@@ -72,7 +72,7 @@ pip install mkdocs-pdf-export-plugin
 ```bash
 cd  docs
 ./build-docs-pdf.sh
-xdg-open TheKartozaHandbook.pdf
+xdg-open TheGeosightHandbook.pdf
 ```
 
 ## Building in VSCode
