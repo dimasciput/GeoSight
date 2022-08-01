@@ -40,6 +40,20 @@ export function Indicators() {
    * Fetch indicator data
    */
   useEffect(() => {
+    const indicator = indicators.filter(indicator => {
+      return indicator.id === currentIndicator
+    })[0]
+    if (indicator) {
+      const indicatorData = JSON.parse(JSON.stringify(indicator))
+      indicatorData.reporting_level = indicatorsData[selectedIndicator.id] && indicatorsData[selectedIndicator.id].reporting_level
+      dispatch(Actions.SelectedIndicator.change(indicatorData))
+    }
+  }, [currentIndicator, indicatorsData]);
+
+  /**
+   * Fetch indicator data
+   */
+  useEffect(() => {
     if (indicators) {
       indicators.map(indicator => {
         const { id } = indicator

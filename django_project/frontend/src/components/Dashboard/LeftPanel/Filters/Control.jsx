@@ -13,6 +13,7 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
+import WarningIcon from '@mui/icons-material/Warning';
 import Switch from '@mui/material/Switch';
 import {
   IDENTIFIER,
@@ -40,6 +41,7 @@ import './style.scss'
 export function FilterControl({ filtersData, indicatorFields, filter }) {
   const dispatcher = useDispatch();
   const [filters, setFilters] = useState(filtersData)
+  const selectedIndicator = useSelector(state => state.selectedIndicator)
 
   // Apply the filters query
   useEffect(() => {
@@ -197,6 +199,11 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
     })[0]
     const fieldName = indicator?.name
 
+    // TODO: Reporting level
+    //  Remove this after aggregation
+    const reportingLevel = indicator?.reporting_level
+    const differentLevel = !editMode && selectedIndicator.reporting_level && ("" + reportingLevel) !== ("" + selectedIndicator.reporting_level)
+
     /**
      * Return filter input
      */
@@ -214,7 +221,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
           <FilterValueInput
             value={currentValue} operator={operator}
             indicator={indicator} onChange={updateValue}
-            disabled={!where.active}/>
+            disabled={!where.active || differentLevel}/>
         </div>
         {where.description ?
           <div
@@ -224,7 +231,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
     }
 
     return <Accordion
-      className='FilterExpression'
+      className={'FilterExpression ' + (differentLevel ? "Disabled" : "")}
       expanded={expanded}
       onChange={updateExpanded}>
       <AccordionSummary
@@ -239,7 +246,21 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
           onChange={() => {
             updateActive(event.target.checked)
           }}
+          disabled={differentLevel}
         />
+        {
+          differentLevel ?
+            <div className='FilterInfo'>
+              <Tooltip
+                title={
+                  "Filter will not affect indicator on the map because the differences of admin level. " +
+                  "Filter admin is " + reportingLevel + " but indicator on map is " + selectedIndicator.reporting_level + "."
+                }
+              >
+                <WarningIcon/>
+              </Tooltip>
+            </div> : ""
+        }
         {
           where.name ?
             <div className='FilterExpressionName'>{where.name}</div> :
@@ -249,7 +270,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
               <div className='FilterExpressionName'>Loading</div>
         }
         <ModeEditIcon
-          className='FilterEdit'
+          className='MuiButtonLike FilterEdit'
           onClick={(event) => {
             event.stopPropagation()
             setOpen(true)
@@ -258,7 +279,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
           upperWhere ? (
             <Tooltip title="Delete Filter">
               <DoDisturbOnIcon
-                className='FilterDelete MuiButtonLike' onClick={
+                className='MuiButtonLike FilterDelete MuiButtonLike' onClick={
                 () => {
                   let isExecuted = confirm("Are you want to delete this group?");
                   if (isExecuted) {
@@ -351,12 +372,13 @@ export default function FilterSection() {
   // get indicator fields
   let indicatorFields = []
   indicators.map(indicator => {
-    if (indicatorsData[indicator.id]?.fetched) {
-      const data = indicatorsData[indicator.id]?.data
+    const indicatorData = indicatorsData[indicator.id]
+    if (indicatorData?.fetched) {
+      const data = indicatorData?.data
       if (data) {
-        const indicatorData = queryIndicator(data)[0]
-        if (indicatorData) {
-          Object.keys(indicatorData).forEach(key => {
+        const queryData = queryIndicator(data)[0]
+        if (queryData) {
+          Object.keys(queryData).forEach(key => {
             const id = `${IDENTIFIER}${indicator.id}.${key}`
             indicatorFields.push({
               'id': id,
@@ -366,7 +388,10 @@ export default function FilterSection() {
                 data.map(data => {
                   return data[key]
                 }))
-              ]
+              ],
+              // TODO: Reporting level
+              //  Remove this after aggregation
+              'reporting_level': indicatorData.reporting_level
             })
           })
         }
@@ -377,6 +402,10 @@ export default function FilterSection() {
 
   return <Fragment>
     <div className='FilterControl'>
+      <div className='FilterControlInfo'>
+        Filter is active if the admin of filter is same with the admin of
+        indicator on the map.
+      </div>
       <FilterControl
         filtersData={
           (filters && Object.keys(filters).length > 0) ? filters : INIT_DATA.GROUP()

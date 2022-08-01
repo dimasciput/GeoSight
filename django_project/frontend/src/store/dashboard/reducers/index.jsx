@@ -7,6 +7,7 @@ import ReferenceLayerDataReducer from "./referenceLayerData";
 import filtersDataReducer from "./filtersData";
 import geometriesReducer from "./geometries";
 import filteredGeometriesReducer from "./filteredGeometries";
+import selectedIndicatorReducer from "./selectedIndicator";
 
 
 export default combineReducers({
@@ -19,4 +20,5 @@ export default combineReducers({
   filtersData: filtersDataReducer,
   geometries: geometriesReducer,
   filteredGeometries: filteredGeometriesReducer,
+  selectedIndicator: selectedIndicatorReducer
 });

@@ -51,12 +51,13 @@ export function queryIndicator(indicatorData) {
  * Return where
  * @param where
  * @param ignoreActive
+ * @param ids
  */
-export function returnWhere(where, ignoreActive) {
+export function returnWhere(where, ignoreActive, ids) {
   switch (where.type) {
     case TYPE.GROUP:
       const queries = where.queries.map(query => {
-        return returnWhere(query, ignoreActive)
+        return returnWhere(query, ignoreActive, ids)
       }).filter(el => el.length)
       if (queries.length === 0) {
         return ''
@@ -66,7 +67,9 @@ export function returnWhere(where, ignoreActive) {
         })`
       }
     case TYPE.EXPRESSION:
-      return ignoreActive || where.active ? returnDataToExpression(where.field, where.operator, where.value) : ''
+      const indicatorId = where.field.split('.')[0]
+      const used = ignoreActive || (where.active && (!ids || ids.includes(indicatorId)))
+      return used ? returnDataToExpression(where.field, where.operator, where.value) : ''
 
   }
 }
@@ -166,7 +169,11 @@ export function queryFromDictionary(indicators, dictionary, ignoreActive) {
     }
   })
 
-  const where = returnWhere(dictionary, ignoreActive);
+  const ids = indicators.map(indicator => {
+    return "indicator_" + indicator.id
+  })
+
+  const where = returnWhere(dictionary, ignoreActive, ids);
   if (where) {
     query += ' WHERE ' + where;
   }

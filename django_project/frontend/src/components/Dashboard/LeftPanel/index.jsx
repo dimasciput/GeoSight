@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { useSelector } from "react-redux";
 
 import LeftRightToggleButton, { LEFT, RIGHT } from '../../ToggleButton'
+import MapInfo from './MapInfo'
 import Basemaps from './Basemaps'
 import ReferenceLayerSection from './ReferenceLayer'
 import ContextLayersAccordion from './ContextLayers'
@@ -70,9 +71,11 @@ export default function LeftPanel() {
           <FiltersAccordion/>
         </div>
       </div>
-      <div className='dashboard__left_side__basemaps'>
-        <Basemaps
-          data={basemapsLayers}/>
+      <div className='dashboard__left_side__bottom'>
+        <div className='dashboard__left_side__basemaps'>
+          <Basemaps data={basemapsLayers}/>
+        </div>
+        <MapInfo/>
       </div>
     </section>
   )

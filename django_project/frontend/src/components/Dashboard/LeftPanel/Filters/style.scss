@@ -52,9 +52,19 @@
     padding: 15px 5px 5px 5px;
     position: relative;
 
-    .MuiPaper-root {
+    & > .MuiPaper-root {
       margin-top: 5px !important;
       margin-bottom: 0 !important;
+
+      & > .MuiButtonBase-root {
+        align-items: unset !important;
+
+        .MuiAccordionSummary-expandIconWrapper {
+          padding: 3px 0;
+          height: 0.8rem;
+          width: 0.8rem;
+        }
+      }
     }
 
     .FilterGroupOption {
@@ -120,6 +130,19 @@
 
   .FilterExpression {
     background: none;
+
+    &.Disabled {
+      opacity: 0.5;
+    }
+
+    .FilterInfo {
+      padding-top: 2px;
+      margin-right: 4px;
+
+      svg {
+        margin: 0;
+      }
+    }
 
     .FilterExpressionName {
       flex-grow: 1;

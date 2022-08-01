@@ -15,6 +15,7 @@ import Indicators from './reducers/indicators/actions'
 import Map from './reducers/map/actions'
 import ReferenceLayer from './reducers/referenceLayer/actions'
 import ReferenceLayerData from './reducers/referenceLayerData/actions'
+import SelectedIndicator from './reducers/selectedIndicator/actions'
 import Widgets from './reducers/widgets/actions'
 
 const Actions = {
@@ -31,6 +32,7 @@ const Actions = {
   Map,
   ReferenceLayer,
   ReferenceLayerData,
+  SelectedIndicator,
   Widgets
 }
 

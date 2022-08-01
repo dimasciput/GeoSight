@@ -73,17 +73,20 @@
       height: 100% !important;
     }
 
-    .dashboard__left_side__basemaps {
+    .dashboard__left_side__bottom {
       position: absolute;
       bottom: 5px;
       left: 100%;
     }
   }
 
-  .dashboard__left_side__basemaps {
+  .dashboard__left_side__bottom {
     position: fixed;
     bottom: 5px;
     left: 0;
+    margin-left: 10px;
+    display: flex;
+    width: 100vw;
   }
 
   .left-right-toggle-button {
@@ -227,10 +230,10 @@
 .MuiAccordionSummary-content {
   .MuiSvgIcon-root {
     margin-left: 5px;
+  }
 
-    &:hover {
-      opacity: 0.5;
-    }
+  .MuiButtonLike:hover {
+    opacity: 0.5;
   }
 }
 
@@ -301,9 +304,10 @@
   background-color: white;
   border-radius: 5px;
   box-shadow: $box-shadow;
-  margin-left: 10px;
   overflow: hidden;
   padding: 5px 5px 0 5px;
+  width: 58px;
+  box-sizing: border-box;
 
   &:hover {
     .basemap__box {
