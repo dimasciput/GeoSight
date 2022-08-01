@@ -4,12 +4,26 @@
 
 @import '../../../../../app/variables';
 
-#MapConfig {
-  height: 500px;
+.ExtentConfig {
+  .ExtentInput {
+    width: 100%;
+    display: flex;
 
-  .leaflet-draw {
-    span {
-      display: none;
+    .ExtentManualInput {
+      width: 20%;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    #MapConfig {
+      width: 80%;
+      height: 500px;
+
+      .leaflet-draw {
+        span {
+          display: none;
+        }
+      }
     }
   }
 }

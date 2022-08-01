@@ -18,8 +18,11 @@ export default function MapConfig() {
   const { extent } = useSelector(state => state.dashboard.data);
   const [map, setMap] = useState(null);
   const [editableLayers, setEditableLayers] = useState(null);
-  const [extentValue, setExtentValue] = useState('');
-  const [extentError, setExtentError] = useState('');
+
+  const [west, setWest] = useState('');
+  const [east, setEast] = useState('');
+  const [north, setNorth] = useState('');
+  const [south, setSouth] = useState('');
 
   useEffect(() => {
     if (!map) {
@@ -65,7 +68,7 @@ export default function MapConfig() {
       var drawControl = new L.Control.Draw(drawPluginOptions)
       newMap.addControl(drawControl)
 
-      newMap.on('draw:created', function (e) {
+      const edited = (e) => {
         editableGroups.clearLayers()
         editableGroups.addLayer(e.layer)
 
@@ -75,6 +78,15 @@ export default function MapConfig() {
           bounds._northEast.lng, bounds._northEast.lat
         ]
         dispatcher(Actions.Extent.changeDefault(newExtent))
+      }
+      newMap.on('draw:created', edited);
+      newMap.on('draw:edited', function (e) {
+        var layers = e.layers;
+        layers.eachLayer(function (layer) {
+          edited({
+            layer: layer
+          })
+        });
       });
 
       // ---------------------------------------------------------
@@ -98,53 +110,66 @@ export default function MapConfig() {
         map.fitBounds(bounds);
 
         // set value
-        setExtentValue(JSON.stringify([
-          [extent[1], extent[0]],
-          [extent[1], extent[2]],
-          [extent[3], extent[2]],
-          [extent[3], extent[0]],
-        ]))
+        setWest(extent[0])
+        setSouth(extent[1])
+        setEast(extent[2])
+        setNorth(extent[3])
       }
     }
   }, [map, extent]);
+  useEffect(() => {
+    if (map) {
+      if (north !== undefined && south !== undefined && east !== undefined && west !== undefined) {
+        const newExtent = [
+          west, south,
+          east, north
+        ]
+        console.log(newExtent)
+        dispatcher(Actions.Extent.changeDefault(newExtent))
+      }
+    }
+  }, [north, south, east, west]);
 
-  return <div>
+  return <div className='ExtentConfig'>
     <div className='helptext'>
       Put specific extent boundary or draw on the map below
     </div>
     <br/>
-    <textarea
-      value={extentValue} rows="4"
-      onChange={(event) => {
-        setExtentValue(event.target.value)
-        if (!event.target.value) {
-          setExtentError('This empty')
-        } else {
-          try {
-            const layer = L.polygon(JSON.parse(event.target.value), { color: 'blue' })
-            const bounds = layer.getBounds()
-            if (!bounds._southWest.lng) {
-              setExtentError('This empty')
-            } else {
-              const newExtent = [
-                bounds._southWest.lng, bounds._southWest.lat,
-                bounds._northEast.lng, bounds._northEast.lat
-              ]
-              dispatcher(Actions.Extent.changeDefault(newExtent))
-            }
-          } catch (err) {
-            const error = err.toString()
-            if (error.includes('JSON')) {
-              setExtentError('Value is not recognized. Please use [[x1,y1],[x1,y2],[x2,y1],[x2,y2]]')
-            } else {
-              setExtentError(error)
-            }
-          }
-        }
-      }}/>
-    {extentError ? <div className='error'>{extentError}</div> : ''}
-    <br/>
-    <div id="MapConfig"></div>
+    <div className='ExtentInput'>
+      <div id="MapConfig"></div>
+      <div className='ExtentManualInput'>
+        WEST (Longitude)
+        <input
+          value={west}
+          onChange={(event) => {
+            setWest(parseFloat(event.target.value))
+          }} type="number" min={-180} max={180}/>
+        <br/>
+        <br/>
+        NORTH (Latitude)
+        <input
+          value={north}
+          onChange={(event) => {
+            setNorth(parseFloat(event.target.value))
+          }} type="number" min={-90} max={90}/>
+        <br/>
+        <br/>
+        EAST (Longitude)
+        <input
+          value={east}
+          onChange={(event) => {
+            setEast(parseFloat(event.target.value))
+          }} type="number" min={-180} max={180}/>
+        <br/>
+        <br/>
+        SOUTH (Latitude)
+        <input
+          value={south}
+          onChange={(event) => {
+            setSouth(parseFloat(event.target.value))
+          }} type="number" min={-90} max={90}/>
+      </div>
+    </div>
   </div>
 }
 
