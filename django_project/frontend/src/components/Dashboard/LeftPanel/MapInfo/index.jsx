@@ -13,15 +13,18 @@ import './style.scss';
 export default function MapInfo() {
   const selectedIndicator = useSelector(state => state.selectedIndicator)
 
-  return (
-    <div className="MapInfo">
-      <div>{selectedIndicator.category}/{selectedIndicator.name}</div>
-      <div>
-        {
-          selectedIndicator.reporting_level ?
-            <Fragment>Admin {selectedIndicator.reporting_level}</Fragment> : ""
-        }
-      </div>
-    </div>
-  )
+  return <Fragment>
+    {
+      Object.keys(selectedIndicator).length > 0 ?
+        <div className="MapInfo">
+          <div>{selectedIndicator.category}/{selectedIndicator.name}</div>
+          <div>
+            {
+              selectedIndicator.reporting_level ?
+                <Fragment>Admin {selectedIndicator.reporting_level}</Fragment> : ""
+            }
+          </div>
+        </div> : ""
+    }
+  </Fragment>
 }

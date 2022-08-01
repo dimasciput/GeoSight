@@ -155,7 +155,7 @@ export function DashboardPreview({ currentMode, setCurrentMode }) {
       {Object.keys(data).length > 0 ?
         <Fragment>
           <LeftPanel/>
-          {currentMode === 'PreviewMode' ? <Map/> : ''}
+          <Map/>
           <RightPanel/>
         </Fragment> :
         <div></div>

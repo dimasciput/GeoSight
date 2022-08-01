@@ -229,7 +229,7 @@ export default function ReferenceLayer({ currentIndicator }) {
       });
 
       dispatch(
-        Actions.Map.change_reference_layer(layer)
+        Actions.Map.changeReferenceLayer(layer)
       )
       // TODO:
       //  Hacky way to show details button

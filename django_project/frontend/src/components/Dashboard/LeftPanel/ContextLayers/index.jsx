@@ -126,13 +126,13 @@ function ContextLayerInput({ data }) {
     if (checked) {
       if (layer) {
         dispatch(
-          Actions.Map.add_context_layer(id, layer)
+          Actions.Map.addContextLayer(id, layer)
         );
       }
     } else {
       if (layer) {
         dispatch(
-          Actions.Map.remove_context_layer(id)
+          Actions.Map.removeContextLayer(id)
         );
       }
     }

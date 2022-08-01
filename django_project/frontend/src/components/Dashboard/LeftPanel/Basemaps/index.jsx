@@ -59,7 +59,7 @@ export default function Basemaps({ data }) {
         }
       }
       dispatch(
-        Actions.Map.change_basemap(layer)
+        Actions.Map.changeBasemap(layer)
       )
     }
   }, [selected])

@@ -27,7 +27,8 @@ export default function MapConfig() {
         center: [0, 0],
         zoom: 6,
         zoomControl: false,
-        maxZoom: maxZoom
+        maxZoom: maxZoom,
+        noWrap: true
       });
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
