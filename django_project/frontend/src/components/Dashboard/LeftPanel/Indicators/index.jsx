@@ -41,9 +41,10 @@ export function Indicator({ checked, layer, onChange }) {
           {
             showLegend ?
               <table>
+                <tbody>
                 {
                   layer.rules.map(rule => (
-                      <tr className='IndicatorLegendRow'>
+                      <tr key={rule.id} className='IndicatorLegendRow'>
                         <td>
                           <div className='IndicatorLegendRow-Color'
                                style={{ backgroundColor: rule.color }}></div>
@@ -53,6 +54,7 @@ export function Indicator({ checked, layer, onChange }) {
                     )
                   )
                 }
+                </tbody>
               </table> : ""
           }
         </div>

@@ -19,7 +19,6 @@ import {
   IDENTIFIER,
   INIT_DATA,
   OPERATOR,
-  queryIndicator,
   TYPE,
   WHERE_OPERATOR
 } from "../../../../utils/queryExtraction"
@@ -376,25 +375,31 @@ export default function FilterSection() {
     if (indicatorData?.fetched) {
       const data = indicatorData?.data
       if (data) {
-        const queryData = queryIndicator(data)[0]
-        if (queryData) {
-          Object.keys(queryData).forEach(key => {
-            const id = `${IDENTIFIER}${indicator.id}.${key}`
-            indicatorFields.push({
-              'id': id,
-              'name': `${indicator.name}.${key}`,
-              'group': indicator.name,
-              'data': [...new Set(
-                data.map(data => {
-                  return data[key]
-                }))
-              ],
-              // TODO: Reporting level
-              //  Remove this after aggregation
-              'reporting_level': indicatorData.reporting_level
-            })
+        let keys = []
+        data.map(row => {
+          keys = [...new Set(keys.concat(Object.keys(row)))]
+        })
+        keys.forEach(key => {
+          const id = `${IDENTIFIER}${indicator.id}.${key}`
+          if (key === 'indicator_id') {
+            return
+          }
+          indicatorFields.push({
+            'id': id,
+            'name': `${indicator.name}.${key}`,
+            'group': indicator.name,
+            'data': [...new Set(
+              data.map(data => {
+                return data[key]
+              }).filter(data => {
+                return data
+              }))
+            ],
+            // TODO: Reporting level
+            //  Remove this after aggregation
+            'reporting_level': indicatorData.reporting_level
           })
-        }
+        })
       }
       indicatorFields = [...new Set(indicatorFields)]
     }
