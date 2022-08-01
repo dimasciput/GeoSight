@@ -14,6 +14,68 @@ import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
 import ReferenceLayer from '../../Map/ReferenceLayer'
 
+
+/**
+ * Indicator selector.
+ * @param {bool} checked Is indicator checked.
+ * @param {dict} layer Layer dictionary.
+ * @param {function} onChange Function when on changed
+ */
+export function Indicator({ checked, layer, onChange }) {
+  const [showLegend, setShowLegend] = useState(checked);
+  const showLegendHandler = (show) => {
+    setShowLegend(show);
+  };
+
+  return (
+    <div className='dashboard__left_side__row'
+         key={layer.id}>
+      <Radio
+        checked={checked}
+        onChange={() => {
+          onChange(event.target.checked, layer.id)
+        }}/>
+      <div className='text title'>
+        <div>{layer.name}</div>
+        <div className='legend'>
+          {
+            showLegend ?
+              <table>
+                {
+                  layer.rules.map(rule => (
+                      <tr className='IndicatorLegendRow'>
+                        <td>
+                          <div className='IndicatorLegendRow-Color'
+                               style={{ backgroundColor: rule.color }}></div>
+                        </td>
+                        <td>{rule.name}</td>
+                      </tr>
+                    )
+                  )
+                }
+              </table> : ""
+          }
+        </div>
+      </div>
+      {
+        checked ? (
+          <Fragment>
+            {
+              showLegend ?
+                <span className='toggler' onClick={() => {
+                  showLegendHandler(false)
+                }}>▴</span> :
+                <span className='toggler' onClick={() => {
+                  showLegendHandler(true)
+                }}>▾</span>
+            }
+          </Fragment>
+        ) : ''
+      }
+    </div>
+  )
+}
+
 /**
  * Indicators selector.
  */
@@ -85,19 +147,10 @@ export function Indicators() {
         className='light'>{groupName}</b></div>
       <div className='LayerGroupList'>
         {
-          group.map(layer => (
-              <div className='dashboard__left_side__row'
-                   key={layer.id}>
-                <Radio
-                  checked={currentIndicator === layer.id}
-                  onChange={() => {
-                    change(event.target.checked, layer.id)
-                  }}/>
-                <div className='text title'>
-                  <div>{layer.name}</div>
-                </div>
-              </div>
-            )
+          group.map(layer =>
+            <Indicator
+              key={layer.id} onChange={change} layer={layer}
+              checked={currentIndicator === layer.id}/>
           )
         }
       </div>
