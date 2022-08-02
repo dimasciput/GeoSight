@@ -29,6 +29,7 @@ import SortableContainer from "./SortableContainer";
  * @param {Function} addLayerInGroup Function of addLayerInGroup.
  * @param {Function} editLayerInGroup When edit layer in group
  * @param {Function} rearrangeLayers Rearrange layers
+ * @param {Function} otherActionsFunction Other actions
  */
 export default function SortableList(
   {
@@ -39,7 +40,8 @@ export default function SortableList(
     changeLayer,
     addLayerInGroup,
     editLayerInGroup,
-    rearrangeLayers
+    rearrangeLayers,
+    otherActionsFunction
   }
 ) {
   const prevState = useRef();
@@ -268,6 +270,7 @@ export default function SortableList(
               changeLayer={changeLayer}
               addLayerInGroup={addLayerInGroup}
               editLayerInGroup={editLayerInGroup}
+              otherActionsFunction={otherActionsFunction}
             />
           ))}
         </SortableContext>

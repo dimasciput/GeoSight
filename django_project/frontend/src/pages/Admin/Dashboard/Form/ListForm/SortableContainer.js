@@ -27,6 +27,7 @@ import { CSS } from "@dnd-kit/utilities";
  * @param {Function} changeLayer Function of change layer.
  * @param {Function} addLayerInGroup Function of addLayerInGroup.
  * @param {Function} editLayerInGroup When edit layer in group
+ * @param {Function} otherActionsFunction Other actions
  */
 export default function SortableContainer(
   {
@@ -39,7 +40,8 @@ export default function SortableContainer(
     removeLayer,
     changeLayer,
     addLayerInGroup,
-    editLayerInGroup
+    editLayerInGroup,
+    otherActionsFunction
   }) {
   const noGroup = '_noGroup'
   const [editName, setEditName] = useState(false);
@@ -148,6 +150,14 @@ export default function SortableContainer(
                     {layer.description}
                   </div>
                 </td>
+                {
+                  otherActionsFunction ?
+                    <td>
+                      {
+                        otherActionsFunction(layer)
+                      }
+                    </td> : ''
+                }
                 <td className='VisibilityAction'>
                   {
                     layer.visible_by_default ?
@@ -173,7 +183,6 @@ export default function SortableContainer(
                       }}/>
                     </td> : ''
                 }
-
                 <td className='RemoveAction'>
                   <RemoveCircleIcon className='MuiButtonLike'
                                     onClick={() => {

@@ -19,10 +19,10 @@ export default function MapConfig() {
   const [map, setMap] = useState(null);
   const [editableLayers, setEditableLayers] = useState(null);
 
-  const [west, setWest] = useState('');
-  const [east, setEast] = useState('');
-  const [north, setNorth] = useState('');
-  const [south, setSouth] = useState('');
+  const [west, setWest] = useState(extent[0]);
+  const [south, setSouth] = useState(extent[1]);
+  const [east, setEast] = useState(extent[2]);
+  const [north, setNorth] = useState(extent[3]);
 
   useEffect(() => {
     if (!map) {
@@ -117,14 +117,14 @@ export default function MapConfig() {
       }
     }
   }, [map, extent]);
+
   useEffect(() => {
     if (map) {
-      if (north !== undefined && south !== undefined && east !== undefined && west !== undefined) {
+      if (north !== '' && south !== '' && east !== '' && west !== '') {
         const newExtent = [
           west, south,
           east, north
         ]
-        console.log(newExtent)
         dispatcher(Actions.Extent.changeDefault(newExtent))
       }
     }

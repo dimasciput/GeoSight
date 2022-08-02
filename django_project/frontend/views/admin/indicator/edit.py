@@ -64,6 +64,7 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
             indicator = form.save()
             indicator.indicatorrule_set.all().delete()
 
+            order = 0
             for req_key, value in request.POST.dict().items():
                 if 'rule_name_' in req_key:
                     idx = req_key.replace('rule_name_', '')
@@ -80,8 +81,10 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
                             )
                         indicator_rule.rule = rule
                         indicator_rule.color = color
+                        indicator_rule.order = order
                         indicator_rule.outline_color = outline_color
                         indicator_rule.save()
+                        order += 1
             return redirect(reverse('admin-indicator-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form

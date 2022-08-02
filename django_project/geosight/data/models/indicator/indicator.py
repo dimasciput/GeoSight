@@ -198,23 +198,26 @@ class Indicator(AbstractTerm, AbstractSource):
                 query = query.filter(date=last_date)
         return query
 
-    def rule_by_value(self, value):
+    def rule_by_value(self, value, rule_set=None):
         """Return scenario level of the value."""
+        if not rule_set:
+            rule_set = self.indicatorrule_set.all()
         if value is not None:
             # check the rule
-            for indicator_rule in self.indicatorrule_set.all():
+            for indicator_rule in rule_set:
                 try:
                     if indicator_rule.rule and eval(
-                            indicator_rule.rule.replace('x',
-                                                        f'{value}').lower()):
+                            indicator_rule.rule.replace(
+                                'x', f'{value}').lower()
+                    ):
                         return indicator_rule
                 except NameError:
                     pass
         return None
 
-    def serialize(self, geometry_code, value, attributes=None):
+    def serialize(self, geometry_code, value, attributes=None, rule_set=None):
         """Return data."""
-        rule = self.rule_by_value(value)
+        rule = self.rule_by_value(value, rule_set)
         background_color = rule.color if rule else ''
         outline_color = rule.outline_color if rule else '#000000'
 
@@ -229,13 +232,12 @@ class Indicator(AbstractTerm, AbstractSource):
         values.update(attributes if attributes else {})
         return values
 
-    def values(self, date_data: date):
+    def values(self, date_data: date, rule_set=None):
         """Return list data based on date.
 
         If it is upper than the reporting geometry level,
         it will be aggregate to upper level
         """
-        # get the geometries of data
         values = []
         query = self.query_value(date_data)
         query_report = query.order_by(
@@ -257,7 +259,8 @@ class Indicator(AbstractTerm, AbstractSource):
             value = self.serialize(
                 indicator_value.geom_identifier,
                 indicator_value.value,
-                attributes
+                attributes,
+                rule_set
             )
             values.append(value)
         return values

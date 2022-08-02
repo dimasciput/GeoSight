@@ -1,6 +1,7 @@
 """Serializer for dashboard."""
 import json
 
+from django.shortcuts import reverse
 from rest_framework import serializers
 
 from geosight.data.models.dashboard import Dashboard, Widget
@@ -58,9 +59,16 @@ class DashboardSerializer(serializers.ModelSerializer):
         output = []
         for model in obj.dashboardindicator_set.all():
             data = IndicatorSerializer(model.object).data
-            data.update(
-                DashboardIndicatorSerializer(model).data
+            data['url'] = reverse(
+                'dashboard-indicator-values-api',
+                args=[obj.slug, model.object.id]
             )
+            dashboard_data = DashboardIndicatorSerializer(model).data
+            if dashboard_data['rules']:
+                del data['rules']
+            else:
+                del dashboard_data['rules']
+            data.update(dashboard_data)
             output.append(data)
 
         return output

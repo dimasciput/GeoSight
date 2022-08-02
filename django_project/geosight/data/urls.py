@@ -10,7 +10,8 @@ from geosight.data.api.context_layers import (
     ContextLayerListAPI, ContextLayerDetailAPI
 )
 from geosight.data.api.dashboard import (
-    DashboardData, DashboardDetail, DashboardListAPI
+    DashboardData, DashboardDetail, DashboardListAPI,
+    DashboardIndicatorValuesAPI
 )
 from geosight.data.api.download_file import (
     DownloadSharepointFile,
@@ -42,6 +43,11 @@ dashboard_api = [
         r'^(?P<slug>[^/]+)$',
         DashboardDetail.as_view(),
         name='dashboard-detail-api'
+    ),
+    url(
+        r'^(?P<slug>[^/]+)/indicator/(?P<pk>\d+)/values/latest',
+        DashboardIndicatorValuesAPI.as_view(),
+        name='dashboard-indicator-values-api'
     ),
 ]
 # ------------------------------------------------------

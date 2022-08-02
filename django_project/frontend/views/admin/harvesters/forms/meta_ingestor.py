@@ -1,10 +1,11 @@
 """MetaIngestor View."""
 
+from django.shortcuts import reverse
+
 from geosight.harvester.harveters.excel_harvester import ExcelHarvester
 from geosight.harvester.models.harvester import Harvester
 from geosight.harvester.tasks import run_harvester
 from ._base import HarvesterFormView
-from django.shortcuts import redirect, reverse, get_object_or_404
 
 MetaIngestor = (
     'geosight.harvester.harveters.excel_harvester.ExcelHarvester',

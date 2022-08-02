@@ -230,6 +230,7 @@ export function DashboardSaveForm(
             order: model.order,
             visible_by_default: model.visible_by_default,
             group: model.group,
+            rules: model.rules,
           }
         }),
         'basemapsLayers': basemapsLayers.map(function (model) {

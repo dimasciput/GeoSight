@@ -146,6 +146,11 @@
 
     input {
       padding: 0.8rem 0.5rem;
+
+      &:focus,
+      &:focus-within {
+        outline: none;
+      }
     }
 
     .IndicatorRule-Add {
@@ -167,6 +172,16 @@
 
       td {
         height: 1rem;
+      }
+    }
+  }
+
+  .DragDropItem-Drag {
+    padding: 0.5rem 1rem;
+
+    svg {
+      &:focus {
+        outline: none !important;
       }
     }
   }

@@ -67,12 +67,36 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
     def save_relations(self, data):
         """Save all relationship data."""
         from geosight.data.models.dashboard import (
-            DashboardIndicator, DashboardBasemap, DashboardContextLayer
+            DashboardIndicator, DashboardIndicatorRule, DashboardBasemap,
+            DashboardContextLayer
         )
         self.save_widgets(data['widgets'])
+
         self.save_relation(
             DashboardIndicator, Indicator, self.dashboardindicator_set.all(),
             data['indicators'])
+        # save rules
+        for indicator in data['indicators']:
+            try:
+                dashboard_indicator = self.dashboardindicator_set.get(
+                    object_id=indicator['id'])
+                dashboard_indicator.dashboardindicatorrule_set.all().delete()
+                for idx, rule in enumerate(indicator['rules']):
+                    indicator_rule, created = \
+                        DashboardIndicatorRule.objects.get_or_create(
+                            object=dashboard_indicator,
+                            indicator=dashboard_indicator.object,
+                            name=rule['name']
+                        )
+                    indicator_rule.rule = rule['rule']
+                    indicator_rule.color = rule['color']
+                    indicator_rule.order = idx
+                    indicator_rule.outline_color = rule['outline_color']
+                    indicator_rule.save()
+
+            except DashboardIndicator.DoesNotExist:
+                pass
+
         self.save_relation(
             DashboardBasemap, BasemapLayer, self.dashboardbasemap_set.all(),
             data['basemapsLayers'])

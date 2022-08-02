@@ -6,6 +6,7 @@ from geosight.data.models.basemap_layer import BasemapLayer
 from geosight.data.models.context_layer import ContextLayer
 from geosight.data.models.dashboard import Dashboard
 from geosight.data.models.indicator import Indicator
+from geosight.data.models.rule import RuleModel
 
 User = get_user_model()
 
@@ -47,6 +48,24 @@ class DashboardIndicator(DashboardRelation):
     )
 
     class Meta:  # noqa: D106
+        ordering = ('order',)
+
+
+class DashboardIndicatorRule(RuleModel):
+    """Indicator x Dashboard rule."""
+
+    object = models.ForeignKey(
+        DashboardIndicator,
+        on_delete=models.CASCADE
+    )
+
+    indicator = models.ForeignKey(
+        Indicator,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:  # noqa: D106
+        unique_together = ('object', 'name')
         ordering = ('order',)
 
 

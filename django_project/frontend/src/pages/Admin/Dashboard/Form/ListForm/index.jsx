@@ -20,6 +20,7 @@ import './style.scss';
  * @param {Function} addLayerInGroupAction When Add Layer In Group.
  * @param {Function} editLayerInGroupAction When edit layer in group
  * @param {Function} rearrangeLayersAction When rearrange layers
+ * @param {Function} otherActionsFunction Other actions
  */
 export default function ListForm(
   {
@@ -31,7 +32,8 @@ export default function ListForm(
     changeLayerAction,
     addLayerInGroupAction,
     editLayerInGroupAction,
-    rearrangeLayersAction
+    rearrangeLayersAction,
+    otherActionsFunction
   }
 ) {
   // GLOBAL DATA
@@ -52,9 +54,7 @@ export default function ListForm(
 
   // Onload, check the default one
   useEffect(() => {
-    const groupLayers = layerInGroup(data);
-    let newGroups = groupLayers;
-    setGroups(newGroups)
+    setGroups(layerInGroup(data))
   }, [data])
 
   /** Add group */
@@ -150,6 +150,7 @@ export default function ListForm(
             addLayerInGroup={addLayerInGroup}
             editLayerInGroup={editLayerInGroupAction}
             rearrangeLayers={rearrangeLayersAction}
+            otherActionsFunction={otherActionsFunction}
           />
 
           <DataSelectionModal

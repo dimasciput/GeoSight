@@ -76,6 +76,7 @@ class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
                             )
                         indicator_rule.rule = rule
                         indicator_rule.color = color
+                        indicator_rule.order = idx
                         indicator_rule.outline_color = outline_color
                         indicator_rule.save()
             return redirect(reverse('admin-indicator-list-view'))

@@ -1,0 +1,32 @@
+/* ==========================================================================
+   Indicator Form style
+   ========================================================================== */
+
+@import '../../../../../app/variables';
+
+
+.IndicatorStyleButton {
+  color: $secondary-color;
+}
+
+.IndicatorRuleForm {
+  .modal--box {
+    width: 90%;
+    max-width: 90%;
+  }
+
+  .RuleModal {
+    overflow-x: auto;
+    padding: 1rem;
+    flex-grow: 1;
+  }
+
+  .RuleModalApply {
+    display: flex;
+    margin-bottom: 0.5rem;
+
+    .Separator {
+      flex-grow: 1;
+    }
+  }
+}
