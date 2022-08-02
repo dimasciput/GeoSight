@@ -22,12 +22,17 @@ class ContextLayerEditView(SuperuserRequiredMixin, BaseView):
     @property
     def content_title(self):
         """Return content title that used on page title basemap."""
-        basemap = get_object_or_404(
+        context_layer = get_object_or_404(
             ContextLayer, id=self.kwargs.get('pk', '')
         )
+        list_url = reverse('admin-context-layer-list-view')
+        edit_url = reverse(
+            'admin-context-layer-edit-view', args=[context_layer.id]
+        )
         return (
-            f'<span>Context Layer</span> <span>></span> '
-            f'<span>{basemap.__str__()}</span>'
+            f'<a href="{list_url}">Context Layers</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">{context_layer.__str__()}</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:

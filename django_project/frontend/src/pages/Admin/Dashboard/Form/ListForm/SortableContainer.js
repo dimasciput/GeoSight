@@ -81,7 +81,7 @@ export default function SortableContainer(
                           className='MuiButtonLike' {...attributes} {...listeners}/> : ''
                     }
                   </td>
-                  <td colSpan={2}>
+                  <td colSpan={5}>
                     {
                       groupName !== noGroup ?
                         <div className='GroupRowTitle'>
@@ -122,22 +122,15 @@ export default function SortableContainer(
                                onClick={() => {
                                  addLayerInGroup(groupName)
                                }}>
-                            <AddCircleIcon/>{"Add"}
+                            <AddCircleIcon/>{"Add To Group"}
+                          </div>
+                          <div className='AddButton MuiButtonLike'
+                               onClick={() => {
+                                 removeGroup(name)
+                               }}>
+                            <RemoveCircleIcon/>{"Remove Group"}
                           </div>
                         </div> : ""
-                    }
-                  </td>
-                  <td className='VisibilityAction'></td>
-                  {
-                    editLayerInGroup ?
-                      <td className='RemoveAction'><EditIcon/></td> : ''
-                  }
-                  <td className='RemoveAction'>
-                    {name ?
-                      <RemoveCircleIcon className='MuiButtonLike'
-                                        onClick={() => {
-                                          removeGroup(name)
-                                        }}/> : ""
                     }
                   </td>
                 </SortableItem>

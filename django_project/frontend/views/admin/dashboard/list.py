@@ -1,6 +1,7 @@
 """Admin Dashboards List View."""
 
 from braces.views import SuperuserRequiredMixin
+from django.shortcuts import reverse
 
 from frontend.views._base import BaseView
 
@@ -18,4 +19,5 @@ class DashboardListView(SuperuserRequiredMixin, BaseView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        return 'Projects'
+        list_url = reverse('admin-dashboard-list-view')
+        return f'<a href="{list_url}">Projects</a>'

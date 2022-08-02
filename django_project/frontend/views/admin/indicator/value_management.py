@@ -25,10 +25,14 @@ class IndicatorValueManagementMapView(SuperuserRequiredMixin, BaseView):
         self.indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        list_url = reverse('admin-indicator-list-view')
+        edit_url = reverse(
+            'admin-indicator-value-mapview-manager', args=[self.indicator.id]
+        )
         return (
-            f'<span>Indicators</span> <span>></span> '
-            f'<span>{self.indicator.__str__()}</span> <span>></span> '
-            f'<span>Value Manager Map </span>'
+            f'<a href="{list_url}">Indicators</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">Value Manager Map</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:
@@ -98,10 +102,14 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
         self.indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        list_url = reverse('admin-indicator-list-view')
+        edit_url = reverse(
+            'admin-indicator-value-form-manager', args=[self.indicator.id]
+        )
         return (
-            f'<span>Indicators</span> <span>></span> '
-            f'<span>{self.indicator.__str__()}</span> <span>></span> '
-            f'<span>Value Manager Form </span>'
+            f'<a href="{list_url}">Indicators</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">Value Manager Form</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:

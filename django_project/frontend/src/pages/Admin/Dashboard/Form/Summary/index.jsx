@@ -45,7 +45,7 @@ export default function SummaryDashboardForm({ changed }) {
         row.detail_url = GeorepoUrls.ReferenceDetail(row.identifier)
         options.push({
           value: row.identifier,
-          label: row.name + ' (' + row.identifier + ')'
+          label: row.name
         })
       })
       setReferenceLayerList(data);

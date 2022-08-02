@@ -11,37 +11,9 @@ from geosight.harvester.models import Harvester
 class IndicatorSerializer(serializers.ModelSerializer):
     """Serializer for Indicator."""
 
-    group = serializers.SerializerMethodField()
-    rules = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
-
-    def get_group(self, obj: Indicator):
-        """Return group."""
-        return obj.group.name
-
-    def get_rules(self, obj: Indicator):
-        """Return rules."""
-        output = []
-        for indicator_rule in obj.indicatorrule_set.all():
-            rules = indicator_rule.rule.replace(' ', '').split('and')
-            try:
-                rule = rules[1].replace(
-                    'x', '').replace('=', '').replace('<', '')
-            except IndexError:
-                rule = rules[0].replace(
-                    'x', '').replace('=', '').replace('<', '')
-
-            try:
-                rule = float(rule)
-            except ValueError:
-                rule = ''
-
-            output.append({
-                'name': indicator_rule.name,
-                'threshold': rule
-            })
-        return output
+    rules = serializers.SerializerMethodField()
 
     def get_url(self, obj: Indicator):
         """Return url."""
@@ -54,11 +26,17 @@ class IndicatorSerializer(serializers.ModelSerializer):
         """Return group."""
         return obj.group.name if obj.group else ''
 
+    def get_rules(self, obj: Indicator):
+        """Return rules."""
+        return IndicatorRuleSerializer(
+            obj.indicatorrule_set.all(), many=True
+        ).data
+
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
-            'id', 'group', 'name', 'category', 'rules', 'reporting_level',
-            'dashboard_link', 'source', 'description', 'url')
+            'id', 'name', 'category', 'source', 'description', 'url',
+            'reporting_level', 'rules')
 
 
 class BasicIndicatorSerializer(serializers.ModelSerializer):
@@ -68,7 +46,6 @@ class BasicIndicatorSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     harvester_url = serializers.SerializerMethodField()
     has_harvester = serializers.SerializerMethodField()
-    rules = serializers.SerializerMethodField()
 
     def get_url(self, obj: Indicator):
         """Return url."""
@@ -102,17 +79,11 @@ class BasicIndicatorSerializer(serializers.ModelSerializer):
             pass
         return False
 
-    def get_rules(self, obj: Indicator):
-        """Return rules."""
-        return IndicatorRuleSerializer(
-            obj.indicatorrule_set.all(), many=True
-        ).data
-
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
             'id', 'name', 'category', 'source', 'description', 'url',
-            'reporting_level', 'harvester_url', 'has_harvester', 'rules')
+            'reporting_level', 'harvester_url', 'has_harvester')
 
 
 class IndicatorRuleSerializer(serializers.ModelSerializer):

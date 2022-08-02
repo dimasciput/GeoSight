@@ -132,7 +132,10 @@
     background: none;
 
     &.Disabled {
-      opacity: 0.5;
+      .FilterInfo,
+      .FilterExpressionName {
+        opacity: 0.5;
+      }
     }
 
     .FilterInfo {

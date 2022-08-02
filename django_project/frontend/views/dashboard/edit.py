@@ -27,9 +27,12 @@ class DashboardEditView(LoginRequiredMixin, BaseDashboardView):
         dashboard = get_object_or_404(
             Dashboard, slug=self.kwargs.get('slug', '')
         )
+        list_url = reverse('admin-dashboard-list-view')
+        edit_url = reverse('dashboard-edit-view', args=[dashboard.slug])
         return (
-            f'<span>Projects</span> <span>></span> '
-            f'<span>{dashboard.__str__()}</span>'
+            f'<a href="{list_url}">Projects</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">{dashboard.__str__()}</a> '
         )
 
     @property

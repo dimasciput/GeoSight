@@ -10,7 +10,7 @@ from geosight.data.serializer.dashboard_relation import (
     DashboardIndicatorSerializer, DashboardBasemapSerializer,
     DashboardContextLayerSerializer
 )
-from geosight.data.serializer.indicator import BasicIndicatorSerializer
+from geosight.data.serializer.indicator import IndicatorSerializer
 
 
 class WidgetSerializer(serializers.ModelSerializer):
@@ -57,7 +57,7 @@ class DashboardSerializer(serializers.ModelSerializer):
         """Return indicators."""
         output = []
         for model in obj.dashboardindicator_set.all():
-            data = BasicIndicatorSerializer(model.object).data
+            data = IndicatorSerializer(model.object).data
             data.update(
                 DashboardIndicatorSerializer(model).data
             )

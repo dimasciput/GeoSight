@@ -25,9 +25,12 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
         indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        list_url = reverse('admin-indicator-list-view')
+        edit_url = reverse('admin-indicator-edit-view', args=[indicator.id])
         return (
-            f'<span>Indicators</span> <span>></span> '
-            f'<span>{indicator.__str__()}</span>'
+            f'<a href="{list_url}">Indicators</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">{indicator.__str__()}</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:

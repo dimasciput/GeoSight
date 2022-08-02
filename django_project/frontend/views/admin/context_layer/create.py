@@ -21,7 +21,13 @@ class ContextLayerCreateView(SuperuserRequiredMixin, BaseView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        return '<span>Context Layer</span> <span>></span> <span>Create</span>'
+        list_url = reverse('admin-context-layer-list-view')
+        create_url = reverse('admin-context-layer-create-view')
+        return (
+            f'<a href="{list_url}">Context Layers</a> '
+            f'<span>></span> '
+            f'<a href="{create_url}">Create</a> '
+        )
 
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""

@@ -25,9 +25,12 @@ class BasemapEditView(SuperuserRequiredMixin, BaseView):
         basemap = get_object_or_404(
             BasemapLayer, id=self.kwargs.get('pk', '')
         )
+        list_url = reverse('admin-basemap-list-view')
+        edit_url = reverse('admin-basemap-edit-view', args=[basemap.id])
         return (
-            f'<span>Basemap</span> <span>></span> '
-            f'<span>{basemap.__str__()}</span>'
+            f'<a href="{list_url}">Basemaps</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">{basemap.__str__()}</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:

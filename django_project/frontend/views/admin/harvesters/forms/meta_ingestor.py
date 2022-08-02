@@ -4,6 +4,7 @@ from geosight.harvester.harveters.excel_harvester import ExcelHarvester
 from geosight.harvester.models.harvester import Harvester
 from geosight.harvester.tasks import run_harvester
 from ._base import HarvesterFormView
+from django.shortcuts import redirect, reverse, get_object_or_404
 
 MetaIngestor = (
     'geosight.harvester.harveters.excel_harvester.ExcelHarvester',
@@ -25,8 +26,12 @@ class MetaIngestorForm(HarvesterFormView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
+        list_url = reverse('admin-indicator-list-view')
+        edit_url = reverse('meta-ingestor-form')
         return (
-            '<span>Indicators</span> <span>></span> <span>Meta Ingestor</span>'
+            f'<a href="{list_url}">Indicators</a> '
+            f'<span>></span> '
+            f'<a href="{edit_url}">Meta Ingestor</a> '
         )
 
     def get_indicator(self):

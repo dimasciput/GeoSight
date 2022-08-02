@@ -21,7 +21,13 @@ class BasemapCreateView(SuperuserRequiredMixin, BaseView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        return '<span>Basemap</span> <span>></span> <span>Create</span>'
+        list_url = reverse('admin-basemap-list-view')
+        create_url = reverse('admin-basemap-create-view')
+        return (
+            f'<a href="{list_url}">Basemaps</a> '
+            f'<span>></span> '
+            f'<a href="{create_url}">Create</a> '
+        )
 
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""

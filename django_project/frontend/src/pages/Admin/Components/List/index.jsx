@@ -1,10 +1,8 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import $ from "jquery";
-import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -28,25 +26,8 @@ import './style.scss';
 export function COLUMNS_ACTION(
   params, redirectUrl, editUrl = null, detailUrl = null, moreActions = null
 ) {
-  editUrl = editUrl ? editUrl : urls.api.edit;
   detailUrl = detailUrl ? detailUrl : urls.api.detail;
-
   const actions = []
-  if (editUrl) {
-    actions.push(
-      <GridActionsCellItem
-        icon={
-          <Tooltip title={`Edit ${params.row.name}`}>
-            <a
-              href={editUrl.replace('/0', `/${params.id}`)}>
-              <EditIcon/>
-            </a>
-          </Tooltip>
-        }
-        label="Edit"
-      />
-    )
-  }
   actions.push(
     <GridActionsCellItem
       icon={
@@ -98,8 +79,20 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
   editUrl = editUrl ? editUrl : urls.api.edit;
   detailUrl = detailUrl ? detailUrl : urls.api.detail;
   return [
-    { field: 'id', headerName: 'id', hide: true, width: 30 },
-    { field: 'name', headerName: pageName + ' Name', flex: 1 },
+    { field: 'id', headerName: 'id', hide: true, width: 30, },
+    {
+      field: 'name', headerName: pageName + ' Name', flex: 1,
+      renderCell: (params) => {
+        if (editUrl) {
+          return <a className='MuiButtonLike CellLink'
+                    href={editUrl.replace('/0', `/${params.id}`)}>
+            {params.value}
+          </a>
+        } else {
+          return params.value
+        }
+      }
+    },
     { field: 'description', headerName: 'Description', flex: 1 },
     { field: 'category', headerName: 'Category', flex: 1 },
     {
