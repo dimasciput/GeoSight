@@ -321,4 +321,4 @@ Answer the following questions:
 * What regions have the highest number of arrivals?
 * what region has had the most changes in departures over time?
 
-![Bringing it all Together](../assets/screencasts/bringing-it-all-together.gif)
+![Bringing it all Together](img/bringing-it-all-together.gif)
