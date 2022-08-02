@@ -50,7 +50,7 @@ Django admin is used for more technical activities and provides a more generic u
 
 🧑‍🏫 Before you can administer the platform, you need to sign in with a user with administrator rights. In the top right-hand corner of the screen is the **Sign In** button. Here, you will sign in using your admin username and password. This process is the same for a regular user and an admin user.  
 
-![Signing in](../assets/screencasts/login.gif "Signing in")
+![Signing in](img/login.gif "Signing in")
 
 ### **Users and Permissions**
 
@@ -58,21 +58,21 @@ Django admin is used for more technical activities and provides a more generic u
 
 Next, we will look at how to manage users. Go to site administration by clicking **Admin -> Django Admin**. Click on **+Add** in the same row as ‘Users’.
 
-![New User](../assets/screenshots/add-user.png "New User")
+![New User](img/add-user.png "New User")
 
 You can now create a profile for someone by adding a username and password. Once you have created the user profile, click **Save**.
 
-![New User](../assets/screencasts/new-user.gif "New User")
+![New User](img/new-user.gif "New User")
 
 > 📝 **Note:** In future the platform will be upgraded to support single sign-on with your Microsoft Teams credentials or similar oauth provider.
 
 Once you have created the user account, pressing save will let you edit the personal information for the new user, as well as select or deselect their permission status. Remember to **Save** your changes.
 
-![Permissions](../assets/screencasts/permissions.gif "Permissions")
+![Permissions](img/permissions.png "Permissions")
 
 > 📒 **Note**: If you want to make a user an admin user so that they can carry out the activities described in this tutorial, you should assign them to the **Staff** group, the **Super User** group and the **Active** box should be checked.
 
-![Groups](../assets/screencasts/permissions.gif "Groups")
+![Groups](img/permissions.gif "Groups")
 
 ### **Creating an instance**
 
@@ -80,17 +80,17 @@ Once you have created the user account, pressing save will let you edit the pers
 
 🧑‍🏫 Make sure you are signed in as an admin user. Open any existing instance, then click on the instance manager icon on the left of the screen.
 
-![Instance Manager](../assets/screenshots/instance-manager.png "Instance Manager")
+![Instance Manager](img/instance-manager.png "Instance Manager")
 
 To create a new instance, click on the Create Instance button at the top right of the screen.
 
-![Instance Creation](../assets/screenshots/create-instance.png "Create Instance")
+![Instance Creation](img/create-instance.png "Create Instance")
 
 On the instance form. add the name of the new instance that you would like to create, a description, as well as the icon file. The icon file in most cases would be the flag of the country for the instance. Once you have added all of the information, click **Save**.
 
 For this tutorial, we will create a demonstrator instance for South Africa:
 
-![Instance Form](../assets/screenshots/instance-form.png "Instance Form")
+![Instance Form](img/instance-form.png "Instance Form")
 
 The flag we used in this exercise is available here:
 
@@ -100,7 +100,7 @@ The flag we used in this exercise is available here:
 
 Once your new instance is created, you will be able to open it from the instance chooser. It will appear very empty, like this:
 
- ![New Instance](../assets/screenshots/newinstance.png)
+ ![New Instance](img/newinstance.png)
 
 ### **Adding a new Context layer**
 
@@ -112,13 +112,13 @@ Once your new instance is created, you will be able to open it from the instance
 
 To add a context layer to the RIR instance, you will need a link to an online layer. For this exercise will be adding a context layer from geonode showing [homelands](https://staging.osgs.rir.kartoza.com/layers/geonode_data:geonode:former_homelands_polygon):
 
-![Home Lands Data](../assets/screenshots/homelands.png)
+![Home Lands Data](img/homelands.png)
 
 > 👨‍🏫 The process for finding the link to an online layer so it can be used as a context layer differs per platform the layer is hosted on. For Geonode layers we need to open the layer in Geonode, right-click on the browser page, click on inspect, and then select network. Hard refresh your screen and look through the URL links until you see the layer URL.
 
 For our example, we will use the URL below. Please copy it:
 
-![Home Lands Data](../assets/screenshots/homelandsurl.png)
+![Home Lands Data](img/homelandsurl.png)
 
 ```
 https://staging.osgs.rir.kartoza.com/geoserver/ows?access_token=SWMqWx64T5dOsNwPD72o4uIbtZ7FIA&LAYERS=geonode%3Aformer_homelands_polygon&TRANSPARENT=TRUE&SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&STYLES=&FORMAT=image%2Fpng&SRS=EPSG%3A900913&BBOX=2504688.5425,-3757032.81375,3757032.81375,-2504688.5425&WIDTH=256&HEIGHT=256
@@ -126,17 +126,17 @@ https://staging.osgs.rir.kartoza.com/geoserver/ows?access_token=SWMqWx64T5dOsNwP
 
 👨‍🏫 Now we can create the context layer in the RIR platform. Click on your account menu in the top right corner of the RIR platform and open **Django Admin**. Click on **+Add** on the Context Layers line. Select the instance you would like to add the context layer to.
 
-![Context Layers](../assets/screenshots/addcontextlayer.png "Context Layers")
+![Context Layers](img/addcontextlayer.png "Context Layers")
 
 We will use the instance that we have just created, South Africa. Paste the URL that you copied above into the URL box.
 
 Enter the information in the form as shown in the images below and save the form once you are happy with it.
 
-![Context Layers](../assets/screenshots/context-layer.png "Context Layers")
+![Context Layers](img/context-layer.png "Context Layers")
 
 Click on **View Site** to see your new layer. You will be able to see your new layer in the **Context Layers** panel.
 
-![Context Layers](../assets/screencasts/context-layer.gif "Context Layers")
+![Context Layers](img/context-layer.gif "Context Layers")
 
 ### Geography Management
 
@@ -158,11 +158,11 @@ Geography levels are heirarchical and follow the political organisation of count
 
 To do this we use the Geography Level Management tool. Click on the **Geography Management** button on the left of the screen. Then click on the Geography Level Management button.
 
-![Geography Level Management](../assets/screenshots/geography-level-management.png "Geography Level Management")
+![Geography Level Management](img/geography-level-management.png "Geography Level Management")
 
 Now drag and drop the levels you want to establish the hierarchy between.
 
-![Geography Heirachy](../assets/screenshots/geography-level-definition.png "Geogery Heirachy")
+![Geography Heirachy](img/geography-level-definition.png "Geogery Heirachy")
 
 Having done this, the system will 'know' that provinces fall under the country boundary.
 
@@ -176,11 +176,11 @@ Press the **Submit** button to save the changes.
 
 Click on the **Geography Management** icon.
 
-![Geography Management](../assets/screenshots/geography-management.png "Geography Management")
+![Geography Management](img/geography-management.png "Geography Management")
 
 You will be redirected to the geography view map page, and you will see that in the top right corner there is an **+uploader** button.
 
-![Geography Uploader](../assets/screenshots/geography-uploader.png "Geography Uploader")
+![Geography Uploader](img/geography-uploader.png "Geography Uploader")
 
 Select this button and start filling in the form. We will create two new geographies: Country and Provices using the tutorial data supplied below:
 
@@ -190,21 +190,21 @@ The geography boundary should be provided in either Esri Shapefile format or as 
 
 Add the country layer first. Start by clicking the **files** button at the bottom of the form and then select **all* of the shapefile layers.
 
-![Shapefile](../assets/screenshots/geography-select-shapefile.png "Shapefile")
+![Shapefile](img/geography-select-shapefile.png "Shapefile")
 
 Now complete the rest of the details as per the screenshot below. Note that the country geography does not need a parent, but we need the code for a country level. In this case, the country is ZA (under 'adm0_pcode').
 
-![Country Form](../assets/screenshots/geography-country-form.png "Country Form")
+![Country Form](img/geography-country-form.png "Country Form")
 
 For a province level, the code column is 'pr_code', the name column is 'pr_name', and the parent code column is 'c_pcode'.
 
-![Province Form](../assets/screenshots/geography-province-form.png "Province Form")
+![Province Form](img/geography-province-form.png "Province Form")
 
 ## Part 2: Managing Indicators
 
 Here is an overview of what we will cover in this section:
 
-![Ingestor Types](../assets/screenshots/ingestor-types.png)
+![Ingestor Types](img/ingestor-types.png)
 
 ### **Adding a New Indicator**
 
@@ -214,7 +214,7 @@ Here is an overview of what we will cover in this section:
 
 👨‍🏫 Once you have filled out the form, scroll down to **Scenario Rules** and add the parameters to match the indicator. you can also change the color for each rule by clicking on the color block. Click **Submit** once you are happy with the added information and scenario rules. If you add a dashboard link, you will see a black dot in the center of the circle that represents the scenario case on that indicator in the Program Interventions panel. By clicking on the black dot, you will be redirected to the dashboard link.
 
-![New Indicator](../assets/screencasts/new-indicator.gif "New Indicator")
+![New Indicator](img/new-indicator.gif "New Indicator")
 
 🧑‍🏫 Once we have created an indicator, we need to populate it with data. There are three ways to do this.
 
@@ -231,7 +231,7 @@ Click on **Settings** for the desired indicator and then click on **Value Manage
 
 👨‍🏫 You can also add a file to fill in the data by clicking **Use File to Refill Form**. To check how to do it, check section *Spreadsheet Uploader*.
 
-![Value Manager Form](../assets/screencasts/value-manager-form.gif "Value Manager Form")
+![Value Manager Form](img/value-manager-form.gif "Value Manager Form")
 
 ### **Value Manager Map**
 
@@ -239,7 +239,7 @@ Click on **Settings** for the desired indicator and then click on **Value Manage
 
 👨‍🏫 The second way to add data to an indicator is through the Value Manager Map option. Go to **Indicator Management** and scroll to the indicator that you would like to add data to. On the right-hand side of the indicator's name, there will be a small Settings symbol. Click on **Settings** for the desired indicator and then "click" on **Value Manager Map**. This will take you back to the map canvas. Now you will be able to click on any geographic location within the instance and a popup window will appear which will allow you to fill in value data for that location.
 
-![Value Manager Map](../assets/screencasts/value-manager-map.gif "Value Manager Map")
+![Value Manager Map](img/value-manager-map.gif "Value Manager Map")
 
 ### **Ingestors**
 
@@ -272,7 +272,7 @@ Click on **Settings** for the desired indicator and then click on **Value Manage
 > 📒 **Note:** If it is still empty, check the administrative code that you have on spreadsheet and the forms.
 > Always use administrative code on the speadsheet value. On the form, the code is in brackets.
 
-![Spreadsheet Ingestor](../assets/screencasts/spreadsheet-ingestor.gif "Spreadsheet Ingestor")
+![Spreadsheet Ingestor](img/spreadsheet-ingestor.gif "Spreadsheet Ingestor")
 
 #### Meta Ingestor Uploader
 
@@ -290,7 +290,7 @@ need to click.
 
 🧑‍🏫 Select *Column name: administration code*, and select other *Column name* inputs (The indicator name) with the header on the Excel that reflects the indicator data.
 Then **Submit** your work, and wait until it says done.
-![Meta Ingestor](../assets/screencasts/meta-ingestor.gif "Meta Ingestor")
+![Meta Ingestor](img/meta-ingestor.gif "Meta Ingestor")
 
 #### API Ingestor
 
@@ -300,7 +300,7 @@ Then **Submit** your work, and wait until it says done.
 
 You will now be presented with an 'API URL' and a 'Token' that has been received from an external source. You now need to "push" the data from outside to the RIR dashboard. "Open" the API platform that you use to build and use API's. We used Postman. "Copy" over the URL and token to push the data to the RIR dashboard.
 
-![Ingestor](../assets/screencasts/ingestor.gif "Ingestor")
+![Ingestor](img/ingestor.gif "Ingestor")
 
 ### **Harvesters**
 
@@ -309,4 +309,4 @@ You will now be presented with an 'API URL' and a 'Token' that has been received
 👨‍🏫 Go to **Indicator Management** and if you haven't already created the indicator you want to work with, start by doing that. Once the necessary indicator exists,click on the little **Settings** icon on the right-hand side of the indicator name. Select the **Create Harvester** option. Pick the type of harvester you would like to create from the drop-down Harvester (you will be presented with three options: 'API With Geography Using Today's Date'; 'API With Geography And Date'; and 'Harvested Using Exposed API By External Client'). The first two options are for the harvester and the third one is for the ingestor. For the 'API With Geography Using Today's Date' and 'API With Geography And Date' options,  fill in the Attributes portion of the form and then a popup window with a list of
 keys will appear; **drag** the green labels to their corresponding criteria. Select **Harvest Now**. You can scroll down to the log to see if your harvest is running in the background. Go to **Indicator Management** and click on the little settings icon that you just created a harvester for and select **Value Manager Map** to view your progress.
 
-![Harvester](../assets/screencasts/harvester.gif "Harvester")
+![Harvester](img/harvester.gif "Harvester")
