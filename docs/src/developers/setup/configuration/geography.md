@@ -12,4 +12,4 @@ thing you need to do is add the data for the geography level. Once the data is u
 Click on the **Geography Management** icon. You will be redirected to the ‘Geography View’ map page, and you will see that in the top right corner there is a button
 for **Level Management**. Select this button. Now you will be able to rearrange the geography level by clicking on a degree and dragging it to your desired location.
 
-![Rearrange Geography Level](../../assets/screencasts/geo-level.gif "Rearrange Geography Level")
+![Rearrange Geography Level](img/geo-level.gif "Rearrange Geography Level")

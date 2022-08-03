@@ -12,26 +12,26 @@ the general theme of the layers that are already on the dashboard. Once you are 
 Go to **Symbology** and click on the drop-down **Style** button. Select **Save Style**. Click on the **Save Style** drop-down option and select **As SLD Style File**.
 Click on the ellipse on the right-hand side of the File line to choose a place to save the SLD. Do this for each file you want to upload.
 
-![SLD](../../assets/screencasts/sld.gif  "SLD")
+![SLD](img/sld.gif  "SLD")
 
 Now we’re going to upload it to GeoNode. Log into your GeoNode or GeoServer account. Click on the **Data** dropdown. Select **Upload Layer**. Please note that
 you can only upload one layer at a time. Drop all the data for the layer into the grey box and select **Upload files**.
 
-![Uploading to GeoNode](../../assets/screencasts/geonode_upload.gif  "Uploading to GeoNode")
+![Uploading to GeoNode](img/geonode_upload.gif  "Uploading to GeoNode")
 
 Once the data has been uploaded, click on **Edit Metadata**. Fill in as much of the metadata information as you have and then click **Return to Layer**.
 
-![Metadata](../../assets/screencasts/metadata.gif  "Metadata")
+![Metadata](img/metadata.gif  "Metadata")
 
 Click on **Editing Tools**. Click on **Upload** under Styles. Choose your SLD file and then return to layer once again. In Editing tools you can also
 change the thumbnail for the layer by uploading a screenshot of the layer.
 
-![Adding SLD File](../../assets/screencasts/adding_sld.gif  "Adding SLD File")
+![Adding SLD File](img/adding_sld.gif  "Adding SLD File")
 
 Right-click on the layer and Select **Inspect**. Select **Network** and hard refresh the page. Select the web address for a tile from the layer
 (usually the third option) but if you click on the address, you’ll be able to see if it is the right one.
 
-![Finding Link](../../assets/screencasts/finding_link.gif  "Finding Link")
+![Finding Link](img/finding_link.gif  "Finding Link")
 
 Copy the link address and paste it into a notepad and change all the words in full capital letters to lower case letters. Use this edited link address as the URL when adding a new layer.  <br>
 
@@ -42,11 +42,11 @@ This was how to upload a context layer but the process of pushing data and creat
 To add a background or basemap layer, click on **Django Admin** and go to the Site Administration page. Click on **+Add** in the Basemap Layers row. This will allow you
 to create a basemap by linking it to a URL as well as the instance you would like it to apply to.
 
-![ Adding a Basemap](../../assets/screenshots/new-basemap.png "Adding a Basemap")
+![ Adding a Basemap](img/new-basemap.png "Adding a Basemap")
 
 You will also be able to add the parameters to the basemap by scrolling down to Basemap Layer Parameters and clicking on the green plus that says **Add**.
 
-![Basemap Parameters](../../assets/screenshots/new-basemap-parameters.png "Basemap Parameters")
+![Basemap Parameters](img/new-basemap-parameters.png "Basemap Parameters")
 
 ## Adding a new Context layer
 
@@ -54,6 +54,6 @@ Click on the user dropdown menu and open **Django Admin**. Click on **+Add** on 
 We will use the existing Somalia instance and Flood Hazard layer as an example. The layer shows areas that are prone to flooding. Enter information in the input boxes as
 shown in the images below and save your data once you are happy with it. Click on view site to see your new layer. You will be able to see your new layer in the 'Layers' menu. There is also an option to add other parameters to this layer.
 
-![Context Layers](../../assets/screenshots/context-layer.png "Context Layers")
+![Context Layers](img/context-layer.png "Context Layers")
 
-![Context Layers](../../assets/screencasts/context-layer.gif "Context Layers")
+![Context Layers](img/context-layer.gif "Context Layers")
