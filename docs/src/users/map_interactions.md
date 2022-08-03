@@ -6,7 +6,7 @@ The GeoSight map interaction tools give an interactive map experience. Users are
 
 ## Zoom In and Out
 
-![Zooming in ]()
+![Zooming in ](img/zoom.png)
 
 Zooming into an area on the map is useful to show a specific area of interest and to see more detail.
 
@@ -14,7 +14,7 @@ To Zoom in or out on the map canvas either scroll your mouse up and down or use 
 
 ## Move Around the Map
 
-![Moving Around the Map ]()
+![Moving Around the Map ](img/panning.png)
 
 Navigating or panning around the map is useful to focus on specific areas of interest.
 
@@ -22,7 +22,7 @@ To pan, `click` the mouse on the map canvas and while holding the click drag the
 
 ## Information Display Window
 
-![Information Display Window]()
+![Information Display Window](img/popup-info.png)
 
 To gain information on a specific area within the map, "click" on that area with your mouse.
 By clicking on an area, a popup window with information related to your selected layers for that area will be displayed on the screen.
