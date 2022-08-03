@@ -13,7 +13,7 @@ Whenever you see a phrase in **bold**, it refers to a link or button on the user
 * [RIR Platform](https://staging.rir.kartoza.com/ "RIR Platform")
 * [RIR Full Documentation](https://kartoza.github.io/rir-dashboard/ "RIR Full Documentation")  
 
-> 📒 **Note:** You can find all the **sample data** used in this tutorial [here](../assets/tutorial_data/RIRTrainingData.zip "Data")
+> 📒 **Note:** You can find all the **sample data** used in this tutorial [here](data/RIRTrainingData.zip "Data")
 
 ## Session Outline
 
@@ -94,9 +94,9 @@ For this tutorial, we will create a demonstrator instance for South Africa:
 
 The flag we used in this exercise is available here:
 
-![SA flag](../assets/tutorial_data/sa-flag.png)
+![SA flag](img/sa-flag.png)
 
-> **Note:** You can find all the **sample data** used in this tutorial (including this flag image) [here](../assets/tutorial_data/RIRTrainingData.zip).
+> **Note:** You can find all the **sample data** used in this tutorial (including this flag image) [here](data/RIRTrainingData.zip).
 
 Once your new instance is created, you will be able to open it from the instance chooser. It will appear very empty, like this:
 
@@ -184,7 +184,7 @@ You will be redirected to the geography view map page, and you will see that in 
 
 Select this button and start filling in the form. We will create two new geographies: Country and Provices using the tutorial data supplied below:
 
-> 📒 **Note:** You can find all the sample data used in this tutorial here: [Data](../assets/tutorial_data/RIRTrainingData.zip "Data")
+> 📒 **Note:** You can find all the sample data used in this tutorial here: [Data](data/RIRTrainingData.zip "Data")
 
 The geography boundary should be provided in either Esri Shapefile format or as a geojson file.
 
