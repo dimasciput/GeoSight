@@ -21,6 +21,7 @@ nav:
                   - Layers: users/layers.md
                   - User Tutorial: users/user_tutorial.md
                   - Disclaimer: users/disclaimer.md
+                  - Credits: users/credits.md
         - For Administrators:
                   - Overview: administrators/index.md
         - For Developers:
