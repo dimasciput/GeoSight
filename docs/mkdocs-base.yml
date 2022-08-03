@@ -17,6 +17,7 @@ nav:
                   - Overview: users/index.md
                   - Platform tour: users/platform_tour.md
                   - Map Interactions: users/map_interactions.md
+                  - Indicators: users/indicator.md
                   - Layers: users/layers.md
                   - User Tutorial: users/user_tutorial.md
         - For Administrators:
