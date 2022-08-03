@@ -12,7 +12,7 @@ copyright: "Unicef, Kartoza and Contributors"
 nav:
         - Home:
                   - About: about_geosight.md
-                  - Contributing: contributing.md
+                  - Contributing: users/contributing.md
         - For Users:
                   - Overview: users/index.md
                   - Platform tour: users/platform_tour.md
@@ -22,6 +22,7 @@ nav:
                   - User Tutorial: users/user_tutorial.md
                   - Disclaimer: users/disclaimer.md
                   - Credits: users/credits.md
+                  - License: users/license.md
         - For Administrators:
                   - Overview: administrators/index.md
         - For Developers:
@@ -29,6 +30,17 @@ nav:
                   - Installation:
                             - Preparation: developers/setup/installation/preparation.md
                             - Project setup: developers/setup/installation/project_setup.md
+                            - Road Map: developers/setup/installation/roadmap.md
                             - Development setup:
                                       - developers/setup/installation/development_setup/index.md
                                       - Using pycharm: developers/setup/installation/development_setup/pycharm.md
+                  - Configuration:
+                            - Geography: developers/setup/configuration/geography.md
+                            - Indicator: developers/setup/configuration/indicator.md
+                            - Instances: developers/setup/configuration/instances.md
+                            - Layer: developers/setup/configuration/layer.md
+                            - Navigation Link: developers/setup/configuration/navigation_link.md
+                            - Preferences: developers/setup/configuration/preferences.md
+                            - Program Intervention: developers/setup/configuration/program_intervention.md
+                            - Scenario: developers/setup/configuration/scenario.md
+                            - User: developers/setup/configuration/user.md
