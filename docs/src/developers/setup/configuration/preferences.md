@@ -3,7 +3,7 @@
 This document is about how to change preferences of the website. Mostly it is about how to change text and the theme.
 
 ## Website Preferences
-![ Site Preference ](../../assets/screenshots/site-preference.png "Site Preference")
+![ Site Preference ](img/site-preference.png "Site Preference")
 
 To change or add icons to the RIR dashboard panel at the top of the screen, you will need to go to the **Site Administration** page. Under the group **Core**,
 you will see **Site Preferences**. Click on this option, and then you will be redirected to a new page, select **Site Preferences** again. 
