@@ -20,6 +20,7 @@ nav:
                   - Indicators: users/indicator.md
                   - Layers: users/layers.md
                   - User Tutorial: users/user_tutorial.md
+                  - Disclaimer: users/disclaimer.md
         - For Administrators:
                   - Overview: administrators/index.md
         - For Developers:
