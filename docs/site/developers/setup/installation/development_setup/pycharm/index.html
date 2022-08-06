@@ -36,7 +36,7 @@
 <a class="dropdown-item" href="../../../../../about_geosight.md">About</a>
 </li>
 <li>
-<a class="dropdown-item" href="../../../../../contributing.md">Contributing</a>
+<a class="dropdown-item" href="../../../../../users/contributing/">Contributing</a>
 </li>
 </ul>
 </li>
@@ -53,7 +53,22 @@
 <a class="dropdown-item" href="../../../../../users/map_interactions/">Map Interactions</a>
 </li>
 <li>
+<a class="dropdown-item" href="../../../../../users/indicator/">Indicators</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../../../users/layers/">Layers</a>
+</li>
+<li>
 <a class="dropdown-item" href="../../../../../users/user_tutorial/">User Tutorial</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../../../users/disclaimer/">Disclaimer</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../../../users/credits/">Credits</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../../../users/license/">License</a>
 </li>
 </ul>
 </li>
@@ -61,7 +76,10 @@
 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">For Administrators <b class="caret"></b></a>
 <ul class="dropdown-menu">
 <li>
-<a class="dropdown-item" href="../../../../../administrators/index.md">Overview</a>
+<a class="dropdown-item" href="../../../../../administrators/administrator_tutorial/">Overview</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../../../administrators/reference_layers/">Provisioning Reference Layers</a>
 </li>
 </ul>
 </li>
@@ -80,6 +98,9 @@
 <li>
 <a class="dropdown-item" href="../../project_setup/">Project setup</a>
 </li>
+<li>
+<a class="dropdown-item" href="../../roadmap.md">Road Map</a>
+</li>
 <li class="dropdown-submenu">
 <a class="dropdown-item" href="#">Development setup</a>
 <ul class="dropdown-menu">
@@ -93,6 +114,38 @@
 </li>
 </ul>
 </li>
+<li class="dropdown-submenu">
+<a class="dropdown-item" href="#">Configuration</a>
+<ul class="dropdown-menu">
+<li>
+<a class="dropdown-item" href="../../../configuration/geography/">Geography</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/indicator/">Indicator</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/instances/">Instances</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/layer/">Layer</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/navigation_link/">Navigation Link</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/preferences/">Preferences</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/program_intervention/">Program Intervention</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/scenario/">Scenario</a>
+</li>
+<li>
+<a class="dropdown-item" href="../../../configuration/user/">User</a>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -103,7 +156,7 @@
                                 </a>
 </li>
 <li class="nav-item">
-<a class="nav-link disabled" rel="next">
+<a class="nav-link" href="../../../configuration/geography/" rel="next">
                                     Next <i class="fa fa-arrow-right"></i>
 </a>
 </li>
@@ -155,27 +208,27 @@
 <ol>
 <li>
 <p>Go to file -&gt; setting -&gt; Project -&gt; Project Interpreter -&gt; click cog -&gt; add
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/1.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/1.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>Go to ssh interpreter -&gt; Fill the form like below
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/2.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/2.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>Click next and fill <strong>docker</strong> as password
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/3.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/3.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>Click next and change interpreter like below and click finish
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/4.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/4.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>After finish, it will show all package like below.
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/5.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/5.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>In current page, click <strong>path mappings</strong>, click + button and put local path to where the project (django-project folder) and remote path is like below. and click oK.
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/6.png" title="Project Interpreter"/></p>
+   <br/><img alt="Project Interpreter " src="../img/6.png" title="Project Interpreter"/></p>
 </li>
 </ol>
 <p>Now the interpreter is done. When we restart the machine, we need to do <code>make up</code> to run the project.</p>
@@ -184,38 +237,38 @@
 <ol>
 <li>
 <p>Click "Add configuration" like in the cursor in the image below. (top-right)
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/7.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/7.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>There will be a popup, and click +, then click <strong>django server</strong> like below
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/8.png" title="Project Interpreter"/>
-<br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/9.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/8.png" title="Project Interpreter"/>
+<br/><img alt="Project Interpreter " src="../img/9.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>It will show the form and fill like below.
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/10.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/10.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>Don't click the OK yet, but click <strong>Environment Variables</strong> and add environments like below 9by clicking + button).
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/11.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/11.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>After that, click OK.</p>
 </li>
 <li>
 <p>Now we need to run the server by clicking <strong>go</strong> button in below image.
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/12.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/12.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>When we click the <strong>go</strong> button, pycharm will run a process until like image below.
-   <br/><img alt="Project Interpreter " src="../../../assets/screenshots/pycharm/13.png" title="Project Interpreter"/><br/><br/></p>
+   <br/><img alt="Project Interpreter " src="../img/13.png" title="Project Interpreter"/><br/><br/></p>
 </li>
 <li>
 <p>Now it is done. We can access the development server in <a href="http://localhost:2000/">http://localhost:2000/</a></p>
 </li>
 </ol>
 <p>This development mode is DEBUG mode, and also whenever we change the code, the site will also change in runtime.</p>
-<p>For more information how to set up on pycharm, please visit <a href="https://kartoza.com/en/blog/using-docker-compose-based-python-interpreter-in-pycharm/">Using a Docker Compose-Based Python Interpreter in PyCharm</a></p></div>
+<p>For more information how to set up on pycharm, please visit <a href="https://kartoza.com/en/blog/using-docker-compose-based-python-interpreter-in-">Using a Docker Compose-Based Python Interpreter in PyCharm</a></p></div>
 </div>
 </div>
 <footer class="col-md-12">

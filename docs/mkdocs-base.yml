@@ -24,7 +24,8 @@ nav:
                   - Credits: users/credits.md
                   - License: users/license.md
         - For Administrators:
-                  - Overview: administrators/index.md
+                  - Overview: administrators/administrator_tutorial.md
+                  - Provisioning Reference Layers: administrators/reference_layers.md
         - For Developers:
                   - developers/setup/index.md
                   - Installation:
