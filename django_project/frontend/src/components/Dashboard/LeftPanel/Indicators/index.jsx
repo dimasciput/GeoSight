@@ -109,7 +109,6 @@ export function Indicators() {
     })[0]
     if (indicator) {
       const indicatorData = JSON.parse(JSON.stringify(indicator))
-      indicatorData.reporting_level = indicatorsData[selectedIndicator.id] && indicatorsData[selectedIndicator.id].reporting_level
       dispatch(Actions.SelectedIndicator.change(indicatorData))
     }
   }, [currentIndicator, indicatorsData]);
@@ -122,7 +121,11 @@ export function Indicators() {
       indicators.map(indicator => {
         const { id } = indicator
         if (!indicatorsData[id]?.data) {
-          dispatch(Actions.IndicatorsData.fetch(dispatch, id, indicator.url));
+          dispatch(
+            Actions.IndicatorsData.fetch(
+              dispatch, id, indicator.url, indicator.reporting_level
+            )
+          );
         }
       })
     }

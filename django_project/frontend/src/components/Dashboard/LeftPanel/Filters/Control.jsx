@@ -201,7 +201,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
     // TODO: Reporting level
     //  Remove this after aggregation
     const reportingLevel = indicator?.reporting_level
-    const differentLevel = !editMode && selectedIndicator.reporting_level && ("" + reportingLevel) !== ("" + selectedIndicator.reporting_level)
+    const differentLevel = !editMode && reportingLevel !== selectedIndicator.reporting_level
 
     /**
      * Return filter input

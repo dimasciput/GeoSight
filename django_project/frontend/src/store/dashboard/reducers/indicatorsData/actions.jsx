@@ -17,22 +17,23 @@ function request(id) {
   };
 }
 
-function receive(data, error, id) {
+function receive(data, error, id, reporting_level) {
   return {
     id: id,
     name: INDICATORS_DATA_ACTION_NAME,
     type: RECEIVE_INDICATOR,
     data,
     error,
-    receivedAt: Date.now()
+    receivedAt: Date.now(),
+    reporting_level: reporting_level
   };
 }
 
-export function fetch(dispatch, id, url) {
+export function fetch(dispatch, id, url, reporting_level) {
   fetchingData(
     url, {}, {}, function (response, error) {
       dispatch(
-        receive(response, error, id)
+        receive(response, error, id, reporting_level)
       )
     }
   )
