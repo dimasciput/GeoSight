@@ -25,6 +25,10 @@
   &:hover {
     opacity: $base-hovered-opacity;
   }
+
+  .MuiTouchRipple-root {
+    display: none;
+  }
 }
 
 .MuiButton-primary {
