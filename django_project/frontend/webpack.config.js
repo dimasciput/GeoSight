@@ -28,9 +28,12 @@ let conf = {
     IndicatorValueManagementForm: ['./src/pages/Admin/Indicator/ValueManagementForm'],
 
     // HARVESTERS
+    AdminHarvesterList: ['./src/pages/Admin/Harvesters/List'],
     HarvesterDetail: ['./src/pages/Admin/Harvesters/Detail'],
     MetaIngestor: ['./src/pages/Admin/Harvesters/MetaIngestor'],
     ExposedAPI: ['./src/pages/Admin/Harvesters/ExposedAPI'],
+    HarvesterApiGeography: ['./src/pages/Admin/Harvesters/HarvesterApiGeography'],
+    HarvesterApiGeographyAndDate: ['./src/pages/Admin/Harvesters/HarvesterApiGeographyAndDate'],
   },
   output: {
     path: path.resolve(__dirname, "./bundles/frontend"),

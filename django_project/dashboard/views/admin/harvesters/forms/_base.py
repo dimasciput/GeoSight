@@ -141,7 +141,8 @@ class HarvesterFormView(AdminView, ABC):
                     )
                 else:
                     harvester = Harvester.objects.create(
-                        harvester_class=harvester_class
+                        harvester_class=harvester_class,
+                        creator=self.request.user
                     )
 
             harvester.harvesterattribute_set.all().delete()

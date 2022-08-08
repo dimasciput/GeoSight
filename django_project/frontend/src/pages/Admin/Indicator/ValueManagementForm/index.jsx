@@ -40,6 +40,7 @@ export default function ValueManagement() {
   const [open, setOpen] = useState(false);
   const [references, setReferences] = useState(null)
   const [reference, setReference] = useState(null)
+  const [level, setLevel] = useState(null)
   const [error, setError] = useState(null)
   const [data, setData] = useState(null)
   const [date, setDate] = useState(new Date())
@@ -76,39 +77,41 @@ export default function ValueManagement() {
         $.ajax({
           url: preferences.georepo_api.reference_layer_detail.replace('<identifier>', reference)
         }).done(function (data) {
-          referenceLayer.data = data.levels;
+          referenceLayer.data = data.levels.map(level => {
+            level.value = level.level
+            level.name = level.level_name
+            return level
+          });
           setReferences([...references])
+          setLevel(referenceLayer.data[0].value)
         });
       } else {
         // Check levels
-        const level = referenceLayer.data.filter(level => {
-          return (level.level_name.toLocaleLowerCase() === reportingLevel.toLocaleLowerCase() || '' + level.level === reportingLevel)
+        const referenceLayerLevel = referenceLayer.data.filter(refLevel => {
+          return refLevel.level === level
         })[0]
-        if (!level) {
-          setError(`Reference Layer does not have data for ${reportingLevel}`)
-        } else {
-          if (!level.finished) {
-            fetchData(level, !level.page ? 1 : level.page)
-          } else {
-            if (level.layer) {
-              const featureData = {}
-              level.layer.features.map(feature => {
-                const identifier = feature?.properties?.identifier?.admin;
-                featureData[identifier] = {
-                  name: feature.properties.name,
-                  lastValue: valueDataList[identifier]
-                }
-                return feature.properties.name
-              })
 
-              let sortedData = Object.keys(featureData).map(function (key) {
-                return [key, featureData[key]];
-              });
-              sortedData.sort(function (first, second) {
-                return second[1].name - first[1].name;
-              });
-              setData(sortedData)
-            }
+        if (!referenceLayerLevel.finished) {
+          fetchData(referenceLayerLevel, !referenceLayerLevel.page ? 1 : referenceLayerLevel.page)
+        } else {
+          if (referenceLayerLevel.layer) {
+            const featureData = {}
+            referenceLayerLevel.layer.features.map(feature => {
+              const identifier = feature?.properties?.identifier?.admin;
+              featureData[identifier] = {
+                name: feature.properties.name,
+                lastValue: valueDataList[identifier]
+              }
+              return feature.properties.name
+            })
+
+            let sortedData = Object.keys(featureData).map(function (key) {
+              return [key, featureData[key]];
+            });
+            sortedData.sort(function (first, second) {
+              return second[1].name - first[1].name;
+            });
+            setData(sortedData)
           }
         }
       }
@@ -125,7 +128,15 @@ export default function ValueManagement() {
         setReferences(references)
       });
     }
-  }, [reference, references])
+  }, [reference, references, level])
+
+  // Check reference layer
+  let referenceLayer = null
+  if (references) {
+    referenceLayer = references.filter(row => {
+      return row.identifier === reference
+    })[0]
+  }
 
   return (
     <form className="BasicForm" method="post" encType="multipart/form-data">
@@ -159,13 +170,32 @@ export default function ValueManagement() {
             </ThemeButton>
           </div>
           <div className='ReferenceLayerSelection'>
+            <b className='light'>Reference Dataset</b>
+          </div>
+          <div className='ReferenceLayerSelection'>
             <SelectWithList
+              name='reference_layer'
               list={references}
               value={reference}
               onChange={evt => {
                 setReference(evt.value)
               }}
             />
+          </div>
+          <div className='ReferenceLayerSelection'>
+            <b className='light'>Admin Level</b>
+          </div>
+          <div className='ReferenceLayerSelection'>
+            <SelectWithList
+              name='admin_level'
+              list={referenceLayer && referenceLayer.data}
+              value={level}
+              onChange={evt => {
+                setLevel(evt.value)
+              }}
+            />
+          </div>
+          <div className='ReferenceLayerSelection'>
             {error ? <div className='error'>{error}</div> : ''}
           </div>
           <div className='ReferenceLayerTable'>

@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 from geosight.data.models.indicator import (
-    Indicator, IndicatorGroup, IndicatorFrequency,
+    Indicator, IndicatorGroup,
     IndicatorValue, IndicatorRule, IndicatorExtraValue
 )
 
@@ -17,16 +17,15 @@ class IndicatorExtraValueRuleInline(admin.TabularInline):
 class IndicatorValueAdmin(admin.ModelAdmin):
     """IndicatorValue admin."""
 
-    list_display = ('indicator', 'date', 'geom_identifier', 'value')
-    list_filter = ('indicator', 'date', 'geom_identifier')
-    search_fields = ('indicator',)
+    list_display = (
+        'indicator', 'date', 'value',
+        'geom_identifier', 'reference_layer', 'admin_level'
+    )
+    list_filter = (
+        'indicator', 'date', 'reference_layer', 'admin_level'
+    )
+    search_fields = ('indicator', 'geom_identifier')
     inlines = (IndicatorExtraValueRuleInline,)
-
-
-class IndicatorFrequencyAdmin(admin.ModelAdmin):
-    """IndicatorFrequencyAdmin admin."""
-
-    list_display = ('name', 'frequency')
 
 
 class IndicatorRuleInline(admin.TabularInline):
@@ -39,7 +38,7 @@ class IndicatorRuleInline(admin.TabularInline):
 class IndicatorAdmin(admin.ModelAdmin):
     """Indicator admin."""
 
-    list_display = ('name', 'group', 'frequency', 'reporting_level')
+    list_display = ('name', 'group',)
     list_filter = ('group',)
     inlines = (IndicatorRuleInline,)
 
@@ -51,6 +50,5 @@ class IndicatorGroupAdmin(admin.ModelAdmin):
 
 
 admin.site.register(IndicatorGroup, IndicatorGroupAdmin)
-admin.site.register(IndicatorFrequency, IndicatorFrequencyAdmin)
 admin.site.register(IndicatorValue, IndicatorValueAdmin)
 admin.site.register(Indicator, IndicatorAdmin)

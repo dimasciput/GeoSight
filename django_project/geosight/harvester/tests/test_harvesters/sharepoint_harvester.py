@@ -12,7 +12,10 @@ class SharepointTest(BaseHarvesterTest):
         """Test run with no attribute error."""
         harvester = HarvesterF(
             indicator=self.indicator,
-            harvester_class=SharepointHarvester[0]
+            harvester_class=SharepointHarvester[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level,
+
         )
         harvester.run()
         log = harvester.harvesterlog_set.last()
@@ -29,7 +32,9 @@ class SharepointTest(BaseHarvesterTest):
         )
         harvester = HarvesterF(
             indicator=self.indicator,
-            harvester_class=SharepointHarvester[0]
+            harvester_class=SharepointHarvester[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level,
         )
         harvester.save_default_attributes()
         harvester.save_attributes(
@@ -47,31 +52,41 @@ class SharepointTest(BaseHarvesterTest):
         harvester.run()
         log = harvester.harvesterlog_set.last()
         self.assertEqual(log.status, 'Done')
+
+        # for non same level
+        values = self.indicator.query_values(
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level + 1
+        )
+
+        self.assertIsNone(values.filter(geom_identifier='A').first())
+        self.assertIsNone(values.filter(geom_identifier='B').first())
+        self.assertIsNone(values.filter(geom_identifier='C').first())
+
+        # for same level
+        values = self.indicator.query_values(
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
+        )
+
         self.assertEqual(
-            self.indicator.indicatorvalue_set.get(
-                geom_identifier='A').value, 3
+            values.get(geom_identifier='A').value, 3
         )
         self.assertEqual(
-            self.indicator.indicatorvalue_set.get(
-                geom_identifier='A'
-            ).date.strftime("%Y-%m-%d"), '2020-12-01'
+            values.get(geom_identifier='A').date.strftime("%Y-%m-%d"),
+            '2020-12-01'
         )
         self.assertEqual(
-            self.indicator.indicatorvalue_set.get(
-                geom_identifier='B').value, 2
+            values.get(geom_identifier='B').value, 2
         )
         self.assertEqual(
-            self.indicator.indicatorvalue_set.get(
-                geom_identifier='B'
-            ).date.strftime("%Y-%m-%d"), '2020-12-01'
+            values.get(geom_identifier='B').date.strftime("%Y-%m-%d"),
+            '2020-12-01'
         )
         self.assertEqual(
-            self.indicator.indicatorvalue_set.get(
-                geom_identifier='C'
-            ).value, 1
+            values.get(geom_identifier='C').value, 1
         )
         self.assertEqual(
-            self.indicator.indicatorvalue_set.get(
-                geom_identifier='C'
-            ).date.strftime("%Y-%m-%d"), '2020-12-01'
+            values.get(geom_identifier='C').date.strftime("%Y-%m-%d"),
+            '2020-12-01'
         )

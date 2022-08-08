@@ -54,6 +54,6 @@ class MetaIngestorView(HarvesterFormView):
 
     def after_post(self, harvester: Harvester):
         """For calling after post success."""
-        harvester.user = self.request.user
+        harvester.creator = self.request.user
         harvester.save()
         run_harvester.delay(harvester.pk)

@@ -106,6 +106,9 @@ class ExcelHarvester(BaseHarvester):
 
     def _process(self):
         """Run the harvester."""
+        harvester = self.harvester
+        reference_layer = harvester.reference_layer
+        admin_level = harvester.admin_level
         default_attr = ExcelHarvester.additional_attributes()
         # fetch data
         self._update('Fetching data')
@@ -181,15 +184,9 @@ class ExcelHarvester(BaseHarvester):
                             continue
                         else:
                             try:
-                                if float(value) < indicator.min_value \
-                                        or float(value) > indicator.max_value:
-                                    detail[idx] += (
-                                        f'{error_separator}'
-                                        f'Value is not between '
-                                        f'{indicator.min_value}-'
-                                        f'{indicator.max_value}'
-                                    )
-                                    continue
+                                # Cast value to float
+                                # It will check the rule by name if not float
+                                value = float(value)
                             except ValueError:
                                 rules = indicator.indicatorrule_set
                                 rule = rules.filter(
@@ -205,7 +202,6 @@ class ExcelHarvester(BaseHarvester):
                                         'x==', '')
                                 )
 
-                            value = float(value)
                             if administrative_code:
                                 indicator_value, created = \
                                     IndicatorValue.objects.get_or_create(
@@ -213,7 +209,9 @@ class ExcelHarvester(BaseHarvester):
                                         date=date,
                                         geom_identifier=administrative_code,
                                         defaults={
-                                            'value': value
+                                            'value': value,
+                                            'reference_layer': reference_layer,
+                                            'admin_level': admin_level
                                         }
                                     )
                                 indicator_value.value = value

@@ -59,7 +59,7 @@ class HarvesterLog(models.Model):
         try:
             pref = SitePreferences.preferences()
             return render_to_string(
-                'pages/harvester_log_detail.html', {
+                'frontend/harvester_log_detail.html', {
                     'table': json.loads(self.detail),
                     'color': pref.primary_color
                 }

@@ -6,6 +6,7 @@ from django.contrib.gis.geos import Polygon
 from django.template.defaultfilters import slugify
 
 from geosight.data.models.dashboard import Dashboard, DashboardGroup
+from geosight.georepo.models import ReferenceLayer
 
 
 class DashboardForm(forms.ModelForm):
@@ -18,6 +19,10 @@ class DashboardForm(forms.ModelForm):
         widget=forms.Select(
             attrs={'data-autocreated': 'True'}
         )
+    )
+    reference_layer = forms.CharField(
+        label='Reference Layer',
+        required=False
     )
 
     class Meta:  # noqa: D106
@@ -50,6 +55,13 @@ class DashboardForm(forms.ModelForm):
         )
         return group
 
+    def clean_reference_layer(self):
+        """Return group."""
+        reference_layer, created = ReferenceLayer.objects.get_or_create(
+            identifier=self.cleaned_data['reference_layer']
+        )
+        return reference_layer
+
     @staticmethod
     def update_data(data):
         """Update data from POST data."""
@@ -62,7 +74,7 @@ class DashboardForm(forms.ModelForm):
         data['extent'] = poly
 
         # save others data
-        data['reference_layer_identifier'] = other_data['referenceLayer']
+        data['reference_layer'] = other_data['referenceLayer']
 
         data['indicators'] = other_data['indicators']
         data['basemapsLayers'] = other_data['basemapsLayers']

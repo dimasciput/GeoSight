@@ -14,7 +14,10 @@ export default function ExposedAPI() {
   const [attributes, setAttributes] = useState(attributesData);
 
   return (
-    <Harvesters attributes={attributes} setAttributes={setAttributes}/>
+    <Harvesters
+      has_indicator={true}
+      attributes={attributes}
+      setAttributes={setAttributes}/>
   );
 }
 

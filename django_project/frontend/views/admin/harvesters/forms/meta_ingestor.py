@@ -27,17 +27,12 @@ class MetaIngestorForm(HarvesterFormView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        list_url = reverse('admin-indicator-list-view')
-        edit_url = reverse('meta-ingestor-form')
+        list_url = reverse('admin-harvester-list-view')
         return (
-            f'<a href="{list_url}">Indicators</a> '
+            f'<a href="{list_url}">Harvesters</a> '
             f'<span>></span> '
-            f'<a href="{edit_url}">Meta Ingestor</a> '
+            f'<a>Meta Ingestor</a> '
         )
-
-    def get_indicator(self):
-        """Return indicator and save it as attribute."""
-        return None
 
     def get_harvester(self) -> Harvester:
         """Return harvester."""
@@ -53,9 +48,9 @@ class MetaIngestorForm(HarvesterFormView):
         """Return harvesters."""
         return (MetaIngestor,)
 
-    def get_context_data(self, **kwargs) -> dict:
+    def context_data(self, **kwargs) -> dict:
         """Return context data."""
-        context = super().get_context_data(**kwargs)
+        context = super().context_data(**kwargs)
         for attr in context['attributes']:
             if attr['name'] == 'file':
                 attr['title'] = 'File'
@@ -68,6 +63,6 @@ class MetaIngestorForm(HarvesterFormView):
 
     def after_post(self, harvester: Harvester):
         """For calling after post success."""
-        harvester.user = self.request.user
+        harvester.creator = self.request.user
         harvester.save()
         run_harvester.delay(harvester.pk)

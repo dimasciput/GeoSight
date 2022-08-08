@@ -5,9 +5,6 @@ from django.contrib.gis.db import models
 from django.shortcuts import reverse
 
 from core.models.general import AbstractTerm, AbstractSource
-from geosight.data.models.indicator.indicator_attributes import (
-    IndicatorFrequency, IndicatorGroup
-)
 
 
 # AGGREGATION BEHAVIOURS
@@ -36,6 +33,12 @@ class IndicatorValueRejectedError(Exception):
     pass
 
 
+class IndicatorGroup(AbstractTerm):
+    """The group of indicator."""
+
+    pass
+
+
 class Indicator(AbstractTerm, AbstractSource):
     """The indicator model."""
 
@@ -52,36 +55,12 @@ class Indicator(AbstractTerm, AbstractSource):
         IndicatorGroup, on_delete=models.SET_NULL,
         blank=True, null=True
     )
-    frequency = models.ForeignKey(
-        IndicatorFrequency, on_delete=models.SET_NULL,
-        blank=True, null=True
-    )
-    reporting_level = models.CharField(
-        max_length=64,
-        help_text=(
-            "Indicate what level of the data for this indicator. "
-            "It can use level name or level number."
-        )
-    )
     unit = models.CharField(
         max_length=64,
         null=True, blank=True,
         help_text=(
             "A unit e.g. 'cases', 'people', 'children', "
             "that will be shown alongside the number in reports."
-        )
-    )
-
-    aggregation_behaviour = models.CharField(
-        max_length=256,
-        default=AggregationBehaviour.USE_MOST_RECENT,
-        choices=(
-            (
-                AggregationBehaviour.USE_AVAILABLE,
-                'Current time window only'
-            ),
-            (AggregationBehaviour.USE_MOST_RECENT,
-             AggregationBehaviour.USE_MOST_RECENT)
         )
     )
 
@@ -98,50 +77,21 @@ class Indicator(AbstractTerm, AbstractSource):
         )
     )
 
-    # threshold
-    min_value = models.FloatField(
-        default=0,
-        help_text="Minimum value for the indicator that can received",
-        verbose_name="Minimum Value"
-    )
-    max_value = models.FloatField(
-        default=100,
-        help_text="Maximum value for the indicator that can received",
-        verbose_name="Maximum Value"
-    )
-
-    # dashboard link
-    dashboard_link = models.CharField(
-        max_length=1024,
-        null=True, blank=True,
-        help_text=(
-            'A dashboard link can be any URL to e.g. '
-            'a BI platform or another web site. '
-            'This is optional, and when populated, '
-            'a special icon will be shown next to the indicator which, '
-            'when clicked, will open up this URL in '
-            'a frame over the main map area.'
-        )
-    )
-
     class Meta:  # noqa: D106
         ordering = ('group__name', 'name')
 
     def __str__(self):
         return f'{self.group}/{self.name}'
 
+    # TODO:
+    #  Remove this after we have aggregation
     @property
-    def allow_to_harvest_new_data(self):
-        """For checking if the new data can be harvested.
-
-        It will check based on the frequency.
-        """
-        last_data = self.indicatorvalue_set.all().order_by('-date').first()
-        if not last_data:
-            return True
-
-        difference = date.today() - last_data.date
-        return difference.days >= self.frequency.frequency
+    def reporting_level(self):
+        """Return reporting level."""
+        first_value = self.query_values().first()
+        if self.query_values().first():
+            return first_value.admin_level
+        return 0
 
     @property
     def create_harvester_url(self):
@@ -160,18 +110,26 @@ class Indicator(AbstractTerm, AbstractSource):
 
     def save_value(
             self,
-            date: date, geom_identifier: str,
-            value: float, extras: dict = None):
+            date: date, geom_identifier: str, value: float,
+            reference_layer=None, admin_level: int = None, extras: dict = None
+    ):
         """Save new value for the indicator."""
         from geosight.data.models.indicator import (
             IndicatorValue, IndicatorExtraValue
         )
+        from geosight.georepo.models import ReferenceLayer
+        if reference_layer and isinstance(reference_layer, str):
+            reference_layer, created = ReferenceLayer.objects.get_or_create(
+                identifier=reference_layer
+            )
         indicator_value, created = IndicatorValue.objects.get_or_create(
             indicator=self,
             date=date,
             geom_identifier=geom_identifier,
             defaults={
-                'value': value
+                'value': value,
+                'reference_layer': reference_layer,
+                'admin_level': admin_level
             }
         )
         indicator_value.value = value
@@ -188,14 +146,18 @@ class Indicator(AbstractTerm, AbstractSource):
                 indicator_extra_value.save()
         return indicator_value
 
-    def query_value(self, date_data: date):
-        """Return query of value."""
-        query = self.indicatorvalue_set.filter(date__lte=date_data)
-        # update query by behaviour
-        if self.aggregation_behaviour == AggregationBehaviour.USE_AVAILABLE:
-            if query.first():
-                last_date = query.first().date
-                query = query.filter(date=last_date)
+    def query_values(
+            self, date_data: date = None,
+            reference_layer=None, admin_level: int = None
+    ):
+        """Return query of indicator values."""
+        query = self.indicatorvalue_set.all()
+        if reference_layer:
+            query = query.filter(reference_layer=reference_layer)
+        if admin_level:
+            query = query.filter(admin_level=admin_level)
+        if date_data:
+            query = query.filter(date__lte=date_data)
         return query
 
     def rule_by_value(self, value, rule_set=None):
@@ -239,7 +201,7 @@ class Indicator(AbstractTerm, AbstractSource):
         it will be aggregate to upper level
         """
         values = []
-        query = self.query_value(date_data)
+        query = self.query_values(date_data)
         query_report = query.order_by(
             'geom_identifier', '-date').distinct(
             'geom_identifier')

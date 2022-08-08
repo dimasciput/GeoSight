@@ -9,7 +9,7 @@ class APIWithGeographyAndDate(BaseHarvester):
 
     description = (
         "Harvester to harvest from API with list of geography "
-        "with it's value and the value's date"
+        "with the value and the date"
     )
 
     @staticmethod

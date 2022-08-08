@@ -20,9 +20,11 @@ export default function Map() {
   const [layer, setLayer] = useState(null);
   const [references, setReferences] = useState(null)
   const [reference, setReference] = useState(null)
+  const [level, setLevel] = useState(null)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const fetchData = (level, page) => {
+  const fetchData = (reference_layer, level, page) => {
     $.ajax({
       url: preferences.georepo_api.domain + level.url + '?page=' + page,
     }).done(function (data) {
@@ -32,7 +34,13 @@ export default function Map() {
           features: []
         }
       }
-      level.layer.features = level.layer.features.concat(data.results.features)
+      level.layer.features = level.layer.features.concat(
+        data.results.features.map(feature => {
+          feature.identifier = reference_layer.identifier
+          feature.level = level.level
+          return feature
+        })
+      )
       page += 1
       if (page > data.total_page) {
         level.finished = true
@@ -149,7 +157,9 @@ export default function Map() {
                       url: url,
                       data: {
                         date: date,
-                        value: value
+                        value: value,
+                        reference_layer: feature.identifier,
+                        admin_level: feature.level
                       },
                       dataType: 'json',
                       type: 'POST',
@@ -196,6 +206,13 @@ export default function Map() {
     });
   }, [])
 
+  // Delete layer when reference and level changed
+  useEffect(() => {
+    if (layer) {
+      layer.clearLayers();
+    }
+  }, [reference, level])
+
   // When reference changed
   useEffect(() => {
     setError('')
@@ -207,45 +224,77 @@ export default function Map() {
         $.ajax({
           url: preferences.georepo_api.reference_layer_detail.replace('<identifier>', reference)
         }).done(function (data) {
-          referenceLayer.data = data.levels;
+          referenceLayer.data = data.levels.map(level => {
+            level.value = level.level
+            level.name = level.level_name
+            return level
+          });
           setReferences([...references])
+          setLevel(referenceLayer.data[0].value)
         });
       } else {
         // Check levels
-        const level = referenceLayer.data.filter(level => {
-          return (level.level_name.toLocaleLowerCase() === reportingLevel.toLocaleLowerCase() || '' + level.level === reportingLevel)
+        const referenceLayerLevel = referenceLayer.data.filter(refLevel => {
+          return refLevel.level === level
         })[0]
-        if (!level) {
-          setError(`Reference Layer does not have data for ${reportingLevel}`)
+        if (!referenceLayerLevel.finished) {
+          setLoading(true)
+          fetchData(referenceLayer, referenceLayerLevel, !referenceLayerLevel.page ? 1 : referenceLayerLevel.page)
         } else {
-          if (!level.finished) {
-            fetchData(level, !level.page ? 1 : level.page)
-          }
-          // render
-          if (level.layer) {
-            layer.clearLayers();
-            layer.addData(level.layer);
-            map.fitBounds(layer.getBounds());
-          }
+          setLoading(false)
+        }
+        // render
+        if (referenceLayerLevel.layer) {
+          layer.clearLayers();
+          layer.addData(referenceLayerLevel.layer);
+          map.fitBounds(layer.getBounds());
         }
       }
     }
-  }, [reference, references])
+  }, [reference, references, level])
 
+
+  // Check reference layer
+  let referenceLayer = null
+  if (references) {
+    referenceLayer = references.filter(row => {
+      return row.identifier === reference
+    })[0]
+  }
 
   return <Fragment>
     <div id="Map"></div>
     <div className='ReferenceList'>{
       references ? (
         <Fragment>
-          <SelectWithList
-            list={references}
-            value={reference}
-            onChange={evt => {
-              setReference(evt.value)
-            }}
-          />
+          <div className='ReferenceLayerSelection'>
+            <b className='light'>Reference Dataset</b>
+          </div>
+          <div className='ReferenceLayerSelection'>
+            <SelectWithList
+              name='reference_layer'
+              list={references}
+              value={reference}
+              onChange={evt => {
+                setReference(evt.value)
+              }}
+            />
+          </div>
+          <div className='ReferenceLayerSelection'>
+            <b className='light'>Admin Level</b>
+          </div>
+          <div className='ReferenceLayerSelection'>
+            <SelectWithList
+              name='admin_level'
+              list={referenceLayer && referenceLayer.data}
+              value={level}
+              onChange={evt => {
+                setLevel(evt.value)
+              }}
+            />
+          </div>
           {error ? <div className='error'>{error}</div> : ''}
+          {loading ? <div className='ReferenceListLoading'>Loading</div> : ''}
         </Fragment>
       ) : (
         <div>References Loading </div>

@@ -27,12 +27,17 @@ class IndicatorValueManagementMapView(SuperuserRequiredMixin, BaseView):
         )
         list_url = reverse('admin-indicator-list-view')
         edit_url = reverse(
+            'admin-indicator-edit-view', args=[self.indicator.id]
+        )
+        form_url = reverse(
             'admin-indicator-value-mapview-manager', args=[self.indicator.id]
         )
         return (
             f'<a href="{list_url}">Indicators</a> '
             f'<span>></span> '
-            f'<a href="{edit_url}">Value Manager Map</a> '
+            f'<a href="{edit_url}">{self.indicator.__str__()}</a> '
+            f'<span>></span> '
+            f'<a href="{form_url}">Value Manager Map</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:
@@ -60,7 +65,7 @@ class IndicatorValueManagementMapView(SuperuserRequiredMixin, BaseView):
                 'indicator': self.indicator,
                 'geometry_has_updated_value': list(
                     set(
-                        self.indicator.query_value(
+                        self.indicator.query_values(
                             datetime.date.today()
                         ).exclude(
                             geom_identifier='undefined'
@@ -104,12 +109,17 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
         )
         list_url = reverse('admin-indicator-list-view')
         edit_url = reverse(
+            'admin-indicator-edit-view', args=[self.indicator.id]
+        )
+        form_url = reverse(
             'admin-indicator-value-form-manager', args=[self.indicator.id]
         )
         return (
             f'<a href="{list_url}">Indicators</a> '
             f'<span>></span> '
-            f'<a href="{edit_url}">Value Manager Form</a> '
+            f'<a href="{edit_url}">{self.indicator.__str__()}</a> '
+            f'<span>></span> '
+            f'<a href="{form_url}">Value Manager Form</a> '
         )
 
     def get_context_data(self, **kwargs) -> dict:
@@ -132,6 +142,8 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
             Indicator, id=self.kwargs.get('pk', '')
         )
         date = request.POST.get('date', None)
+        reference_layer = request.POST.get('reference_layer', None)
+        admin_level = request.POST.get('admin_level', None)
         if date:
             indicator_values = {}
             # save data by geometry
@@ -139,7 +151,10 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
                 if value and 'geometry:' in key:
                     code = key.replace('geometry:', '')
                     indicator_value = indicator.save_value(
-                        date, code, float(value))
+                        date, code, float(value),
+                        reference_layer=reference_layer,
+                        admin_level=admin_level
+                    )
                     indicator_values[code] = indicator_value
 
             # we need to check extra value

@@ -1,16 +1,19 @@
 """Harvester base."""
+import json
 from abc import ABC
 
 from braces.views import SuperuserRequiredMixin
 from django.http import HttpResponseBadRequest
-from django.shortcuts import redirect, reverse, get_object_or_404
+from django.shortcuts import reverse, get_object_or_404, redirect
 from django.utils.module_loading import import_string
 
 from frontend.views._base import BaseView
 from geosight.data.models import Indicator
+from geosight.georepo.models import ReferenceLayer
 from geosight.harvester.models import (
     HARVESTERS, Harvester, HarvesterAttribute, HarvesterMappingValue
 )
+from geosight.harvester.serializer.harvester import HarvesterSerializer
 
 
 class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
@@ -18,6 +21,30 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
 
     indicator = None
     harvester_class = None
+
+    @staticmethod
+    def get_url_create_name(harvester_class):
+        """Return url create name."""
+        return harvester_class + '.create'
+
+    @staticmethod
+    def get_url_edit_name(harvester_class):
+        """Return url edit name."""
+        return harvester_class + '.edit'
+
+    @property
+    def url_create_name(self):
+        """Return url create name."""
+        return HarvesterFormView.get_url_create_name(
+            str(self.harvester_class).split("'")[1]
+        )
+
+    @property
+    def url_edit_name(self):
+        """Return url edit name."""
+        return HarvesterFormView.get_url_edit_name(
+            str(self.harvester_class).split("'")[1]
+        )
 
     @property
     def page_title(self):
@@ -27,18 +54,24 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        return f'Harvester for {self.indicator.__str__()}'
-
-    def get_indicator(self):
-        """Return indicator and save it as attribute."""
-        self.indicator = get_object_or_404(
-            Indicator, id=self.kwargs.get('pk', '')
+        list_url = reverse('admin-harvester-list-view')
+        class_name = str(self.harvester_class).split("'")[1]
+        harvester = Harvester(harvester_class=class_name)
+        return (
+            f'<a href="{list_url}">Harvesters</a> '
+            f'<span>></span> '
+            f'{harvester.harvester_name}'
         )
-        return self.indicator
 
     def get_harvester(self) -> Harvester:
         """Return harvester."""
-        return self.indicator.harvester
+        uuid = self.kwargs.get('uuid', None)
+        if uuid:
+            return get_object_or_404(
+                Harvester, unique_id=uuid
+            )
+        if not uuid:
+            raise Harvester.DoesNotExist()
 
     @property
     def harvesters(self) -> list:
@@ -47,8 +80,17 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
 
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""
-        self.get_indicator()
         context = super().get_context_data(**kwargs)
+        context.update(self.context_data(**kwargs))
+        context['harvesters'] = json.dumps(context['harvesters'])
+        context['harvester'] = json.dumps(context['harvester'])
+        context['attributes'] = json.dumps(context['attributes'])
+        context['mapping'] = json.dumps(context['mapping'])
+        return context
+
+    def context_data(self, **kwargs) -> dict:
+        """Return context data."""
+        context = {}
         attributes = []
         mapping = []
         harvester = None
@@ -67,15 +109,17 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
             pass
 
         harvester_class = str(self.harvester_class).split("'")[1]
-        for name, attr in self.harvester_class.additional_attributes(
-                indicator=self.indicator
-        ).items():
+        for name, attr in self.harvester_class.additional_attributes().items():
             value = attr.get('value', '')
             try:
                 if name != 'API URL' and harvester:
                     value = harvester.harvesterattribute_set.get(
                         name=name
                     ).value
+                    try:
+                        value = value.replace('"', "'")
+                    except ValueError:
+                        pass
             except HarvesterAttribute.DoesNotExist:
                 pass
 
@@ -95,20 +139,29 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
             )
         context.update(
             {
-                'indicator': self.indicator,
+                'indicator': harvester.indicator if harvester else None,
                 'harvesters': [
                     {
-                        'name': harvester[1],
-                        'value': harvester[0],
+                        'name': HarvesterClass[1],
+                        'value': HarvesterClass[0],
                         'description': import_string(
-                            harvester[0]
+                            HarvesterClass[0]
                         ).description,
                         'url': reverse(
-                            harvester[0], args=[self.indicator.id]
-                        ) if self.indicator else ''
-                    } for harvester in self.harvesters
+                            HarvesterFormView.get_url_edit_name(
+                                HarvesterClass[0]
+                            ), args=[harvester.unique_id]
+                        ) if harvester else reverse(
+                            HarvesterFormView.get_url_create_name(
+                                HarvesterClass[0]
+                            )
+                        )
+                    } for HarvesterClass in self.harvesters
                 ],
                 'harvester_class': harvester_class,
+                'harvester': HarvesterSerializer(
+                    harvester
+                ).data if harvester else {},
                 'attributes': attributes,
                 'mapping': mapping
             }
@@ -117,34 +170,49 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
 
     def post(self, request, **kwargs):
         """POST save harvester."""
-        indicator = self.get_indicator()
         try:
             data = request.POST.copy()
+            if not data.get('reference_layer', None):
+                return HttpResponseBadRequest('Reference layer is required')
+
+            if data.get('admin_level', None) is None:
+                return HttpResponseBadRequest('Admin level is required')
+
+            reference_layer, created = ReferenceLayer.objects.get_or_create(
+                identifier=data.get('reference_layer', None)
+            )
             data['attribute_extra_columns'] = ','.join(
                 request.POST.getlist('attribute_extra_columns')
             )
             data['attribute_extra_keys'] = ','.join(
                 request.POST.getlist('attribute_extra_keys')
             )
+            indicator = data.get('indicator', None)
+            if indicator:
+                try:
+                    indicator = Indicator.objects.get(id=indicator)
+                except Indicator.DoesNotExist:
+                    return HttpResponseBadRequest('Indicator is not found')
+
             harvester_class = data['harvester']
             try:
                 harvester = self.get_harvester()
             except Harvester.DoesNotExist:
-                if indicator:
-                    try:
-                        harvester = indicator.harvester
-                    except Harvester.DoesNotExist:
-                        harvester = Harvester()
-                        harvester.indicator = indicator
-                else:
-                    harvester = Harvester.objects.create(
-                        harvester_class=harvester_class
-                    )
+                harvester = Harvester.objects.create(
+                    harvester_class=harvester_class,
+                    reference_layer=reference_layer,
+                    indicator=indicator,
+                    admin_level=data.get('admin_level', None),
+                    creator=self.request.user
+                )
 
             harvester.harvesterattribute_set.all().delete()
             harvester.harvestermappingvalue_set.all().delete()
 
             harvester.harvester_class = harvester_class
+            harvester.indicator = indicator
+            harvester.reference_layer = reference_layer
+            harvester.admin_level = data.get('admin_level', None)
             harvester.save()
 
             for key, value in data.items():
@@ -188,22 +256,13 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
                             pass
 
             self.after_post(harvester)
-            if indicator:
-                return redirect(
-                    reverse(
-                        'harvester-indicator-detail', args=[
-                            indicator.id
-                        ]
-                    )
+            return redirect(
+                reverse(
+                    'harvester-detail-view', args=[
+                        str(harvester.unique_id)
+                    ]
                 )
-            else:
-                return redirect(
-                    reverse(
-                        'meta-ingestor-detail', args=[
-                            str(harvester.unique_id)
-                        ]
-                    )
-                )
+            )
         except KeyError as e:
             return HttpResponseBadRequest(f'{e} is required')
 

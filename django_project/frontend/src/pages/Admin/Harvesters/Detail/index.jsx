@@ -40,7 +40,7 @@ export default function Detail() {
 
   return (
     <Admin
-      pageName={pageNames.Indicators}
+      pageName={pageNames.Harvester}
       rightHeader={
         <a href={editUrl}>
           <EditButton
@@ -51,7 +51,18 @@ export default function Detail() {
       }
     >
       <div className='PageContent'>
-        <b className='light'>Harvester Class</b> : {harvester.name}
+        <b className='light'>Harvester Class</b> : {harvester.type}<br/>
+        <b className='light'>Reference
+          Layer</b> : {harvester.reference_layer}<br/>
+        <b className='light'>Admin Level</b> : {harvester.admin_level}<br/>
+        {
+          harvester.indicator ? <Fragment><b
+            className='light'>Indicator</b> : {harvester.indicator}<br/></Fragment> : ''
+        }
+        {
+          harvester.frequency ? <Fragment><b
+            className='light'>Frequency</b> : {harvester.frequency} day(s)<br/></Fragment> : ''
+        }
         {
           currentLog ? (
             <div className='PageSection'>
@@ -101,11 +112,11 @@ export default function Detail() {
           <table className='PageSectionTable'>
             <tbody>
             {
-              harvester.user.full_name ?
+              harvester.creator.full_name ?
                 <tr>
                   <td>User who run</td>
                   <td>
-                    {harvester.user.full_name}
+                    {harvester.creator.full_name}
                   </td>
                 </tr>
                 : ""

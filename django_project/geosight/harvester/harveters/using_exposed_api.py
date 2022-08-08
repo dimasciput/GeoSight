@@ -22,10 +22,10 @@ class UsingExposedAPI(BaseHarvester):
     def additional_attributes(**kwargs) -> dict:
         """Return additional attributes."""
         api_url = ''
-        if 'indicator' in kwargs and kwargs['indicator']:
+        if 'harvester' in kwargs and kwargs['harvester']:
             api_url = reverse(
-                'indicator-upload-values-api',
-                args=[kwargs['indicator'].id]
+                'harvester-upload-values-api',
+                args=[str(kwargs['harvester'].unique_id)]
             )
         return {
             'token': {

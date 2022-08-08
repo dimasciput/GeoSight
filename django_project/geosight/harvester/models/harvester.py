@@ -1,14 +1,13 @@
 """Harvester Model."""
-import os
 import uuid
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 
 from geosight.data.models.indicator import Indicator
+from geosight.georepo.models import ReferenceLayer
 
 User = get_user_model()
 APIWithGeographyAndTodayDate = (
@@ -38,8 +37,8 @@ ExcelHarvester = (
     'Excel Harvesters',
 )
 HARVESTERS = (
-    # APIWithGeographyAndTodayDate,
-    # APIListWithGeographyAndDate,
+    APIWithGeographyAndTodayDate,
+    APIListWithGeographyAndDate,
     # SharepointHarvester,
     UsingExposedAPI,
 )
@@ -61,30 +60,53 @@ class Harvester(models.Model):
             "Use class with full package."),
         choices=ALL_HARVESTERS
     )
-    indicator = models.OneToOneField(
-        Indicator, on_delete=models.CASCADE,
-        null=True, blank=True
+    creator = models.ForeignKey(
+        User,
+        null=True, blank=True,
+        help_text=_('User who run the harvester.'),
+        on_delete=models.CASCADE
     )
-    is_run = models.BooleanField(
-        default=False,
-        help_text=_("Is the harvester running.")
-    )
+
     active = models.BooleanField(
         default=True,
         help_text=_(
             'Make this harvester ready to be harvested.')
     )
-    user = models.ForeignKey(
-        User,
+
+    # Data that used for saving values
+    indicator = models.ForeignKey(
+        Indicator, on_delete=models.CASCADE,
+        null=True, blank=True
+    )
+    reference_layer = models.ForeignKey(
+        ReferenceLayer,
+        help_text=_('Reference layer.'),
+        on_delete=models.CASCADE,
+    )
+    admin_level = models.IntegerField(default=0)
+    frequency = models.IntegerField(
         null=True, blank=True,
-        help_text=_(
-            'User who run the harvester.'),
-        on_delete=models.CASCADE
+        help_text=_('The frequency in days that the harvester will run.')
     )
 
     def __str__(self):
         """Return str."""
         return str(self.unique_id)
+
+    @property
+    def is_run(self):
+        """Return harvester class of indicator."""
+        from geosight.harvester.models.harvester_log import LogStatus
+        return self.harvesterlog_set.filter(status=LogStatus.RUNNING).count()
+
+    @property
+    def last_run(self):
+        """Return last run of the harvester."""
+        last_log = self.harvesterlog_set.all().first()
+        if last_log:
+            return last_log.start_time
+        else:
+            return None
 
     @property
     def get_harvester_class(self):
@@ -102,7 +124,7 @@ class Harvester(models.Model):
     def save(self, *args, **kwargs):
         """Save model."""
         super().save(*args, **kwargs)
-        self.save_default_attributes(indicator=self.indicator)
+        self.save_default_attributes(harvester=self)
 
     def save_default_attributes(self, **kwargs):
         """Save default attributes for the harvesters."""
@@ -124,9 +146,7 @@ class Harvester(models.Model):
         )
         for key, value in data.items():
             try:
-                attribute = self.harvesterattribute_set.get(
-                    name=key
-                )
+                attribute = self.harvesterattribute_set.get(name=key)
                 attribute.value = value
                 attribute.save()
             except HarvesterAttribute.DoesNotExist:
@@ -158,13 +178,18 @@ class Harvester(models.Model):
         from geosight.harvester.models import HarvesterAttribute
         ids = []
         attributes = []
-        for name, attribute in self.get_harvester_class.additional_attributes(
-
-        ).items():
+        additional_attributes = self.get_harvester_class.additional_attributes(
+            harvester=self
+        )
+        for name, attribute in additional_attributes.items():
             try:
                 attr = self.harvesterattribute_set.get(name=name)
-                attr.name = attribute['title'] \
-                    if 'title' in attribute else attr.human_name
+                attr.name = attr.human_name
+                try:
+                    attr.name = attribute['title']
+                except KeyError:
+                    pass
+
                 if attr.value:
                     attributes.append(attr)
                     ids.append(attr.id)
@@ -179,22 +204,6 @@ class Harvester(models.Model):
         """Run the harvester."""
         if self.active:
             self.get_harvester_class(self).run(force)
-
-    @property
-    def report_file(self):
-        """Return report file."""
-        folder = os.path.join(settings.MEDIA_ROOT, 'harvester', 'report')
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        return os.path.join(folder, str(self.unique_id) + '.xlsx')
-
-    @property
-    def report_file_url(self):
-        """Return report url file."""
-        return os.path.join(
-            settings.MEDIA_URL, 'harvester', 'report',
-            str(self.unique_id) + '.xlsx'
-        )
 
     @property
     def short_log_list(self):

@@ -4,7 +4,7 @@ from django.apps import AppConfig
 
 
 class Config(AppConfig):
-    """GeoSight Georepo App."""
+    """GeoSight Config App."""
 
     label = 'geosight_georepo'
     name = 'geosight.georepo'

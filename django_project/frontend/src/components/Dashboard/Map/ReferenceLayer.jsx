@@ -126,16 +126,14 @@ export default function ReferenceLayer({ currentIndicator }) {
   let levels = [];
   if (indicators && indicators.length) {
     indicators.map(indicator => {
-      if (indicator.reporting_level) {
-        levels.push(indicator.reporting_level.toLowerCase())
-      }
+      levels.push(indicator.reporting_level)
     })
   }
 
   // If there is currentIndicator that selected
   // Use level from that
   if (currentIndicator) {
-    levels = [currentIndicator.reporting_level.toLowerCase()]
+    levels = [currentIndicator.reporting_level]
   }
 
   // When level changed
@@ -148,24 +146,6 @@ export default function ReferenceLayer({ currentIndicator }) {
       )
     }
   }, [referenceLayer]);
-
-  // Prepare the data
-  useEffect(() => {
-    if (referenceLayerData[referenceLayer.identifier]?.data &&
-      referenceLayerData[referenceLayer.identifier].data.levels) {
-
-      indicators.forEach(indicator => {
-        const level = referenceLayerData[referenceLayer.identifier].data.levels.filter(level => {
-          return level.level_name.toLowerCase() === indicator.reporting_level.toLowerCase() || '' + level.level === indicator.reporting_level
-        })[0];
-        if (level && !indicatorsData[indicator.id].reporting_level) {
-          dispatch(
-            Actions.IndicatorsData.updateLevel(indicator.id, '' + level.level)
-          );
-        }
-      })
-    }
-  }, [referenceLayerData, indicatorsData]);
 
   useEffect(() => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
@@ -183,7 +163,7 @@ export default function ReferenceLayer({ currentIndicator }) {
       const options = {
         maxDetailZoom: 8,
         filter: function (feature) {
-          return (levels.includes(feature.properties.type.toLowerCase()) || levels.includes('' + feature.properties.level))
+          return levels.includes(feature.properties.level)
             && (!where || !geometryCodes || geometryCodes.includes(feature.properties.code))
         },
         style: function (feature, layer, test) {

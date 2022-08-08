@@ -8,6 +8,7 @@ export const pageNames = {
   Dashboard: 'Project',
   Indicators: 'Indicator',
   Basemaps: 'Basemap',
+  Harvester: 'Harvesters',
   ContextLayer: 'Context Layer',
 }
 /**

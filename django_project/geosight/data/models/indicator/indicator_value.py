@@ -3,6 +3,7 @@ from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from geosight.data.models.indicator.indicator import Indicator
+from geosight.georepo.models import ReferenceLayer
 
 
 class IndicatorValue(models.Model):
@@ -15,10 +16,25 @@ class IndicatorValue(models.Model):
         _('Date'),
         help_text=_('The date of the value harvested.')
     )
+    value = models.FloatField()
+
+    # -------------------------------------------------------
+    # Grouping by geometries
+    # By Reference Layer
+    # By Level
     geom_identifier = models.CharField(
         max_length=256
     )
-    value = models.FloatField()
+    reference_layer = models.ForeignKey(
+        ReferenceLayer,
+        help_text=_('Reference layer.'),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    admin_level = models.IntegerField(
+        null=True, blank=True
+    )
 
     class Meta:  # noqa: D106
         unique_together = ('indicator', 'date', 'geom_identifier')

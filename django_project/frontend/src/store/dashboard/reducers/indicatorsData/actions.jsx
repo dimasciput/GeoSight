@@ -1,7 +1,4 @@
-import {
-  INDICATORS_DATA_ACTION_NAME,
-  INDICATORS_DATA_ACTION_TYPE_UPDATE_LEVEL
-} from './index'
+import { INDICATORS_DATA_ACTION_NAME } from './index'
 import { fetchingData } from "../../../../Requests";
 
 /**
@@ -42,21 +39,6 @@ export function fetch(dispatch, id, url) {
   return request(id);
 }
 
-
-/**
- * Update level name
- * @param {int} id Id of data.
- * @param {String} reporting_level Reporting level that will be changed.
- */
-export function updateLevel(id, reporting_level) {
-  return {
-    name: INDICATORS_DATA_ACTION_NAME,
-    type: INDICATORS_DATA_ACTION_TYPE_UPDATE_LEVEL,
-    id: id,
-    reporting_level: reporting_level
-  };
-}
-
 export default {
-  updateLevel, fetch
+  fetch
 }

@@ -4,11 +4,10 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import authentication
 from rest_framework import exceptions
 
-from geosight.data.models.indicator import Indicator
-from geosight.harvester.models.harvester import UsingExposedAPI, Harvester
+from geosight.harvester.models.harvester import Harvester
 
 
-class IndicatorHarvesterTokenAndBearerAuthentication(
+class HarvesterTokenAndBearerAuthentication(
     authentication.TokenAuthentication
 ):
     """Authentication using token and bearer."""
@@ -47,23 +46,16 @@ class IndicatorHarvesterTokenAndBearerAuthentication(
 
         kwargs = request.parser_context['kwargs']
 
-        indicator = get_object_or_404(
-            Indicator, pk=kwargs.get('pk', 0)
+        harvester = get_object_or_404(
+            Harvester, unique_id=kwargs.get('uuid', 0)
         )
         try:
-            if not indicator.harvester or \
-                    indicator.harvester.harvester_class != UsingExposedAPI[0]:
-                msg = _('API is not exposed.')
-                raise exceptions.AuthenticationFailed(msg)
+            token_attr = harvester.harvesterattribute_set.all().filter(
+                name='token',
+                value=token
+            ).first()
 
-            token_attr = indicator.harvester.harvesterattribute_set.all(
-
-            ).filter(name='token').first()
             if not token_attr:
-                msg = _('API is not exposed.')
-                raise exceptions.AuthenticationFailed(msg)
-
-            if token_attr.value != token:
                 msg = _('Invalid token.')
                 raise exceptions.AuthenticationFailed(msg)
         except Harvester.DoesNotExist:

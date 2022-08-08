@@ -327,14 +327,14 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
     <table id="RuleTable">
       <thead>
       <tr className="RuleTable-Header">
-        <th></th>
+        <th colSpan="2"></th>
         <th valign="top">Name</th>
         <th valign="top">Rule</th>
         <th valign="top">Color</th>
         <th valign="top">Outline Color</th>
       </tr>
       <tr className="RuleTable-Help">
-        <th valign="top"></th>
+        <th valign="top" colSpan="2"></th>
         <th valign="top" colSpan="2">
           <div>
             The values for each rule can either be:

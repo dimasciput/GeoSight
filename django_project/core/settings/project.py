@@ -53,6 +53,7 @@ LOCALE_PATHS = (ABS_PATH('locale'),)
 INSTALLED_APPS = INSTALLED_APPS + (
     'core',
     'geosight.data',
+    'geosight.georepo',
     'geosight.harvester',
     'dashboard',
 )

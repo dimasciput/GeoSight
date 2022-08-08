@@ -4,6 +4,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import LayersIcon from '@mui/icons-material/Layers';
 import MapIcon from '@mui/icons-material/Map';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import { pageNames } from '../../index'
 
 import './style.scss';
@@ -17,6 +18,7 @@ export default function SideNavigation({ pageName }) {
   const indicatorList = urls.admin.indicatorList; // eslint-disable-line no-undef
   const basemapList = urls.admin.basemapList; // eslint-disable-line no-undef
   const contextLayerList = urls.admin.contextLayerList; // eslint-disable-line no-undef
+  const harvesterList = urls.admin.harvesterList; // eslint-disable-line no-undef
   return (
     <div className='SideNavigation'>
       <a href='/' className='SideNavigation-Row'>
@@ -42,6 +44,11 @@ export default function SideNavigation({ pageName }) {
          className={'SideNavigation-Row ' + (pageName === pageNames.Basemaps ? 'active' : '')}>
         <MapIcon className='SideNavigation-Row-Icon'/>
         <span className='SideNavigation-Row-Name'>Basemaps</span>
+      </a>
+      <a href={harvesterList}
+         className={'SideNavigation-Row ' + (pageName === pageNames.Harvester ? 'active' : '')}>
+        <CloudSyncIcon className='SideNavigation-Row-Icon'/>
+        <span className='SideNavigation-Row-Name'>Harvesters</span>
       </a>
     </div>
   );

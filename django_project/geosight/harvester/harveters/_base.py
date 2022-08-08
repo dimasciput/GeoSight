@@ -74,13 +74,12 @@ class BaseHarvester(ABC):
         last_data = self.harvester.harvesterlog_set.all().first()
         if not last_data:
             return True
+        if not self.harvester.frequency:
+            return False
 
         difference = timezone.now() - last_data.start_time
-        if self.harvester.indicator:
-            frequency = self.harvester.indicator.frequency.frequency
-            return difference.days >= frequency
-        else:
-            return False
+        frequency = self.harvester.frequency
+        return difference.days >= frequency
 
     def run(self, force=False):
         """To run the process."""
@@ -122,7 +121,6 @@ class BaseHarvester(ABC):
 
     def _error(self, message):
         """Raise error and update log."""
-        self.harvester.is_run = False
         self.harvester.save()
 
         self.log.end_time = timezone.now()
@@ -132,7 +130,6 @@ class BaseHarvester(ABC):
 
     def _done(self, message=''):
         """Update log to done."""
-        self.harvester.is_run = False
         self.harvester.save()
 
         self.log.end_time = timezone.now()
@@ -150,11 +147,10 @@ class BaseHarvester(ABC):
     ) -> IndicatorValue:
         """Save new indicator data of the indicator."""
         try:
-            if value:
-                return self.harvester.indicator.save_value(
-                    date, geometry, float(value)
-                )
-            else:
-                return None
-        except IndicatorValueRejectedError:
+            return self.harvester.indicator.save_value(
+                date, geometry, float(value),
+                reference_layer=self.harvester.reference_layer,
+                admin_level=self.harvester.admin_level
+            )
+        except (IndicatorValueRejectedError, ValueError):
             return None

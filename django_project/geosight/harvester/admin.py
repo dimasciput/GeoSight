@@ -57,7 +57,8 @@ class HarvesterAdmin(admin.ModelAdmin):
     inlines = [HarvesterAttributeInline, HarvesterMappingValueInline]
     list_display = (
         'id', 'uuid', '_indicator', 'harvester_class', 'active',
-        'is_finished', 'logs')
+        'is_finished', 'logs'
+    )
     list_filter = ('harvester_class',)
     list_editable = ('active',)
     search_fields = ('indicator__name',)

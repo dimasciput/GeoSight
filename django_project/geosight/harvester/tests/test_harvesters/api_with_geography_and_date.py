@@ -13,7 +13,9 @@ class APIWithGeograpyAndDateTest(BaseHarvesterTest):
         """Test run with no attribute error."""
         harvester = HarvesterF(
             indicator=self.indicator,
-            harvester_class=APIListWithGeographyAndDate[0]
+            harvester_class=APIListWithGeographyAndDate[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
         )
         harvester.run()
         log = harvester.harvesterlog_set.last()
@@ -29,7 +31,9 @@ class APIWithGeograpyAndDateTest(BaseHarvesterTest):
         """Test run with timestamp."""
         harvester = HarvesterF(
             indicator=self.indicator,
-            harvester_class=APIListWithGeographyAndDate[0]
+            harvester_class=APIListWithGeographyAndDate[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
         )
         harvester.save_attributes(
             {
@@ -74,36 +78,43 @@ class APIWithGeograpyAndDateTest(BaseHarvesterTest):
         )
         harvester.run()
         log = harvester.harvesterlog_set.last()
+        # for non same admin
+        values = self.indicator.query_values(
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level + 1
+        )
+
+        self.assertIsNone(values.filter(geom_identifier='A').first())
+        self.assertIsNone(values.filter(geom_identifier='B').first())
+        self.assertIsNone(values.filter(geom_identifier='C').first())
+
+        # for same admin
+        values = self.indicator.query_values(
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
+        )
+
         self.assertEqual(log.status, 'Done')
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='A'
-            ).value, 1
+            values.get(geom_identifier='A').value, 1
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='A'
-            ).date.strftime("%Y-%m-%d"), "2022-03-23"
+            values.get(geom_identifier='A').date.strftime("%Y-%m-%d"),
+            "2022-03-23"
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='B'
-            ).value, 2
+            values.get(geom_identifier='B').value, 2
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='B'
-            ).date.strftime("%Y-%m-%d"), "2022-03-11"
+            values.get(geom_identifier='B').date.strftime("%Y-%m-%d"),
+            "2022-03-11"
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='C'
-            ).value, 4
+            values.get(geom_identifier='C').value, 4
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='C'
-            ).date.strftime("%Y-%m-%d"), "2022-02-27"
+            values.get(geom_identifier='C').date.strftime("%Y-%m-%d"),
+            "2022-02-27"
         )
 
     @responses.activate
@@ -111,7 +122,9 @@ class APIWithGeograpyAndDateTest(BaseHarvesterTest):
         """Test run."""
         harvester = HarvesterF(
             indicator=self.indicator,
-            harvester_class=APIListWithGeographyAndDate[0]
+            harvester_class=APIListWithGeographyAndDate[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
         )
         harvester.save_attributes(
             {
@@ -157,33 +170,41 @@ class APIWithGeograpyAndDateTest(BaseHarvesterTest):
         harvester.run()
         log = harvester.harvesterlog_set.last()
         self.assertEqual(log.status, 'Done')
+
+        # for non same admin
+        values = self.indicator.query_values(
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level + 1
+        )
+
+        self.assertIsNone(values.filter(geom_identifier='A').first())
+        self.assertIsNone(values.filter(geom_identifier='B').first())
+        self.assertIsNone(values.filter(geom_identifier='C').first())
+
+        # for same admin
+        values = self.indicator.query_values(
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
+        )
+
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='A'
-            ).value, 1
+            values.get(geom_identifier='A').value, 1
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='A'
-            ).date.strftime("%Y-%m-%d"), "2010-01-01"
+            values.get(geom_identifier='A').date.strftime("%Y-%m-%d"),
+            "2010-01-01"
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='B'
-            ).value, 2
+            values.get(geom_identifier='B').value, 2
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='B'
-            ).date.strftime("%Y-%m-%d"), "2011-01-01"
+            values.get(geom_identifier='B').date.strftime("%Y-%m-%d"),
+            "2011-01-01"
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='C'
-            ).value, 4
+            values.get(geom_identifier='C').value, 4
         )
         self.assertEqual(
-            harvester.indicator.indicatorvalue_set.get(
-                geom_identifier='C'
-            ).date.strftime("%Y-%m-%d"), "2013-01-01"
+            values.get(geom_identifier='C').date.strftime("%Y-%m-%d"),
+            "2013-01-01"
         )

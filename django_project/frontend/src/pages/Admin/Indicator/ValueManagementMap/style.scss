@@ -20,8 +20,16 @@
     right: 0;
     position: absolute;
     top: 0;
-    z-index: 9999;
+    z-index: 999;
     padding: 0.5rem;
+
+    .ReferenceListLoading {
+      color: $secondary-color;
+      margin-top: 0.5rem;
+      text-align: center;
+      animation: blinker 1s steps(5, start) infinite;
+      -webkit-animation: blinker 1s steps(5, start) infinite;
+    }
   }
 }
 

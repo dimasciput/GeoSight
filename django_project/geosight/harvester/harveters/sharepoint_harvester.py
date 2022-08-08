@@ -79,7 +79,10 @@ class SharepointHarvester(BaseHarvester):
 
     def _process(self):
         """Run the harvester."""
-        indicator = self.harvester.indicator
+        harvester = self.harvester
+        reference_layer = harvester.reference_layer
+        admin_level = harvester.admin_level
+        indicator = harvester.indicator
         rule_names = [name.lower() for name in list(
             indicator.indicatorrule_set.values_list('name', flat=True)
         )]
@@ -175,15 +178,6 @@ class SharepointHarvester(BaseHarvester):
                         if indicator.unit == '%':
                             value = value * 100
                             detail[idx_value] = f'{value}%'
-
-                        # check the value in range
-                        if value < indicator.min_value or \
-                                value > indicator.max_value:
-                            detail[idx_value] += (
-                                f'{error_separator}'
-                                f'Value is not between '
-                                f'{indicator.min_value}-{indicator.max_value}'
-                            )
                     except ValueError:
                         try:
                             rule_index = rule_names.index(value.lower())
@@ -249,7 +243,9 @@ class SharepointHarvester(BaseHarvester):
                                 date=date_time,
                                 geom_identifier=administration_code,
                                 defaults={
-                                    'value': value
+                                    'value': value,
+                                    'reference_layer': reference_layer,
+                                    'admin_level': admin_level
                                 }
                             )
                         if not created:

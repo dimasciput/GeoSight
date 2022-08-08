@@ -23,3 +23,19 @@ form {
   width: 100%;
   padding: 0 !important;
 }
+
+#mapping-table {
+  width: 100%;
+  margin-bottom: 1rem;
+
+  th, td {
+    width: 50%;
+    padding: 0.5rem;
+  }
+
+  th {
+    font-weight: $base-font-medium;
+    background: $secondary-color;
+    color: $anti-secondary-color;
+  }
+}

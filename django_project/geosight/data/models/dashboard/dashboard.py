@@ -9,7 +9,7 @@ from core.models.general import (
 from geosight.data.models.basemap_layer import BasemapLayer
 from geosight.data.models.context_layer import ContextLayer
 from geosight.data.models.indicator import Indicator
-from geosight.georepo.reference_layer import ReferenceLayer
+from geosight.georepo.models import ReferenceLayer
 
 User = get_user_model()
 
@@ -30,8 +30,12 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
     Basemap layers and context layers is based on the indicator's instance.
     """
 
-    reference_layer_identifier = models.CharField(
-        max_length=512, null=True, blank=True
+    reference_layer = models.ForeignKey(
+        ReferenceLayer,
+        help_text=_('Reference layer.'),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
     extent = models.PolygonField(
         blank=True, null=True,
@@ -54,11 +58,6 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         on_delete=models.SET_NULL,
         blank=True, null=True
     )
-
-    @property
-    def reference_layer(self):
-        """Return reference layer object."""
-        return ReferenceLayer(self.reference_layer_identifier)
 
     def can_edit(self, user: User):
         """Is dashboard can be edited by user."""

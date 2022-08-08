@@ -15,15 +15,52 @@ class HarvesterSerializer(serializers.ModelSerializer):
     """Harvester Serializer."""
 
     name = serializers.SerializerMethodField()
-    user = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
+    creator = serializers.SerializerMethodField()
+    creator_name = serializers.SerializerMethodField()
+    reference_layer = serializers.SerializerMethodField()
+    indicator = serializers.SerializerMethodField()
+    indicator_id = serializers.SerializerMethodField()
+    last_run = serializers.SerializerMethodField()
 
     def get_name(self, obj: Harvester):
         """Return name of html."""
+        return str(obj.unique_id)
+
+    def get_type(self, obj: Harvester):
+        """Return name of html."""
         return obj.harvester_name
 
-    def get_user(self, obj: Harvester):
+    def get_creator(self, obj: Harvester):
         """Return user of html."""
-        return UserSerializer(obj.user).data
+        return UserSerializer(obj.creator).data
+
+    def get_creator_name(self, obj: Harvester):
+        """Return user of html."""
+        if obj.creator:
+            full_name = f'{obj.creator.first_name} {obj.creator.last_name}'
+            return full_name if full_name.strip() else obj.creator.username
+        else:
+            return ''
+
+    def get_reference_layer(self, obj: Harvester):
+        """Return reference_layer."""
+        return obj.reference_layer.identifier
+
+    def get_indicator(self, obj: Harvester):
+        """Return indicator."""
+        return obj.indicator.__str__() if obj.indicator else ''
+
+    def get_indicator_id(self, obj: Harvester):
+        """Return indicator."""
+        return obj.indicator.id if obj.indicator else ''
+
+    def get_last_run(self, obj: Harvester):
+        """Return indicator."""
+        if obj.last_run:
+            return obj.last_run.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            return ''
 
     class Meta:  # noqa: D106
         model = Harvester
@@ -65,12 +102,15 @@ class HarvesterAttributeSerializer(serializers.ModelSerializer):
             if obj.name == 'API URL' and obj.harvester.harvester_class == \
                     UsingExposedAPI[0]:
                 return reverse(
-                    'indicator-upload-values-api',
-                    args=[obj.harvester.indicator.id]
+                    'harvester-upload-values-api',
+                    args=[str(obj.harvester.unique_id)]
                 )
         except Indicator.DoesNotExist:
             pass
-        return obj.value
+        try:
+            return obj.value.replace('"', "'")
+        except ValueError:
+            return obj.value
 
     class Meta:  # noqa: D106
         model = HarvesterAttribute
