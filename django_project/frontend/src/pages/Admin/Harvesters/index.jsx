@@ -5,6 +5,7 @@ import Moment from 'moment';
 import Admin, { pageNames } from '../index';
 import { SaveButton } from "../../../components/Elements/Button";
 import { SelectWithList } from "../../../components/Input/SelectWithList";
+import { GeorepoUrls } from '../../../utils/georepo'
 
 import './style.scss';
 
@@ -140,7 +141,7 @@ export default function Harvesters(
         })[0]
         if (!referenceLayer.data) {
           $.ajax({
-            url: preferences.georepo_api.reference_layer_detail.replace('<identifier>', reference)
+            url: GeorepoUrls.ReferenceDetail(reference)
           }).done(function (data) {
             referenceLayer.data = data.levels.map(level => {
               level.value = level.level
@@ -166,7 +167,7 @@ export default function Harvesters(
       } else {
         // GET PREFERENCES LIST
         $.ajax({
-          url: preferences.georepo_api.reference_layer_list
+          url: GeorepoUrls.ReferenceList
         }).done(function (data) {
           const references = data.map(row => {
             row.value = row.identifier

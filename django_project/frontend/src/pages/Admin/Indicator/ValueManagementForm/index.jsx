@@ -15,6 +15,7 @@ import {
 } from "../../../../components/Elements/Button";
 import { SelectWithList } from "../../../../components/Input/SelectWithList";
 import InputFile from './InputFile'
+import { GeorepoUrls } from '../../../../utils/georepo'
 
 import './style.scss';
 
@@ -75,7 +76,7 @@ export default function ValueManagement() {
       })[0]
       if (!referenceLayer.data) {
         $.ajax({
-          url: preferences.georepo_api.reference_layer_detail.replace('<identifier>', reference)
+          url: GeorepoUrls.ReferenceDetail(reference)
         }).done(function (data) {
           referenceLayer.data = data.levels.map(level => {
             level.value = level.level
@@ -118,7 +119,7 @@ export default function ValueManagement() {
     } else {
       // GET PREFERENCES LIST
       $.ajax({
-        url: preferences.georepo_api.reference_layer_list
+        url: GeorepoUrls.ReferenceList
       }).done(function (data) {
         const references = data.map(row => {
           row.value = row.identifier

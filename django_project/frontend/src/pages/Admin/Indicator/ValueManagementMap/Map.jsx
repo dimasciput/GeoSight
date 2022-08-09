@@ -7,6 +7,7 @@ import $ from 'jquery';
 import L from 'leaflet';
 
 import { SelectWithList } from "../../../../components/Input/SelectWithList";
+import { GeorepoUrls } from '../../../../utils/georepo'
 
 /**
  * Map component.
@@ -195,7 +196,7 @@ export default function Map() {
 
     // GET PREFERENCES LIST
     $.ajax({
-      url: preferences.georepo_api.reference_layer_list
+      url: GeorepoUrls.ReferenceList
     }).done(function (data) {
       const references = data.map(row => {
         row.value = row.identifier
@@ -222,7 +223,7 @@ export default function Map() {
       })[0]
       if (!referenceLayer.data) {
         $.ajax({
-          url: preferences.georepo_api.reference_layer_detail.replace('<identifier>', reference)
+          url: GeorepoUrls.ReferenceDetail(reference)
         }).done(function (data) {
           referenceLayer.data = data.levels.map(level => {
             level.value = level.level
