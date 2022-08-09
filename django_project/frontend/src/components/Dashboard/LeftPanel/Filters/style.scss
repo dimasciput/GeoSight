@@ -132,7 +132,6 @@
     background: none;
 
     &.Disabled {
-      .FilterInfo,
       .FilterExpressionName {
         opacity: 0.5;
       }
@@ -149,6 +148,7 @@
 
     .FilterExpressionName {
       flex-grow: 1;
+      display: flex;
     }
 
     .FilterExpressionDescription {

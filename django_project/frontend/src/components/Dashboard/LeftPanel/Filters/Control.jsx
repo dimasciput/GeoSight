@@ -236,38 +236,47 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
       <AccordionSummary
         expandIcon={<ExpandMoreIcon/>}
       >
-        <Switch
-          size="small"
-          checked={active}
+        <div
+          className='FilterExpressionName'
           onClick={(event) => {
-            event.stopPropagation()
-          }}
-          onChange={() => {
-            updateActive(event.target.checked)
-          }}
-          disabled={differentLevel}
-        />
-        {
-          differentLevel ?
-            <div className='FilterInfo'>
-              <Tooltip
-                title={
-                  "Filter will not affect indicator on the map because the differences of admin level. " +
-                  "Filter admin is " + reportingLevel + " but indicator on map is " + selectedIndicator.reporting_level + "."
-                }
-              >
-                <WarningIcon/>
-              </Tooltip>
-            </div> : ""
-        }
-        {
-          where.name ?
-            <div className='FilterExpressionName'>{where.name}</div> :
-            fieldName ?
-              <div
-                className='FilterExpressionName'>{capitalize(fieldName.split('.')[1])}</div> :
-              <div className='FilterExpressionName'>Loading</div>
-        }
+            if (!differentLevel) {
+              updateActive(!active)
+              if (!active) {
+                setExpanded(true)
+              } else {
+                setExpanded(false)
+              }
+              event.stopPropagation()
+            }
+          }}>
+          <Switch
+            size="small"
+            checked={active}
+            onChange={() => {
+            }}
+            disabled={differentLevel}
+          />
+          {
+            differentLevel ?
+              <div className='FilterInfo'>
+                <Tooltip
+                  title={
+                    "Filter will not affect indicator on the map because the differences of admin level. " +
+                    "Filter admin is " + reportingLevel + " but indicator on map is " + selectedIndicator.reporting_level + "."
+                  }
+                >
+                  <WarningIcon/>
+                </Tooltip>
+              </div> : ""
+          }
+          {
+            where.name ?
+              <div>{where.name}</div> :
+              fieldName ?
+                <div>{capitalize(fieldName.split('.')[1])}</div> :
+                <div>Loading</div>
+          }
+        </div>
         <ModeEditIcon
           className='MuiButtonLike FilterEdit'
           onClick={(event) => {

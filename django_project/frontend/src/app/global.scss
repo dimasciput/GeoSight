@@ -70,6 +70,42 @@ b.light {
   font-weight: 500 !important;
 }
 
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+textarea {
+  box-sizing: border-box;
+  border: 1px solid $primary-color;
+  border-radius: 5px;
+  padding: 5px 10px;
+  width: 100%;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &.error {
+    border: 1px solid $error;
+  }
+}
+// --------------------------------------------------------------------------
+// CLASS
+// --------------------------------------------------------------------------
+
+.circle {
+  border-radius: 50%;
+}
+
+.error {
+  color: red;
+}
+
+.leaflet-overlay-pane {
+  z-index: 400 !important;
+}
+
 .leaflet-popup-content {
   margin: 0;
 
@@ -104,33 +140,4 @@ b.light {
   border-radius: 5px;
   overflow: hidden;
   padding: 0;
-}
-
-textarea {
-  box-sizing: border-box;
-  border: 1px solid $primary-color;
-  border-radius: 5px;
-  padding: 5px 10px;
-  width: 100%;
-
-  &:focus-visible {
-    outline: none;
-  }
-
-  &.error {
-    border: 1px solid $error;
-  }
-}
-
-.leaflet-overlay-pane {
-  z-index: 400 !important;
-}
-
-.error {
-  color: red;
-}
-
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
 }

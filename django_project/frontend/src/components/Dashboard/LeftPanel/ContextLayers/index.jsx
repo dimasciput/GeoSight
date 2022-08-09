@@ -143,6 +143,8 @@ function ContextLayerInput({ data }) {
     setChecked(checked);
     if (!checked) {
       showLegendHandler(false);
+    } else {
+      showLegendHandler(true);
     }
   };
   const showLegendHandler = (show) => {
@@ -152,40 +154,61 @@ function ContextLayerInput({ data }) {
   const className = layer ? 'dashboard__left_side__row' : 'dashboard__left_side__row disabled';
   return (
     <Fragment>
-      <div className={className} title={error}>
-        <Switch
-          disabled={!layer}
-          size="small"
-          checked={checked}
-          onChange={() => {
-            change(event.target.checked)
-          }}
-        />
-        <div className='text title'>
-          <div>{data.name}</div>
-          {
-            legend && showLegend ?
-              <div className='legend'
-                   dangerouslySetInnerHTML={{ __html: legend }}></div> : ''
-          }
-
-        </div>
+      <table className={className} title={error}>
+        <tbody>
+        <tr className='dashboard__left_side__row__title' onClick={() => {
+          change(!checked)
+        }}>
+          <td>
+            <Switch
+              disabled={!layer}
+              size="small"
+              checked={checked}
+              onChange={() => {
+              }}
+            />
+          </td>
+          <td>
+            <div className='text title'>
+              <div>{data.name}</div>
+            </div>
+          </td>
+          <td>
+            {
+              checked && legend ? (
+                <Fragment>
+                  {
+                    showLegend ?
+                      <span className='toggler' onClick={(e) => {
+                        showLegendHandler(false)
+                        e.stopPropagation();
+                      }}>▴</span> :
+                      <span className='toggler' onClick={(e) => {
+                        showLegendHandler(true)
+                        e.stopPropagation();
+                      }}>▾</span>
+                  }
+                </Fragment>
+              ) : ''
+            }
+          </td>
+        </tr>
         {
-          checked && legend ? (
-            <Fragment>
-              {
-                showLegend ?
-                  <span className='toggler' onClick={() => {
-                    showLegendHandler(false)
-                  }}>▴</span> :
-                  <span className='toggler' onClick={() => {
-                    showLegendHandler(true)
-                  }}>▾</span>
-              }
-            </Fragment>
-          ) : ''
+          legend ?
+            <tr className={showLegend ? 'legend showLegend' : 'legend'}>
+              <td></td>
+              <td>
+                {
+                  legend && showLegend
+                    ? <div dangerouslySetInnerHTML={{ __html: legend }}></div>
+                    : ''
+                }
+              </td>
+              <td></td>
+            </tr> : ""
         }
-      </div>
+        </tbody>
+      </table>
     </Fragment>
   )
 }

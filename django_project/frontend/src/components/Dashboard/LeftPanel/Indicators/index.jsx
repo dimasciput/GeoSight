@@ -28,53 +28,72 @@ export function Indicator({ checked, layer, onChange }) {
   };
 
   return (
-    <div className='dashboard__left_side__row'
-         key={layer.id}>
-      <Radio
-        checked={checked}
-        onChange={() => {
-          onChange(event.target.checked, layer.id)
-        }}/>
-      <div className='text title'>
-        <div>{layer.name}</div>
-        <div className='legend'>
+    <table className='dashboard__left_side__row'
+           key={layer.id}>
+      <tbody>
+      <tr className='dashboard__left_side__row__title' onClick={() => {
+        if (!checked) {
+          onChange(!checked, layer.id)
+        }
+      }}>
+        <td>
+          <Radio
+            checked={checked}
+            onChange={() => {
+
+            }}/>
+        </td>
+        <td>
+          <div className='text title'>
+            <div>{layer.name}</div>
+          </div>
+        </td>
+        <td>
           {
-            showLegend ?
-              <table>
-                <tbody>
+            checked ? (
+              <Fragment>
                 {
-                  layer.rules.map(rule => (
-                      <tr key={rule.id} className='IndicatorLegendRow'>
-                        <td>
-                          <div className='IndicatorLegendRow-Color'
-                               style={{ backgroundColor: rule.color }}></div>
-                        </td>
-                        <td>{rule.name}</td>
-                      </tr>
-                    )
-                  )
+                  showLegend ?
+                    <span className='toggler' onClick={(e) => {
+                      e.stopPropagation()
+                      showLegendHandler(false)
+                    }}>▴</span> :
+                    <span className='toggler' onClick={(e) => {
+                      e.stopPropagation()
+                      showLegendHandler(true)
+                    }}>▾</span>
                 }
-                </tbody>
-              </table> : ""
+              </Fragment>
+            ) : ''
           }
-        </div>
-      </div>
-      {
-        checked ? (
-          <Fragment>
-            {
-              showLegend ?
-                <span className='toggler' onClick={() => {
-                  showLegendHandler(false)
-                }}>▴</span> :
-                <span className='toggler' onClick={() => {
-                  showLegendHandler(true)
-                }}>▾</span>
-            }
-          </Fragment>
-        ) : ''
-      }
-    </div>
+        </td>
+      </tr>
+      <tr className={showLegend ? 'legend showLegend' : 'legend'}>
+        <td></td>
+        <td>
+          <div>
+            <table>
+              <tbody>
+              {
+                layer.rules.map(rule => (
+                    <tr key={rule.id} className='IndicatorLegendRow'>
+                      <td>
+                        <div className='IndicatorLegendRow-Color'
+                             style={{ backgroundColor: rule.color }}></div>
+                      </td>
+                      <td>{rule.name}</td>
+                    </tr>
+                  )
+                )
+              }
+              </tbody>
+            </table>
+          </div>
+        </td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
   )
 }
 

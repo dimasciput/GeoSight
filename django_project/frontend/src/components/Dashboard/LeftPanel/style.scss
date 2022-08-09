@@ -251,8 +251,29 @@
   ROWS
  ----------------------------------------------- **/
 .dashboard__left_side__row {
-  display: flex;
-  padding: 5px 0;
+  width: 100%;
+
+  & > tbody {
+    & > tr {
+      & > td {
+        &:first-child {
+          width: 25px;
+        }
+
+        &:last-child {
+          width: 12px;
+        }
+      }
+    }
+  }
+
+  .dashboard__left_side__row__title {
+    cursor: pointer;
+
+    td {
+      padding: 5px 0;
+    }
+  }
 
   .MuiCheckbox-root {
     align-items: baseline;
@@ -272,9 +293,24 @@
   }
 
   .legend {
+    display: none;
+
+    &.showLegend {
+      display: table-row;
+    }
+
+    & > td {
+      &:nth-child(2) {
+        > div {
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+
     img {
       height: 20px;
     }
+
   }
 
   .toggler {
