@@ -49,10 +49,16 @@ class DashboardSerializer(serializers.ModelSerializer):
     def get_referenceLayer(self, obj: Dashboard):
         """Return reference_layer."""
         reference_layer = obj.reference_layer
-        return {
-            'identifier': reference_layer.identifier,
-            'detail_url': reference_layer.detail_url
-        }
+        if reference_layer:
+            return {
+                'identifier': reference_layer.identifier,
+                'detail_url': reference_layer.detail_url
+            }
+        else:
+            return {
+                'identifier': '',
+                'detail_url': ''
+            }
 
     def get_indicators(self, obj: Dashboard):
         """Return indicators."""
