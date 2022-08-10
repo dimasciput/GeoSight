@@ -1,6 +1,6 @@
 # Indicators
 
-The RIR dashboard displays various indicators and their corresponding severity levels in the indicator panel. 
+The GeoSight dashboard displays various indicators and their corresponding severity levels in the indicator panel. 
 This panel can be accessed under the indicators tab which is visible when the user has selected the context analysis icon which is located above the Programme interventions bar. 
 Each indicator falls under a group. The severity levels refer to how good or bad the case is for that factor within the instance. 
 This ranges from worst-case scenario to best-case scenario. The case of the scenario will indicate if that region or state needs additional response or intervention. 
