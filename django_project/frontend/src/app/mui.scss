@@ -148,11 +148,44 @@
       color: inherit;
       display: block;
       height: 20px !important;
-      width: 20px !important;
 
       svg {
         height: 100%;
-        width: 100%;
+        width: 20px !important;
+      }
+    }
+
+    button {
+      &:not(.TextButton) {
+        a {
+          width: 20px !important;
+
+          svg {
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    .TextButton {
+      height: 100%;
+      line-height: 1 !important;
+
+      a {
+        height: 30px !important;
+      }
+
+      .MuiButtonBase-root {
+        height: 100%;
+        padding: 0 1rem !important;
+
+        svg {
+          height: 20px !important;
+        }
+      }
+
+      &:hover {
+        background-color: unset;
       }
     }
   }

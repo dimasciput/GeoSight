@@ -47,24 +47,34 @@
   }
 
   .dashboard__content-wrapper__navbar {
-    background: white;
+    background: #eee;
     display: flex;
-    padding: 12px 0 0 0;
-    border-bottom: 1px solid #ddd;
+    padding: 0.5rem;
 
     div {
+      width: 50%;
       cursor: pointer;
-      padding: 0 1rem 5px;
+      padding: 0.2rem;
+      text-align: center;
+      border-radius: $border-radius;
 
       &:hover {
         opacity: 0.5;
       }
+
+      svg {
+        height: 15px;
+        width: 15px;
+      }
     }
 
     .active {
-      color: $primary-color;
-      border-bottom: 2px solid $primary-color;
-      font-weight: 500;
+      color: $anti-primary-color;
+      background-color: $primary-color;
+
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
@@ -123,11 +133,12 @@
 
   // For accordion
   .dashboard__content-wrapper__inner {
+    background-color: #eee;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    padding-top: 10px;
+    padding: 0 0.5rem 0.5rem 0.5rem;
 
     .reference-dataset {
       &.Mui-expanded {
@@ -135,20 +146,26 @@
       }
 
       b {
-        font-weight: 500;
-        color: $primary-color;
+        font-weight: $base-font-medium;
       }
     }
 
     > div.Mui-expanded {
       flex-grow: 1;
-      margin: 0 !important;
     }
 
     > .MuiPaper-root {
+      margin: 0.2rem 0;
+      border-radius: $border-radius;
+
+      &:before {
+        display: none;
+      }
+
       .MuiAccordionSummary-content {
         margin: 0 !important;
-        font-weight: 500;
+        font-weight: $base-font-medium;
+        color: $primary-color;
       }
     }
 
@@ -168,7 +185,6 @@
       box-shadow: unset !important;
       display: flex;
       flex-direction: column;
-      border-radius: 0 !important;
 
       &:before {
         opacity: 1 !important;
@@ -436,7 +452,7 @@
 .modal__setting {
   .title {
     b {
-      font-weight: 500;
+      font-weight: $base-font-medium;
     }
   }
 }

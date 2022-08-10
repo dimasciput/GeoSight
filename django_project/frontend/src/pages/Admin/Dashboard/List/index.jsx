@@ -1,12 +1,12 @@
 import React from 'react';
 import MapIcon from '@mui/icons-material/Map';
-import Tooltip from "@mui/material/Tooltip";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
 import { pageNames } from '../../index';
 import { COLUMNS, COLUMNS_ACTION } from "../../Components/List";
+import { ThemeButton } from "../../../../components/Elements/Button";
 import AdminList from "../../AdminList";
 
 import './style.scss';
@@ -21,18 +21,19 @@ export default function DashboardList() {
   columns[4] = {
     field: 'actions',
     type: 'actions',
-    width: 120,
+    width: 180,
     getActions: (params) => {
       const actions = [].concat(COLUMNS_ACTION(params, urls.admin.dashboardList));
       actions.unshift(
         <GridActionsCellItem
+          className='TextButton'
           icon={
-            <Tooltip title={`Project Map`}>
-              <a
-                href={urls.api.map.replace('/0', `/${params.id}`)}>
-                <MapIcon/>
-              </a>
-            </Tooltip>
+            <a href={urls.api.map.replace('/0', `/${params.id}`)}>
+              <ThemeButton variant='secondary'>
+                <MapIcon/> Preview
+              </ThemeButton>
+
+            </a>
           }
           label="Management Form"
         />)

@@ -5,6 +5,7 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import Tooltip from '@mui/material/Tooltip'
+import { styled } from '@mui/material/styles';
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -15,6 +16,7 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import WarningIcon from '@mui/icons-material/Warning';
 import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import {
   IDENTIFIER,
   INIT_DATA,
@@ -33,6 +35,16 @@ import FilterValueInput from './ValueInput'
 
 import './style.scss'
 
+const Switcher = styled(Switch)(({ theme }) => ({}));
+
+export function OperatorSwitcher({ ...props }) {
+  return <FormControlLabel
+    className='OperatorSwitcher'
+    control={<Switcher/>}
+    {...props}
+  />
+}
+
 /**
  * Control All Filter.
  * @param {dict} filtersData Filters of dashboard.
@@ -40,7 +52,7 @@ import './style.scss'
  * @param {Function} filter Filter function.
  */
 export function FilterControl({ filtersData, indicatorFields, filter }) {
-  const dispatcher = useDispatch();
+  const dispatcher = useDispatch()
   const [filters, setFilters] = useState(filtersData)
   const selectedIndicator = useSelector(state => state.selectedIndicator)
 
@@ -78,6 +90,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
       where.operator = operator;
       updateFilter(true)
     }
+
     const add = (newData) => {
       switch (addType) {
         case TYPE.EXPRESSION: {
@@ -94,60 +107,81 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
       updateFilter(true)
     }
 
+    // Apply when group control changed
+    const groupCheckedChanged = (where, checked) => {
+      where.active = checked
+      if (where.queries) {
+        where.queries.map(query => {
+          groupCheckedChanged(query, checked)
+        })
+      }
+      updateFilter(true)
+    }
+
     return <div className='FilterGroup'>
-      <div className='FilterGroupOption'>
-        <div className='FilterOperatorToggler' onClick={
-          () => {
-            switchWhere(operator === WHERE_OPERATOR.AND ? WHERE_OPERATOR.OR : WHERE_OPERATOR.AND)
-          }
-        }>{operator}</div>
-        <div className='FilterGroupName'>
-        </div>
-        <Tooltip title="Add New Filter">
-          <AddCircleIcon
-            className='FilterGroupAddExpression MuiButtonLike'
-            onClick={
+      <div className='FilterGroupHeader'>
+        <div className='FilterGroupOption'>
+          <Switch
+            className='GroupSwitcher'
+            size="small"
+            checked={where.active}
+            onChange={() => {
+              groupCheckedChanged(where, !where.active)
+            }}
+          />
+          <OperatorSwitcher
+            checked={operator === WHERE_OPERATOR.AND}
+            onChange={() => {
+              switchWhere(operator === WHERE_OPERATOR.AND ? WHERE_OPERATOR.OR : WHERE_OPERATOR.AND)
+            }}/>
+          <div className='FilterGroupName'>
+          </div>
+          <Tooltip title="Add New Filter">
+            <AddCircleIcon
+              className='FilterGroupAddExpression MuiButtonLike'
+              onClick={
+                () => {
+                  setOpen(true)
+                  setAddType(TYPE.EXPRESSION)
+                }}/>
+          </Tooltip>
+          <Tooltip title="Add New Group">
+            <CreateNewFolderIcon
+              className='FilterGroupAdd MuiButtonLike' onClick={
               () => {
                 setOpen(true)
-                setAddType(TYPE.EXPRESSION)
-              }}/>
-        </Tooltip>
-        <Tooltip title="Add New Group">
-          <CreateNewFolderIcon
-            className='FilterGroupAdd MuiButtonLike' onClick={
-            () => {
-              setOpen(true)
-              setAddType(TYPE.GROUP)
-            }
-          }/>
-        </Tooltip>
-        <FilterEditorModal
-          open={open}
-          setOpen={(opened) => {
-            setOpen(opened)
-            setData(INIT_DATA.WHERE());
-          }}
-          data={data}
-          fields={indicatorFields}
-          update={add}/>
-        {
-          upperWhere ? (
-            <Tooltip title="Delete Group">
-              <DoDisturbOnIcon
-                className='FilterGroupDelete MuiButtonLike' onClick={
-                () => {
-                  let isExecuted = confirm("Are you want to delete this group?");
-                  if (isExecuted) {
-                    upperWhere.queries = [...upperWhere.queries.filter(query => {
-                      return query !== where
-                    })]
-                    updateFilter(true)
+                setAddType(TYPE.GROUP)
+              }
+            }/>
+          </Tooltip>
+          <FilterEditorModal
+            open={open}
+            setOpen={(opened) => {
+              setOpen(opened)
+              setData(INIT_DATA.WHERE());
+            }}
+            data={data}
+            fields={indicatorFields}
+            update={add}/>
+          {
+            upperWhere ? (
+              <Tooltip title="Delete Group">
+                <DoDisturbOnIcon
+                  className='FilterGroupDelete MuiButtonLike' onClick={
+                  () => {
+                    let isExecuted = confirm("Are you want to delete this group?");
+                    if (isExecuted) {
+                      upperWhere.queries = [...upperWhere.queries.filter(query => {
+                        return query !== where
+                      })]
+                      updateFilter(true)
+                    }
                   }
-                }
-              }/>
-            </Tooltip>
-          ) : ''}
-        <div className='FilterGroupEnd'>
+                }/>
+              </Tooltip>
+            ) : ''}
+          <div className='FilterGroupEnd'>
+          </div>
         </div>
       </div>
       {

@@ -41,16 +41,96 @@
    FILTERS CONTROL COMPONENT
    ========================================================================== */
 .FilterControl {
-  padding: 0 8px 16px;
+  padding: 0.5rem;
   font-size: 0.8rem;
   flex-grow: 1;
   overflow-y: auto;
 
+  // GROUP SWITCHER
+  .GroupSwitcher {
+    .Mui-checked {
+      .MuiSwitch-thumb {
+        background-color: $secondary-color;
+      }
+    }
+  }
+
+  // OPERATOR SWITCHER
+  .OperatorSwitcher {
+    margin-left: -1px;
+
+    .MuiSwitch-root {
+      height: 24px;
+      width: 73px;
+      padding: 4px;
+    }
+
+    .MuiButtonBase-root {
+      padding: 4px;
+      align-items: flex-start;
+
+      &.Mui-checked {
+        -webkit-transform: translateX(36px);
+        -moz-transform: translateX(36px);
+        -ms-transform: translateX(36px);
+        transform: translateX(36px);
+
+        .MuiSwitch-thumb {
+          border-radius: 0;
+          border-bottom-right-radius: $border-radius;
+          border-top-right-radius: $border-radius;
+        }
+      }
+    }
+
+    .MuiSwitch-thumb {
+      box-shadow: none;
+      background-color: $secondary-color;
+      border-radius: 0;
+      border-bottom-left-radius: $border-radius;
+      border-top-left-radius: $border-radius;
+      width: 30px;
+      height: 16px;
+    }
+
+    .MuiSwitch-track {
+      background-color: $anti-primary-color !important;
+      border-radius: $border-radius;
+      opacity: 1 !important;
+
+      &:before, &:after {
+        content: '""';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 19px;
+      }
+
+      &:before {
+        content: 'AND';
+        left: 9px;
+        color: $primary-color;
+      }
+
+      &:after {
+        content: 'OR';
+        right: 13px;
+        color: $primary-color;
+      }
+    }
+  }
+
+  .MuiAccordionSummary-content {
+    color: $base-black-color !important;
+  }
+
   .FilterGroup {
     border: 1px solid $primary-color;
-    margin-top: 15px;
-    padding: 15px 5px 5px 5px;
+    margin-top: 20px;
+    padding: 20px 8px 10px 8px;
     position: relative;
+    border-radius: $border-radius;
 
     & > .MuiPaper-root {
       margin-top: 5px !important;
@@ -67,47 +147,52 @@
       }
     }
 
-    .FilterGroupOption {
+    .FilterGroupHeader {
+      box-sizing: border-box;
       height: 18px;
-      position: absolute;
-      top: -7px;
       left: 0;
+      padding: 0 0.5rem;
+      position: absolute;
+      top: -10px;
       width: 100%;
-      display: flex;
 
-      .FilterGroupName {
-        flex-grow: 1;
-      }
+      .FilterGroupOption {
+        background-color: $primary-color;
+        border-radius: $border-radius;
+        color: $anti-primary-color;
+        display: flex;
+        padding: 0 7px;
 
-      .FilterGroupEnd {
-        width: 5px;
-      }
-
-      .MuiButtonLike {
-        color: $primary-color;
-        background: white;
-        height: 0.8rem;
-        width: 18px;
-
-        &:hover {
-          opacity: 1;
-          color: #555;
+        .FilterGroupName {
+          flex-grow: 1;
         }
-      }
 
-      .FilterGroupDelete {
-        color: $error;
-      }
+        .FilterGroupEnd {
+          width: 5px;
+        }
 
-      .FilterOperatorToggler {
-        color: white;
-        padding: 2px 10px;
-        margin-left: 10px;
-        font-size: 12px;
-        margin-top: -2px;
-        background: $primary-color;
-        border-radius: 5px;
-        cursor: pointer;
+        .MuiButtonLike {
+          color: white;
+          background: $primary-color;
+          height: 16px;
+          margin-top: 0.2rem;
+          margin-left: 0.2rem;
+          width: 18px;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+
+        .FilterOperatorToggler {
+          color: white;
+          padding: 2px 10px;
+          margin-left: 10px;
+          font-size: 12px;
+          background: $primary-color;
+          border-radius: 5px;
+          cursor: pointer;
+        }
       }
     }
   }
