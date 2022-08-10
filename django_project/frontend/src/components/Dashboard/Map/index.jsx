@@ -15,7 +15,8 @@ export default function Map() {
   const {
     basemapLayer,
     referenceLayer,
-    contextLayers
+    contextLayers,
+    center
   } = useSelector(state => state.map);
 
   const { extent } = useSelector(state => state.dashboard.data);
@@ -61,6 +62,13 @@ export default function Map() {
       ])
     }
   }, [map, extent]);
+
+  /** EXTENT CHANGED */
+  useEffect(() => {
+    if (map && center) {
+      map.panTo(center);
+    }
+  }, [center]);
 
   /** BASEMAP CHANGED */
   useEffect(() => {

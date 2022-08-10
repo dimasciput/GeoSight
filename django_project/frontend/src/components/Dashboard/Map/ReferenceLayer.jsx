@@ -235,6 +235,10 @@ export default function ReferenceLayer({ currentIndicator }) {
             });
           })
         }
+
+        dispatch(
+          Actions.Map.updateCenter(event.latlng)
+        )
       }, this);
     }
   }, [

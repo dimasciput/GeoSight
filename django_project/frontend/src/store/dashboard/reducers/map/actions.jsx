@@ -1,6 +1,7 @@
 import {
   MAP_ACTION_NAME,
   MAP_ADD_CONTEXTLAYERS,
+  MAP_CENTER,
   MAP_CHANGE_BASEMAP,
   MAP_REFERENCE_LAYER_CHANGED,
   MAP_REMOVE_CONTEXTLAYERS,
@@ -69,7 +70,19 @@ function removeAllContextLayer() {
   };
 }
 
+/**
+ * Update center of map.
+ */
+function updateCenter(center) {
+  return {
+    name: MAP_ACTION_NAME,
+    type: MAP_CENTER,
+    payload: center
+  };
+}
+
 export default {
+  updateCenter,
   changeBasemap,
   addContextLayer,
   removeContextLayer,

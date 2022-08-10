@@ -41,6 +41,11 @@ function ContextLayerInput({ data }) {
       layer.bindPopup(
         featurePopupContent(layerData.name, feature.properties)
       );
+      layer.on('click', function (event) {
+        dispatch(
+          Actions.Map.updateCenter(event.latlng)
+        )
+      }, this);
     }
     switch (layerType) {
       case 'Raster Tile': {
