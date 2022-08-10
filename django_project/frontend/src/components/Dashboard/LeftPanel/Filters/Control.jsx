@@ -391,7 +391,7 @@ export default function FilterSection() {
 
   // Set older filters
   const prevState = useRef();
-  prevState.current = JSON.stringify(filters);
+  prevState.current = '';
 
   /** Filter data **/
   const filter = (currentFilter) => {
@@ -416,7 +416,7 @@ export default function FilterSection() {
     }
 
     const currentFilterStr = JSON.stringify(currentFilter)
-    if (allHasData && prevState.current !== currentFilterStr) {
+    if (prevState.current !== currentFilterStr) {
       const filteredGeometries = filteredGeoms(
         indicatorsList, currentFilter
       )
