@@ -160,9 +160,9 @@ export default function ReferenceLayer({ currentIndicator }) {
       }
 
       // Check current level
-      let currentLevel = currentIndicator.reporting_level
+      let currentLevel = currentIndicator?.reporting_level
       if (!levels[currentLevel]) {
-        currentLevel = levels[levels.length - 1].level
+        currentLevel = levels[0].level
       }
 
       const options = {

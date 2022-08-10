@@ -140,33 +140,45 @@ export default function MapConfig() {
       <div className='ExtentManualInput'>
         WEST (Longitude)
         <input
-          value={west}
+          defaultValue={west}
           onChange={(event) => {
-            setWest(parseFloat(event.target.value))
+            const value = parseFloat(event.target.value)
+            if (!isNaN(value)) {
+              setWest(value)
+            }
           }} type="number" min={-180} max={180}/>
         <br/>
         <br/>
         NORTH (Latitude)
         <input
-          value={north}
+          defaultValue={north}
           onChange={(event) => {
-            setNorth(parseFloat(event.target.value))
+            const value = parseFloat(event.target.value)
+            if (!isNaN(value)) {
+              setNorth(value)
+            }
           }} type="number" min={-90} max={90}/>
         <br/>
         <br/>
         EAST (Longitude)
         <input
-          value={east}
+          defaultValue={east}
           onChange={(event) => {
-            setEast(parseFloat(event.target.value))
+            const value = parseFloat(event.target.value)
+            if (!isNaN(value)) {
+              setEast(value)
+            }
           }} type="number" min={-180} max={180}/>
         <br/>
         <br/>
         SOUTH (Latitude)
         <input
-          value={south}
+          defaultValue={south}
           onChange={(event) => {
-            setSouth(parseFloat(event.target.value))
+            const value = parseFloat(event.target.value)
+            if (!isNaN(value)) {
+              setSouth(value)
+            }
           }} type="number" min={-90} max={90}/>
       </div>
     </div>
