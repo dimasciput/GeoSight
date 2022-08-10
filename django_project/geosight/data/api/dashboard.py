@@ -81,6 +81,7 @@ class DashboardIndicatorValuesAPI(APIView):
 
         return Response(
             indicator.values(
-                datetime.now(), rule_set=rule_set
+                datetime.now(), rule_set=rule_set,
+                reference_layer=dashboard.reference_layer
             )
         )

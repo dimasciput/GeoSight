@@ -120,6 +120,7 @@ export default function FilterEditorModal(
               }}/>
             {
               field && operator ? <FilterValueInput
+                field={field}
                 value={currentValue} operator={operator}
                 indicator={indicator} onChange={setValue}/> : ""
             }

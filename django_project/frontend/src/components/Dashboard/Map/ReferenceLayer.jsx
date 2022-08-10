@@ -123,17 +123,14 @@ export default function ReferenceLayer({ currentIndicator }) {
   // Filter geometry_code based on indicators layer
   // Also filter by levels that found on indicators
   let geometryCodes = filteredGeometries;
-  let levels = [];
-  if (indicators && indicators.length) {
-    indicators.map(indicator => {
-      levels.push(indicator.reporting_level)
-    })
-  }
 
   // If there is currentIndicator that selected
   // Use level from that
+  let nodataRule = null
   if (currentIndicator) {
-    levels = [currentIndicator.reporting_level]
+    nodataRule = currentIndicator.rules.filter(
+      rule => rule.active
+    ).find(rule => rule.rule.toLowerCase() === 'no data')
   }
 
   // When level changed
@@ -147,8 +144,10 @@ export default function ReferenceLayer({ currentIndicator }) {
     }
   }, [referenceLayer]);
 
+
   useEffect(() => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
+    const levels = referenceLayerData[referenceLayer.identifier]?.data?.levels
     if (vectorTiles) {
 
       // Save indicator data per geom
@@ -160,11 +159,19 @@ export default function ReferenceLayer({ currentIndicator }) {
         })
       }
 
+      // Check current level
+      let currentLevel = currentIndicator.reporting_level
+      if (!levels[currentLevel]) {
+        currentLevel = levels[levels.length - 1].level
+      }
+
       const options = {
         maxDetailZoom: 8,
         filter: function (feature) {
-          return levels.includes(feature.properties.level)
-            && (!where || !geometryCodes || geometryCodes.includes(feature.properties.code))
+          if (currentLevel !== feature.properties.level) {
+            return false
+          }
+          return !where || !geometryCodes.length === 0 || geometryCodes.includes(feature.properties.code)
         },
         style: function (feature, layer, test) {
           dispatch(
@@ -172,10 +179,10 @@ export default function ReferenceLayer({ currentIndicator }) {
               feature.properties.code, feature.properties
             )
           );
-
           const indicatorData = indicatorsByGeom[feature.properties.code];
-          let fillColor = indicatorData ? indicatorData.color : null;
-          let color = indicatorData ? indicatorData.outline_color : '#000000';
+          const style = indicatorData ? indicatorData : nodataRule;
+          let fillColor = style ? style.color : null;
+          let color = style ? style.outline_color : '#000000';
           let weight = 0.5;
           let fillOpacity = 0;
           if (fillColor) {

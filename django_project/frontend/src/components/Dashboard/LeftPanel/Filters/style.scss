@@ -378,3 +378,28 @@
     border: 1px solid $primary-color;
   }
 }
+
+.FilterDatePickerInput {
+  padding: 0 !important;
+  min-height: 2rem;
+
+  .react-datepicker-wrapper,
+  .react-datepicker__input-container {
+    height: 100%;
+    width: 100%;
+  }
+
+  input {
+    height: 100%;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0 14px;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      outline: none;
+    }
+  }
+}

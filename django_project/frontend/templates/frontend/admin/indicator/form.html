@@ -7,6 +7,6 @@
 {% endblock %}
 {% block scripts %}
     <script>
-      const indicatorRules = {{ rules|safe }};
+      const indicatorRules = JSON.parse(`{{ rules|safe }}`);
     </script>
 {% endblock %}

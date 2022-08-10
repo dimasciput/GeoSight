@@ -2,7 +2,7 @@
    WIDGET
    ========================================================================== */
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import InfoIcon from "@mui/icons-material/Info";
 
@@ -48,10 +48,15 @@ export function Widget({ idx, data }) {
     indicatorData = Object.assign({}, indicatorData)
     if (indicatorData.fetched && indicatorData.data) {
       indicatorData.data = indicatorData.data.filter(indicator => {
-        return filteredGeometries.includes(indicator.geometry_code)
+        return !filteredGeometries || filteredGeometries.includes(indicator.geometry_code)
       })
     }
   }
+
+  // onSubmitted
+  useEffect(() => {
+  }, [indicatorData])
+
 
   const showInfoHandler = () => {
     setShowInfo(!showInfo)

@@ -173,8 +173,14 @@ class Indicator(AbstractTerm, AbstractSource):
                                 'x', f'{value}').lower()
                     ):
                         return indicator_rule
-                except NameError:
+                except (NameError, SyntaxError):
                     pass
+            # This is empty one, use the other data
+            return rule_set.filter(
+                active=True
+            ).filter(
+                rule__icontains='other data'
+            ).first()
         return None
 
     def serialize(self, geometry_code, value, attributes=None, rule_set=None):
@@ -194,14 +200,17 @@ class Indicator(AbstractTerm, AbstractSource):
         values.update(attributes if attributes else {})
         return values
 
-    def values(self, date_data: date, rule_set=None):
+    def values(self, date_data: date, rule_set=None,
+               reference_layer=None, admin_level: int = None):
         """Return list data based on date.
 
         If it is upper than the reporting geometry level,
         it will be aggregate to upper level
         """
         values = []
-        query = self.query_values(date_data)
+        query = self.query_values(
+            date_data, reference_layer=reference_layer,
+            admin_level=admin_level)
         query_report = query.order_by(
             'geom_identifier', '-date').distinct(
             'geom_identifier')

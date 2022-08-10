@@ -2,7 +2,7 @@
    Filters CONTROL
    ========================================================================== */
 
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import Tooltip from '@mui/material/Tooltip'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -18,6 +18,8 @@ import Switch from '@mui/material/Switch';
 import {
   IDENTIFIER,
   INIT_DATA,
+  IS_NOT_NULL,
+  IS_NULL,
   OPERATOR,
   TYPE,
   WHERE_OPERATOR
@@ -214,14 +216,19 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
         where.value = cleanValue
         updateFilter()
       }
+      const needsValue = ![IS_NULL, IS_NOT_NULL].includes(operator)
       return <div>
         {fieldName ? fieldName : field} {OPERATOR[operator]}
-        <div className='FilterInputWrapper'>
-          <FilterValueInput
-            value={currentValue} operator={operator}
-            indicator={indicator} onChange={updateValue}
-            disabled={!where.active || differentLevel}/>
-        </div>
+        {
+          needsValue ?
+            <div className='FilterInputWrapper'>
+              <FilterValueInput
+                field={field}
+                value={currentValue} operator={operator}
+                indicator={indicator} onChange={updateValue}
+                disabled={!where.active || differentLevel}/>
+            </div> : ""
+        }
         {where.description ?
           <div
             className='FilterExpressionDescription'>{where.description}</div> : ''
@@ -345,28 +352,50 @@ export default function FilterSection() {
   } = useSelector(state => state.dashboard.data);
   const referenceLayerData = useSelector(state => state.referenceLayerData)
   const indicatorsData = useSelector(state => state.indicatorsData)
+  const geometries = useSelector(state => state.geometries);
   const dispatcher = useDispatch();
 
+  // Set older filters
+  const prevState = useRef();
+  prevState.current = JSON.stringify(filters);
+
+  /** Filter data **/
   const filter = (currentFilter) => {
     let indicatorsList = [];
     let allHasData = true;
-    for (const [key, indicator] of Object.entries(indicatorsData)) {
+    for (const [key, indicatorDataRow] of Object.entries(indicatorsData)) {
+      const indicator = JSON.parse(JSON.stringify(indicatorDataRow))
       if (indicator.fetching) {
         allHasData = false
+      } else {
+        indicatorsList.push(indicator)
+        const codes = geometries[indicator.reporting_level] ? Object.keys(geometries[indicator.reporting_level]) : []
+        const indicatorCodes = indicator.data.map(data => data.geometry_code)
+        const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
+        missingCodes.map(code => {
+          indicator.data.push({
+            geometry_code: code,
+            indicator_id: indicator.id
+          })
+        })
       }
-      indicatorsList.push(indicator)
     }
-    const filteredGeometries = filteredGeoms(
-      indicatorsList, allHasData ? currentFilter : null
-    )
-    if (filteredGeometries) {
-      dispatcher(
-        Actions.FilteredGeometries.update(filteredGeometries)
+
+    const currentFilterStr = JSON.stringify(currentFilter)
+    if (allHasData && prevState.current !== currentFilterStr) {
+      const filteredGeometries = filteredGeoms(
+        indicatorsList, currentFilter
       )
+      if (filteredGeometries) {
+        dispatcher(
+          Actions.FilteredGeometries.update(filteredGeometries)
+        )
+      }
+      dispatcher(
+        Actions.FiltersData.update(currentFilter)
+      );
+      prevState.current = currentFilterStr
     }
-    dispatcher(
-      Actions.FiltersData.update(currentFilter)
-    );
   }
 
   // Apply the filters query
@@ -375,7 +404,7 @@ export default function FilterSection() {
       referenceLayerData[referenceLayer.identifier].data.levels) {
       filter(filters)
     }
-  }, [filters, indicatorsData]);
+  }, [filters, indicatorsData, geometries]);
 
   // get indicator fields
   let indicatorFields = []

@@ -89,8 +89,9 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                         )
                     indicator_rule.rule = rule['rule']
                     indicator_rule.color = rule['color']
-                    indicator_rule.order = idx
                     indicator_rule.outline_color = rule['outline_color']
+                    indicator_rule.active = rule['active']
+                    indicator_rule.order = idx
                     indicator_rule.save()
 
             except DashboardIndicator.DoesNotExist:

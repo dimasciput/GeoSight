@@ -1,5 +1,7 @@
 """Admin Indicator Create View."""
 
+import json
+
 from braces.views import SuperuserRequiredMixin
 from django.shortcuts import redirect, reverse, render
 
@@ -50,7 +52,7 @@ class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
         context.update(
             {
                 'form': IndicatorForm(initial=initial),
-                'rules': rules
+                'rules': json.dumps(rules)
             }
         )
         return context
@@ -68,6 +70,10 @@ class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
                     color = request.POST.get(f'rule_color_{idx}', None)
                     outline_color = request.POST.get(
                         f'rule_outline_color_{idx}', None)
+
+                    active = request.POST.get(f'rule_active_{idx}', 'true')
+                    active = True if active.lower() == 'true' else False
+
                     if rule and name:
                         indicator_rule, created = \
                             IndicatorRule.objects.get_or_create(
@@ -78,6 +84,7 @@ class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
                         indicator_rule.color = color
                         indicator_rule.order = idx
                         indicator_rule.outline_color = outline_color
+                        indicator_rule.active = active
                         indicator_rule.save()
             return redirect(reverse('admin-indicator-list-view'))
         context = self.get_context_data(**kwargs)

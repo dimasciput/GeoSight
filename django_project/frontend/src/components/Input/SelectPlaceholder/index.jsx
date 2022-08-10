@@ -6,6 +6,8 @@ import Select from "@mui/material/Select";
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from "@mui/material/MenuItem";
 
+import './style.scss'
+
 /**
  * Select with placeholder
  * @param {str} placeholder Placeholder.
@@ -53,12 +55,34 @@ export default function SelectPlaceholder(
     }
     value={value}
     className={value === 0 ? 'MuiInputBase-empty' : ''}
+    renderValue={
+      value => {
+        let label
+        if (listAndGroup.length > 0) {
+          label = listAndGroup.find(val => val.id === value)
+          if (label) {
+            label = <div className='MuiSelectValue'>
+              <div className='MuiSelectValueGroup'>{label.group}</div>
+              <div>{label.name.split('.')[1]}</div>
+            </div>
+          }
+        } else {
+          label = list.find(val => val.id === value)?.name
+        }
+
+        if (!label) {
+          label = placeholder
+        }
+        return label
+      }
+    }
   >
     <MenuItem
       key={0}
       value={0}
       className='MuiMenuItem-placeholder'
-    >{placeholder}
+    >
+      {placeholder}
     </MenuItem>
     {
       listAndGroup.length > 0 ? (
@@ -80,9 +104,11 @@ export default function SelectPlaceholder(
             key={data.id ? data.id : data}
             value={data.id ? data.id : data}>
             <div>{data.name ? data.name : data}</div>
-            {data.subName ?
-              <div
-                className='MuiMenuItem-subname'>&nbsp;({data.subName})</div> : ''}
+            {
+              data.subName ?
+                <div
+                  className='MuiMenuItem-subname'>&nbsp;({data.subName})</div> : ''
+            }
           </MenuItem>
         })
       )

@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import Checkbox from '@mui/material/Checkbox';
 import {
   DndContext,
   KeyboardSensor,
@@ -18,9 +19,9 @@ import { CSS } from "@dnd-kit/utilities";
 
 import SortableItem from '../../../Admin/Dashboard/Form/ListForm/SortableItem'
 import { AddButton } from "../../../../components/Elements/Button";
+import { arrayMove } from "../../../../utils/Array";
 
 import './style.scss';
-import { arrayMove } from "../../../../utils/Array";
 
 /**
  * Indicator Rule
@@ -214,6 +215,105 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
 }
 
 /**
+ * Indicator Other Rule
+ * @param {dict} rule Rule.
+ * @param {int} idx Index.
+ * @param {Function} onChange OnChange.
+ */
+const NO_DATA_RULE = 'No data'
+const OTHER_DATA_RULE = 'Other data'
+
+export function IndicatorOtherRule({ rule, idx, onChange }) {
+  const ruleNameName = 'rule_name_' + idx;
+  const ruleNameActive = 'rule_active_' + idx;
+  const ruleNameRule = 'rule_rule_' + idx;
+  const ruleNameColor = 'rule_color_' + idx;
+  const ruleNameOutlineColor = 'rule_outline_color_' + idx;
+
+  const [name, setName] = useState(rule.name);
+  const [color, setColor] = useState(rule.color);
+  const [active, setActive] = useState(rule.active);
+  const [outlineColor, setOutlineColor] = useState(rule.outline_color);
+
+  // When the rule changed
+  useEffect(() => {
+    rule.name = name
+    rule.color = color
+    rule.outline_color = outlineColor
+    rule.active = active
+    onChange(idx, rule)
+  }, [name, color, outlineColor, active])
+
+  return (
+    <tr className='OtherData'>
+      <td colSpan={2}>
+        <Checkbox
+          checked={active}
+          onChange={(evt) => {
+            setActive(evt.target.checked)
+          }}/>
+        <input
+          type="hidden" name={ruleNameActive} value={active}
+          onChange={(evt) => {
+          }}/>
+      </td>
+      <td>
+        <input
+          type="text" name={ruleNameName} value={name}
+          spellCheck="false"
+          onChange={(evt) => {
+            setName(evt.target.value)
+          }}/>
+      </td>
+      <td>
+        <input
+          type="text" className="IndicatorRuleValue"
+          name={ruleNameRule}
+          value={rule.rule}
+          onChange={() => {
+          }}/>
+        <div className="RuleSection">
+          <div className="RuleSectionSymbol">value</div>
+          <div className="RuleSectionSymbol">is</div>
+          <div>
+            <input
+              type="text" spellCheck="false"
+              value={rule.rule}
+              disabled={true}
+              onChange={(evt) => {
+              }}
+            />
+          </div>
+        </div>
+      </td>
+      <td>
+        <div className='RuleSectionColor'>
+          <input type="text" name={ruleNameColor} value={color}
+                 onChange={evt => setColor(evt.target.value)}
+                 spellCheck="false"/>
+          <div className='RuleSectionColor-Preview'>
+            <input type="color" spellCheck="false" value={color}
+                   onChange={evt => setColor(evt.target.value)}/>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div className='RuleSectionColor'>
+          <input type="text" name={ruleNameOutlineColor} value={outlineColor}
+                 onChange={evt => setOutlineColor(evt.target.value)}
+                 spellCheck="false"/>
+          <div className='RuleSectionColor-Preview'>
+            <input type="color" spellCheck="false" value={outlineColor}
+                   onChange={evt => setOutlineColor(evt.target.value)}/>
+          </div>
+        </div>
+      </td>
+    </tr>
+  )
+}
+
+
+/**
  * Indicator Rules
  * @param {Array} indicatorRules Indicator rules.
  * @param {Function} onRulesChanged OnChange.
@@ -221,6 +321,7 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
 export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
   const [rules, setRules] = useState(indicatorRules);
   const [items, setItems] = useState([]);
+
   const prevState = useRef();
   const id = 'Rules'
   const {
@@ -245,16 +346,25 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
 
   // When the rule changed
   useEffect(() => {
-    setRules(indicatorRules)
+    const theRules = [...indicatorRules]
+    if (!theRules.filter(rule => rule.rule === NO_DATA_RULE).length) {
+      theRules.push(newRule(theRules, false, NO_DATA_RULE, NO_DATA_RULE, "#FFFFFF"))
+    }
+    if (!theRules.filter(rule => rule.rule === OTHER_DATA_RULE).length) {
+      theRules.push(newRule(theRules, false, OTHER_DATA_RULE, OTHER_DATA_RULE, "#FFFFFF"))
+    }
+    setRules(theRules)
   }, [indicatorRules])
 
   useEffect(() => {
     if (onRulesChanged) {
       onRulesChanged(rules)
     }
-    setItems(rules.map((rule, idx) => {
-      return idx + 1
-    }))
+    setItems(
+      rules.map((rule, idx) => {
+        return idx + 1
+      })
+    )
   }, [rules])
 
   /** On delete a row of rule **/
@@ -269,6 +379,19 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
   }
 
   /** Adding new rule **/
+  const newRule = (theRules, active, defaultValue, defaultName, defaultColor) => {
+    let idx = Math.max(...theRules.map(rule => {
+      return rule.id
+    }))
+    return {
+      "id": idx + 1,
+      "name": defaultName ? defaultName : "",
+      "rule": defaultValue ? defaultValue : "",
+      "color": defaultColor ? defaultColor : "#000000",
+      "outline_color": "#000000",
+      "active": active,
+    }
+  }
   const addNewRule = () => {
     let idx = Math.max(...rules.map(rule => {
       return rule.id
@@ -279,14 +402,7 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
       newRules.push(rules[item - 1])
     })
     setRules(
-      [...newRules,
-        {
-          "id": idx + 1,
-          "name": "",
-          "rule": "",
-          "color": "#000000",
-          "outline_color": "#000000"
-        }]
+      [...newRules, newRule(rules, true)]
     )
   }
   const onChange = (idx, rule) => {
@@ -324,7 +440,7 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
     sensors={sensors}
     onDragEnd={handleDragEnd}
   >
-    <table id="RuleTable">
+    <table id="RuleTable" className='BasicForm'>
       <thead>
       <tr className="RuleTable-Header">
         <th colSpan="2"></th>
@@ -381,7 +497,12 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
         {
           items.map(item => {
             const idx = item - 1;
-            const rule = rules[item - 1]
+            let rule = rules[item - 1]
+            if (rule) {
+              rule = ![
+                NO_DATA_RULE, OTHER_DATA_RULE
+              ].includes(rule.rule) ? rule : null
+            }
             return rule ? <SortableItem key={rule.id} id={item}>
               <IndicatorRule
                 key={rule.id} rule={rule} idx={idx}
@@ -392,6 +513,23 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
           })
         }
       </SortableContext>
+      {
+        items.map(item => {
+          const idx = item - 1;
+          let rule = rules[item - 1]
+          if (rule) {
+            rule = [
+              NO_DATA_RULE, OTHER_DATA_RULE
+            ].includes(rule.rule) ? rule : null
+          }
+          return rule ?
+            <IndicatorOtherRule
+              key={rule.id} rule={rule} idx={idx}
+              onChange={onChange}
+            /> : ""
+
+        })
+      }
       <tr className='IndicatorRule-Divider'>
         <td colSpan={5}>
         </td>

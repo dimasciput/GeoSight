@@ -185,4 +185,15 @@
       }
     }
   }
+
+  .OtherData {
+    .RuleSection {
+      width: fit-content;
+    }
+
+    td:first-child {
+      text-align: right;
+      padding-right: 7px;
+    }
+  }
 }

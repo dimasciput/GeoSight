@@ -8,6 +8,11 @@ export const TYPE = {
   GROUP: 'GROUP',
   EXPRESSION: 'EXPRESSION'
 }
+
+// TODO We need to do it in elegant way
+//  This is matching the key on OPERATOR
+export const IS_NULL = 'IS NULL'
+export const IS_NOT_NULL = 'IS NOT NULL'
 export const OPERATOR = {
   'IN': 'is any of',
   '=': 'is equal',
@@ -15,6 +20,8 @@ export const OPERATOR = {
   '>=': 'is more and equal',
   '<': 'is less than',
   '<=': 'is less and equal',
+  'IS NULL': 'is null',
+  'IS NOT NULL': 'is not null',
 }
 
 /** OPERATOR BETWEEN WHERE */
@@ -144,6 +151,8 @@ export function returnDataToExpression(field, operator, value) {
     } else {
       cleanValue = `('')`
     }
+  } else if ([IS_NULL, IS_NOT_NULL].includes(operator)) {
+    return `${field} ${cleanOperator}`
   }
   return `${field}${cleanOperator}${cleanValue}`
 }

@@ -1,1 +1,1 @@
-export { default as SelectPlaceholder } from "./SelectPlaceholder";
+export { default as SelectPlaceholder } from "./SelectPlaceholder/index";

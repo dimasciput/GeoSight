@@ -34,6 +34,9 @@ class RuleModel(models.Model):
     order = models.IntegerField(
         default=0
     )
+    active = models.BooleanField(
+        default=True
+    )
 
     class Meta:  # noqa: D106
         abstract = True

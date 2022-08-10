@@ -75,7 +75,7 @@ export function Indicator({ checked, layer, onChange }) {
             <table>
               <tbody>
               {
-                layer.rules.map(rule => (
+                layer.rules.filter(rule => rule.active).map(rule => (
                     <tr key={rule.id} className='IndicatorLegendRow'>
                       <td>
                         <div className='IndicatorLegendRow-Color'
@@ -104,6 +104,8 @@ export function Indicators() {
   const dispatch = useDispatch();
   const { indicators } = useSelector(state => state.dashboard.data);
   const indicatorsData = useSelector(state => state.indicatorsData);
+  const geometries = useSelector(state => state.geometries);
+
   const indicatorsEnabled = indicators.filter(indicator => {
     return indicator.visible_by_default
   })

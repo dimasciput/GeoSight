@@ -20,7 +20,6 @@ export default function Index(
     name, operation, property_2
   } = widgetData
 
-
   const geometries = useSelector(state => state.geometries);
 
   /**
@@ -36,9 +35,17 @@ export default function Index(
           data.forEach(function (rowData) {
             const rowValue = parseFloat(rowData.value);
             let groupName = rowData[property_2];
+
+            // Change the name if geometry code
             if (property_2 === 'geometry_code') {
-              groupName = geometries[groupName] ? geometries[groupName].label : groupName;
+              // We need to check max value for all group
+              for (const [level, geometriesLevel] of Object.entries(geometries)) {
+                if (geometriesLevel[groupName]) {
+                  groupName = geometriesLevel[groupName].label;
+                }
+              }
             }
+
             if (!isNaN(rowValue)) {
               if (!byGroup[groupName]) {
                 byGroup[groupName] = {

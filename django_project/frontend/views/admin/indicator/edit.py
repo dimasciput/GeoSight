@@ -1,5 +1,7 @@
 """Admin Indicator Edit View."""
 
+import json
+
 from braces.views import SuperuserRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
@@ -17,7 +19,7 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
     @property
     def page_title(self):
         """Return page title that used on tab bar."""
-        return 'Create Indicator'
+        return 'Edit Indicator'
 
     @property
     def content_title(self):
@@ -46,7 +48,7 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
                 'form': IndicatorForm(
                     initial=IndicatorForm.model_to_initial(indicator)
                 ),
-                'rules': rules
+                'rules': json.dumps(rules)
             }
         )
         return context
@@ -73,6 +75,10 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
                     color = request.POST.get(f'rule_color_{idx}', None)
                     outline_color = request.POST.get(
                         f'rule_outline_color_{idx}', None)
+
+                    active = request.POST.get(f'rule_active_{idx}', 'true')
+                    active = True if active.lower() == 'true' else False
+
                     if rule and name:
                         indicator_rule, created = \
                             IndicatorRule.objects.get_or_create(
@@ -83,6 +89,7 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
                         indicator_rule.color = color
                         indicator_rule.order = order
                         indicator_rule.outline_color = outline_color
+                        indicator_rule.active = active
                         indicator_rule.save()
                         order += 1
             return redirect(reverse('admin-indicator-list-view'))
