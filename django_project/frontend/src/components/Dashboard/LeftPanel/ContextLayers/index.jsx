@@ -154,10 +154,13 @@ function ContextLayerInput({ data }) {
   const className = layer ? 'dashboard__left_side__row' : 'dashboard__left_side__row disabled';
   return (
     <Fragment>
-      <table className={className} title={error}>
+      <table className={className}
+             title={error ? error : !layer ? 'Loading' : ''}>
         <tbody>
         <tr className='dashboard__left_side__row__title' onClick={() => {
-          change(!checked)
+          if (layer) {
+            change(!checked)
+          }
         }}>
           <td>
             <Switch

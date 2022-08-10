@@ -54,6 +54,31 @@ const readSymbol = (symbol) => {
           fillOpacity: 0.7
         },
       };
+    case 'esriPFS': {
+      let style = symbol.outline ? readSymbol(symbol.outline) : {};
+      let icon = {
+        iconUrl: `data:image/png;base64,${symbol.imageData}`,
+        rotation: symbol.angle,
+        color: style ? style['style']?.color : null,
+        weight: style ? style['style']?.width : 0
+      };
+      if (symbol.color) {
+        icon['fillColor'] = `rgba(${symbol.color.join(',')})`
+        icon['fillOpacity'] = 0.7
+      } else {
+        icon['fillColor'] = icon.color
+        icon['fillOpacity'] = 0.1
+      }
+      if (symbol.height && symbol.width) {
+        icon['height'] = symbol.height;
+        icon['width'] = symbol.width;
+        icon['iconSize'] = [symbol.width, symbol.height];
+      }
+      return {
+        type: 'icon',
+        style: icon
+      };
+    }
     default:
       throw `Symbol type ${symbol.type} is not implemented yet.`;
   }

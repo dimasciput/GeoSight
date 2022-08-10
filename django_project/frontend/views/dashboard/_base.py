@@ -26,7 +26,7 @@ class BaseDashboardView(ABC, BaseView):
     @property
     def page_title(self):
         """Return page title that used on tab bar."""
-        return 'Dashboard'
+        return 'Project'
 
     @property
     def content_title(self):

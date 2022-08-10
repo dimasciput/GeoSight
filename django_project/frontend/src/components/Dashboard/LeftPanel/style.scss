@@ -307,10 +307,27 @@
       }
     }
 
+    table {
+      tr {
+        td:first-child {
+          padding-right: 0.3rem;
+        }
+      }
+    }
+
     img {
       height: 20px;
     }
 
+    // LEGEND
+    .circle {
+      border-radius: 50%;
+    }
+
+    .polygon {
+      height: 10px;
+      width: 10px;
+    }
   }
 
   .toggler {

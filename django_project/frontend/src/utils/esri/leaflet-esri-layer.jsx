@@ -60,7 +60,7 @@ export default class EsriLeafletLayer {
         if (data.error) {
           return {
             layer: null,
-            error: data.error.details ? data.error.details : data.error
+            error: data.error.message ? data.error.message : data.error.details ? data.error.details : data.error
           }
         }
         if (data.drawingInfo === undefined) {
@@ -128,12 +128,12 @@ export default class EsriLeafletLayer {
               }
               break
             case "classExactValue":
-              style.classifications.forEach(function (index, classification) {
-                if ('' + value === '' + classification.value) {
-                  leafletStyle = classification.style;
-                  return false;
-                }
-              });
+              const classification = style.classifications.find(
+                classification => ("" + value) === ("" + classification.value)
+              );
+              if (classification) {
+                leafletStyle = classification.style;
+              }
               break
             case "noClassification":
               leafletStyle = style.style;
@@ -227,9 +227,10 @@ export default class EsriLeafletLayer {
         if (style.classifications) {
           style.classifications.forEach(function (classification, index) {
             const color = classification.style.style.fillColor;
+            const outlineColor = classification.style.style.color;
             legend += '' +
               '<tr>' +
-              `<td><div class="polygon" style="background-color: ${color}"></div></td>` +
+              `<td><div class="polygon" style="background-color: ${color}; border: 1px solid ${outlineColor}"></div></td>` +
               `<td>${classification.label}</td>` +
               '</tr>'
           });

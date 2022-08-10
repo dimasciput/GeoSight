@@ -201,6 +201,7 @@ export default function ReferenceLayer({ currentIndicator }) {
       const url = GeorepoUrls.WithDomain(vectorTiles)
       const layer = vectorTileLayer(url, options);
       layer.bindPopup(function (feature) {
+        // CREATE POPUP
         const properties = indicatorsByGeom[feature.properties.code]
           ? Object.assign({}, indicatorsByGeom[feature.properties.code]) : Object.assign({}, feature.properties);
         delete properties.geometry_code
@@ -212,6 +213,8 @@ export default function ReferenceLayer({ currentIndicator }) {
         delete properties.label
         delete properties.type
         delete properties.code
+        delete properties.centroid
+        delete properties.parent_code
         return featurePopupContent(properties.name ? properties.name : 'Reference Layer', properties)
       });
 
