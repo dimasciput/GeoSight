@@ -119,6 +119,7 @@ export default function ReferenceLayer({ currentIndicator }) {
   const [clickedFeature, setClickedFeature] = useState(null);
 
   const where = returnWhere(filtersData ? filtersData : [])
+  const [prevWhere, setPrevWhere] = useState(JSON.stringify(where));
 
   // Filter geometry_code based on indicators layer
   // Also filter by levels that found on indicators
@@ -144,8 +145,7 @@ export default function ReferenceLayer({ currentIndicator }) {
     }
   }, [referenceLayer]);
 
-
-  useEffect(() => {
+  const updateLayer = () => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
     const levels = referenceLayerData[referenceLayer.identifier]?.data?.levels
     if (vectorTiles) {
@@ -241,9 +241,25 @@ export default function ReferenceLayer({ currentIndicator }) {
         )
       }, this);
     }
+  }
+
+  useEffect(() => {
+    updateLayer()
   }, [
     referenceLayer, referenceLayerData, indicatorsData,
-    currentIndicator, filteredGeometries
+    currentIndicator
+  ]);
+
+
+  // Rerender if filters
+  useEffect(() => {
+    const whereStr = JSON.stringify(where)
+    if (prevWhere !== whereStr) {
+      updateLayer()
+      setPrevWhere(whereStr)
+    }
+  }, [
+    filteredGeometries
   ]);
 
   return (
