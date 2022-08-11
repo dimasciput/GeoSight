@@ -147,6 +147,10 @@
       }
     }
 
+    &.Hidden {
+      display: none;
+    }
+
     .FilterGroupHeader {
       box-sizing: border-box;
       height: 18px;

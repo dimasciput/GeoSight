@@ -3,6 +3,7 @@
    ========================================================================== */
 
 import React, { Fragment, useEffect, useRef, useState } from 'react'
+import $ from 'jquery'
 import { useDispatch, useSelector } from "react-redux"
 import Tooltip from '@mui/material/Tooltip'
 import { styled } from '@mui/material/styles';
@@ -14,7 +15,6 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-import WarningIcon from '@mui/icons-material/Warning';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {
@@ -78,6 +78,20 @@ export function FilterControl(
       setFilters({ ...filters });
     }
   }
+
+  // When component updated
+  useEffect(() => {
+    if (!editMode) {
+      // We hide group if not have filter
+      $('.FilterGroup').each(function () {
+        if ($(this).find('.MuiPaper-root').length === 0) {
+          $(this).addClass('Hidden')
+        } else {
+          $(this).removeClass('Hidden')
+        }
+      })
+    }
+  });
 
   /** --------------------------------------------------
    ** Render filter group.
@@ -271,7 +285,7 @@ export function FilterControl(
                 field={field}
                 value={currentValue} operator={operator}
                 indicator={indicator} onChange={updateValue}
-                disabled={!where.active || differentLevel}/>
+                disabled={!where.active}/>
             </div> : ""
         }
         {where.description ?
@@ -282,9 +296,12 @@ export function FilterControl(
     }
 
     const ableToExpand = where.allowModify || editMode;
+    if (differentLevel) {
+      return ""
+    }
 
     return <Accordion
-      className={'FilterExpression ' + (differentLevel ? "Disabled" : "")}
+      className={'FilterExpression'}
       expanded={!ableToExpand ? false : expanded}
       onChange={updateExpanded}>
       <AccordionSummary
@@ -293,36 +310,20 @@ export function FilterControl(
         <div
           className='FilterExpressionName'
           onClick={(event) => {
-            if (!differentLevel) {
-              updateActive(!active)
-              if (!active) {
-                setExpanded(true)
-              } else {
-                setExpanded(false)
-              }
-              event.stopPropagation()
+            updateActive(!active)
+            if (!active) {
+              setExpanded(true)
+            } else {
+              setExpanded(false)
             }
+            event.stopPropagation()
           }}>
           <Switch
             size="small"
             checked={active}
             onChange={() => {
             }}
-            disabled={differentLevel}
           />
-          {
-            differentLevel ?
-              <div className='FilterInfo'>
-                <Tooltip
-                  title={
-                    "Filter will not affect indicator on the map because the differences of admin level. " +
-                    "Filter admin is " + reportingLevel + " but indicator on map is " + selectedIndicator.reporting_level + "."
-                  }
-                >
-                  <WarningIcon/>
-                </Tooltip>
-              </div> : ""
-          }
           {
             where.name ?
               <div>{where.name}</div> :
@@ -502,8 +503,7 @@ export default function FilterSection() {
   return <Fragment>
     <div className='FilterControl'>
       <div className='FilterControlInfo'>
-        Filter is active if the admin of filter is same with the admin of
-        indicator on the map.
+        Filter changes based on the admin level shows on the map.
       </div>
       <FilterControl
         filtersData={
