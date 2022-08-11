@@ -138,3 +138,11 @@ textarea {
   overflow: hidden;
   padding: 0;
 }
+
+.LeafletSquareIcon {
+  div {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

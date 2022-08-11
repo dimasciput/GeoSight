@@ -190,13 +190,28 @@ export default class EsriLeafletLayer {
                 return L.circleMarker(
                   latlng, leafletStyle.style
                 );
-              case 'icon':
+              case 'square': {
+                const radius = leafletStyle.style.radius * 2;
+                const color = leafletStyle.style.color
+                const fillColor = leafletStyle.style.fillColor
+                const weight = leafletStyle.style.weight
+                var icon = L.divIcon({
+                  html: `<div style="background-color: ${fillColor}; border: ${weight}px solid ${color}"></div>`,
+                  className: 'LeafletSquareIcon',
+                  iconSize: [radius, radius]
+                });
+                return L.marker(latlng, {
+                  icon: icon
+                });
+              }
+              case 'icon': {
                 const icon = L.icon(leafletStyle.style);
                 return L.marker(
                   latlng, {
                     icon: icon
                   }
                 );
+              }
 
             }
           }
@@ -264,7 +279,7 @@ export default class EsriLeafletLayer {
         if (style.classifications) {
           style.classifications.forEach(function (classification, index) {
             switch (classification.style.type) {
-              case 'circle':
+              case 'circle': {
                 const size = classification.style.style.radius;
                 const fillColor = classification.style.style.fillColor;
                 legend += '' +
@@ -273,6 +288,17 @@ export default class EsriLeafletLayer {
                   `<td>${classification.label}</td>` +
                   '</tr>'
                 break
+              }
+              case 'square': {
+                const size = classification.style.style.radius;
+                const fillColor = classification.style.style.fillColor;
+                legend += '' +
+                  '<tr>' +
+                  `<td><div class="square" style="width: ${size}px; height: ${size}px; background-color: ${fillColor}"></div></td>` +
+                  `<td>${classification.label}</td>` +
+                  '</tr>'
+                break
+              }
               case 'icon':
                 legend += '' +
                   '<tr>' +

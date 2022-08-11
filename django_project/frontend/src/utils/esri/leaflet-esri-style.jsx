@@ -13,11 +13,22 @@ const readSymbol = (symbol) => {
               fillColor: symbol.color ? `rgba(${symbol.color.join(',')})` : null,
               color: symbol.outline && symbol.outline.color ? `rgba(${symbol.outline.color.join(',')})` : null,
               weight: symbol.outline && symbol.outline.width ? symbol.outline.width : null,
-              fillOpacity: 0.7
+              fillOpacity: 1
+            },
+          };
+        case 'esriSMSSquare':
+          return {
+            type: 'square',
+            style: {
+              radius: symbol.size,
+              fillColor: symbol.color ? `rgba(${symbol.color.join(',')})` : null,
+              color: symbol.outline && symbol.outline.color ? `rgba(${symbol.outline.color.join(',')})` : null,
+              weight: symbol.outline && symbol.outline.width ? symbol.outline.width : null,
+              fillOpacity: 1
             },
           };
         default:
-          return
+          throw `Symbol type ${symbol.type} and style ${symbol.style} is not implemented yet.`;
       }
     case 'esriPMS':
       let icon = {
@@ -40,7 +51,7 @@ const readSymbol = (symbol) => {
         style: {
           color: `rgba(${symbol.color.join(',')})`,
           width: symbol.width,
-          fillOpacity: 0.7
+          fillOpacity: 1
         },
       };
     case 'esriSFS':
@@ -51,7 +62,7 @@ const readSymbol = (symbol) => {
           color: style ? style['style']?.color : null,
           weight: style ? style['style']?.width : 0,
           fillColor: `rgba(${symbol.color.join(',')})`,
-          fillOpacity: 0.7
+          fillOpacity: 1
         },
       };
     case 'esriPFS': {
@@ -64,7 +75,7 @@ const readSymbol = (symbol) => {
       };
       if (symbol.color) {
         icon['fillColor'] = `rgba(${symbol.color.join(',')})`
-        icon['fillOpacity'] = 0.7
+        icon['fillOpacity'] = 1
       } else {
         icon['fillColor'] = icon.color
         icon['fillOpacity'] = 0.1
