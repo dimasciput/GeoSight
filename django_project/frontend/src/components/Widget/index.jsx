@@ -133,8 +133,7 @@ export function Widget({ idx, data }) {
 /**
  * Widget List rendering
  */
-export default function WidgetList() {
-  const { widgets } = useSelector(state => state.dashboard.data);
+export default function WidgetList({widgets}) {
   return <Fragment>
     {
       widgets ?
