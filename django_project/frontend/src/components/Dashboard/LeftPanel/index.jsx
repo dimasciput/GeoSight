@@ -34,7 +34,11 @@ export default function LeftPanel() {
   const [expanded, setExpanded] = useState('indicators');
 
   const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(expanded === 'indicators' ? 'contextLayers' : 'indicators');
+    if (panel === 'referenceLayer' && isExpanded) {
+      setExpanded('referenceLayer')
+    }else {
+      setExpanded(expanded === 'indicators' ? 'contextLayers' : 'indicators');
+    }
   };
 
   const className = `dashboard__panel dashboard__left_side ${state} ${expanded ? 'expanded' : ''} `
@@ -57,7 +61,10 @@ export default function LeftPanel() {
           </div>
         </div>
         <div className='dashboard__content-wrapper__inner dataset-wrapper'>
-          <ReferenceLayerSection/>
+          <ReferenceLayerSection
+            expanded={expanded === 'referenceLayer'}
+            handleChange={handleChange}
+          />
           <ContextLayersAccordion
             expanded={expanded === 'contextLayers'}
             handleChange={handleChange}

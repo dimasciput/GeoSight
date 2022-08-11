@@ -140,9 +140,15 @@
     overflow: hidden;
     padding: 0 0.5rem 0.5rem 0.5rem;
 
+    .MuiAccordionSummary-title-desc {
+      color: $base-black-color;
+      font-weight: $base-font-light;
+    }
+
     .reference-dataset {
-      &.Mui-expanded {
-        flex-grow: unset !important;
+
+      .MuiAccordionDetails-root {
+        padding-top: 0;
       }
 
       b {
@@ -157,6 +163,10 @@
     > .MuiPaper-root {
       margin: 0.2rem 0;
       border-radius: $border-radius;
+
+      &.Mui-expanded {
+        margin: 0.2rem 0;
+      }
 
       &:before {
         display: none;
@@ -173,12 +183,6 @@
       flex-grow: 1 !important;
       overflow: auto;
       height: 0 !important;
-    }
-
-    > .MuiPaper-root.reference-dataset > .MuiCollapse-root {
-      flex-grow: unset !important;
-      overflow: auto;
-      height: fit-content !important;
     }
 
     .MuiPaper-root {
