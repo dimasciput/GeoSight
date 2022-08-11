@@ -50,8 +50,11 @@ export function OperatorSwitcher({ ...props }) {
  * @param {dict} filtersData Filters of dashboard.
  * @param {list} indicatorFields Indicator fields.
  * @param {Function} filter Filter function.
+ * @param {bool} ableToModify Able to modify.
  */
-export function FilterControl({ filtersData, indicatorFields, filter }) {
+export function FilterControl(
+  { filtersData, indicatorFields, filter, ableToModify }
+) {
   const dispatcher = useDispatch()
   const [filters, setFilters] = useState(filtersData)
   const selectedIndicator = useSelector(state => state.selectedIndicator)
@@ -129,67 +132,74 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
               groupCheckedChanged(where, !where.active)
             }}
           />
-          <OperatorSwitcher
-            checked={operator === WHERE_OPERATOR.AND}
-            onChange={() => {
-              switchWhere(operator === WHERE_OPERATOR.AND ? WHERE_OPERATOR.OR : WHERE_OPERATOR.AND)
-            }}/>
-          <div className='FilterGroupName'>
-          </div>
-          <Tooltip title="Add New Filter">
-            <AddCircleIcon
-              className='FilterGroupAddExpression MuiButtonLike'
-              onClick={
-                () => {
-                  setOpen(true)
-                  setAddType(TYPE.EXPRESSION)
-                }}/>
-          </Tooltip>
-          <Tooltip title="Add New Group">
-            <CreateNewFolderIcon
-              className='FilterGroupAdd MuiButtonLike' onClick={
-              () => {
-                setOpen(true)
-                setAddType(TYPE.GROUP)
-              }
-            }/>
-          </Tooltip>
-          <FilterEditorModal
-            open={open}
-            setOpen={(opened) => {
-              setOpen(opened)
-              setData(INIT_DATA.WHERE());
-            }}
-            data={data}
-            fields={indicatorFields}
-            update={add}/>
           {
-            upperWhere ? (
-              <Tooltip title="Delete Group">
-                <DoDisturbOnIcon
-                  className='FilterGroupDelete MuiButtonLike' onClick={
-                  () => {
-                    let isExecuted = confirm("Are you want to delete this group?");
-                    if (isExecuted) {
-                      upperWhere.queries = [...upperWhere.queries.filter(query => {
-                        return query !== where
-                      })]
-                      updateFilter(true)
+            ableToModify ?
+              <Fragment>
+                <OperatorSwitcher
+                  checked={operator === WHERE_OPERATOR.AND}
+                  onChange={() => {
+                    switchWhere(operator === WHERE_OPERATOR.AND ? WHERE_OPERATOR.OR : WHERE_OPERATOR.AND)
+                  }}/>
+                <div className='FilterGroupName'>
+                </div>
+                <Tooltip title="Add New Filter">
+                  <AddCircleIcon
+                    className='FilterGroupAddExpression MuiButtonLike'
+                    onClick={
+                      () => {
+                        setOpen(true)
+                        setAddType(TYPE.EXPRESSION)
+                      }}/>
+                </Tooltip>
+                <Tooltip title="Add New Group">
+                  <CreateNewFolderIcon
+                    className='FilterGroupAdd MuiButtonLike' onClick={
+                    () => {
+                      setOpen(true)
+                      setAddType(TYPE.GROUP)
                     }
-                  }
-                }/>
-              </Tooltip>
-            ) : ''}
-          <div className='FilterGroupEnd'>
-          </div>
+                  }/>
+                </Tooltip>
+                <FilterEditorModal
+                  open={open}
+                  setOpen={(opened) => {
+                    setOpen(opened)
+                    setData(INIT_DATA.WHERE());
+                  }}
+                  data={data}
+                  fields={indicatorFields}
+                  update={add}/>
+                {
+                  upperWhere ? (
+                    <Tooltip title="Delete Group">
+                      <DoDisturbOnIcon
+                        className='FilterGroupDelete MuiButtonLike' onClick={
+                        () => {
+                          let isExecuted = confirm("Are you want to delete this group?");
+                          if (isExecuted) {
+                            upperWhere.queries = [...upperWhere.queries.filter(query => {
+                              return query !== where
+                            })]
+                            updateFilter(true)
+                          }
+                        }
+                      }/>
+                    </Tooltip>
+                  ) : ''}
+                <div className='FilterGroupEnd'>
+                </div>
+              </Fragment> :
+              <div className='OperatorIdentifier'>{operator}</div>
+          }
         </div>
       </div>
       {
         where.queries.length > 0 ?
           where.queries.map(
             (query, idx) => (
-              <FilterRender key={idx} where={query} upperWhere={where}
-                            updateFilter={updateFilter}/>
+              <FilterRender
+                key={idx} where={query} upperWhere={where}
+                updateFilter={updateFilter}/>
             )
           )
           :
@@ -224,6 +234,7 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
       where.value = newWhere.value
       where.name = newWhere.name
       where.description = newWhere.description
+      where.allowModify = newWhere.allowModify
       updateFilter(true)
     }
     const field = where.field
@@ -270,12 +281,14 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
       </div>
     }
 
+    const ableToExpand = where.allowModify || editMode;
+
     return <Accordion
       className={'FilterExpression ' + (differentLevel ? "Disabled" : "")}
-      expanded={expanded}
+      expanded={!ableToExpand ? false : expanded}
       onChange={updateExpanded}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon/>}
+        expandIcon={ableToExpand ? <ExpandMoreIcon/> : ""}
       >
         <div
           className='FilterExpressionName'
@@ -318,37 +331,42 @@ export function FilterControl({ filtersData, indicatorFields, filter }) {
                 <div>Loading</div>
           }
         </div>
-        <ModeEditIcon
-          className='MuiButtonLike FilterEdit'
-          onClick={(event) => {
-            event.stopPropagation()
-            setOpen(true)
-          }}/>
-        {
-          upperWhere ? (
-            <Tooltip title="Delete Filter">
-              <DoDisturbOnIcon
-                className='MuiButtonLike FilterDelete MuiButtonLike' onClick={
-                () => {
-                  let isExecuted = confirm("Are you want to delete this group?");
-                  if (isExecuted) {
-                    upperWhere.queries = [...upperWhere.queries.filter(query => {
-                      return query !== where
-                    })]
-                    updateFilter(true)
-                  }
-                }
-              }/>
-            </Tooltip>
-          ) : ''
-        }
+        {ableToModify ?
+          <Fragment>
+            <ModeEditIcon
+              className='MuiButtonLike FilterEdit'
+              onClick={(event) => {
+                event.stopPropagation()
+                setOpen(true)
+              }}/>
+            {
+              upperWhere ? (
+                <Tooltip title="Delete Filter">
+                  <DoDisturbOnIcon
+                    className='MuiButtonLike FilterDelete MuiButtonLike'
+                    onClick={
+                      () => {
+                        let isExecuted = confirm("Are you want to delete this group?");
+                        if (isExecuted) {
+                          upperWhere.queries = [...upperWhere.queries.filter(query => {
+                            return query !== where
+                          })]
+                          updateFilter(true)
+                        }
+                      }
+                    }/>
+                </Tooltip>
+              ) : ''
+            }
 
-        <FilterEditorModal
-          open={open} setOpen={setOpen} data={where}
-          fields={indicatorFields} update={update}/>
+            <FilterEditorModal
+              open={open} setOpen={setOpen} data={where}
+              fields={indicatorFields} update={update}/>
+          </Fragment>
+          : ""}
       </AccordionSummary>
       <AccordionDetails>
-        <FilterInputElement/>
+        {ableToExpand ? <FilterInputElement/> : ""}
       </AccordionDetails>
     </Accordion>
   }
@@ -382,8 +400,12 @@ export default function FilterSection() {
   const {
     filters,
     indicators,
-    referenceLayer
+    referenceLayer,
+    filtersAllowModify
   } = useSelector(state => state.dashboard.data);
+
+  const ableToModify = filtersAllowModify || editMode;
+
   const referenceLayerData = useSelector(state => state.referenceLayerData)
   const indicatorsData = useSelector(state => state.indicatorsData)
   const geometries = useSelector(state => state.geometries);
@@ -489,6 +511,7 @@ export default function FilterSection() {
         }
         indicatorFields={indicatorFields}
         filter={filter}
+        ableToModify={ableToModify}
       />
     </div>
   </Fragment>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, FormControl, Input, InputLabel } from "@mui/material";
+import Checkbox from '@mui/material/Checkbox';
 import { OPERATOR } from "../../../../utils/queryExtraction";
 import Modal, { ModalContent, ModalHeader } from "../../../Modal";
 import { SelectPlaceholder } from "../../../Input";
@@ -31,6 +32,7 @@ export default function FilterEditorModal(
   const [value, setValue] = useState(data.value ? data.value : '')
   const [name, setName] = useState(data.name ? data.name : '')
   const [description, setDescription] = useState(data.description ? data.description : '')
+  const [allowModify, setAllowChange] = useState(data.allowModify ? data.allowModify : false)
 
   let currentValue = updateValue(value);
 
@@ -51,6 +53,7 @@ export default function FilterEditorModal(
         value: currentValue,
         name: name,
         description: description,
+        allowModify: allowModify,
       })
     }
   }
@@ -125,6 +128,12 @@ export default function FilterEditorModal(
                 indicator={indicator} onChange={setValue}/> : ""
             }
           </div>
+        </div>
+        <div>
+          <br/>
+          <Checkbox checked={allowModify} onChange={(evt) => {
+            setAllowChange(evt.target.checked)
+          }}/> Allow users to modify filter parameters (values)
         </div>
         <Button
           variant="primary"

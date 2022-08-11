@@ -3,7 +3,7 @@ import indicatorReducer, { INDICATOR_ACTION_NAME } from '../indicators'
 import basemapsReducer, { BASEMAP_ACTION_NAME } from '../basemap'
 import widgetsReducer, { WIDGET_ACTION_NAME } from "../widgets";
 import extentReducer, { EXTENT_DEFAULT_ACTION_NAME } from "../extent";
-import filtersReducer , { FILTERS_ACTION_NAME } from "../filters";
+import filtersReducer, { FILTERS_ACTION_NAME } from "../filters";
 import referenceLayerReducer, {
   REFERENCE_LAYER_ACTION_NAME
 } from '../referenceLayer'
@@ -16,6 +16,7 @@ import contextLayersReducer, {
  */
 export const DASHBOARD_ACTION_NAME = 'DASHBOARD';
 export const DASHBOARD_ACTION_TYPE_UPDATE = 'DASHBOARD/UPDATE';
+export const DASHBOARD_ACTION_TYPE_FILTERS_ALLOW_MODIFY = 'DASHBOARD/FILTERS_ALLOW_MODIFY';
 const dashboardInitialState = {
   fetching: false,
   fetched: false,
@@ -33,6 +34,15 @@ export default function dashboardReducer(
           return {
             ...state,
             data: action.payload
+          }
+        }
+        case DASHBOARD_ACTION_TYPE_FILTERS_ALLOW_MODIFY: {
+          return {
+            ...state,
+            data: {
+              ...state.data,
+              filtersAllowModify: !state.data.filtersAllowModify
+            }
           }
         }
         default: {

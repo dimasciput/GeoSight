@@ -51,6 +51,9 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
     filters = models.TextField(
         blank=True, null=True
     )
+    filters_allow_modify = models.BooleanField(
+        default=False
+    )
 
     # group
     group = models.ForeignKey(

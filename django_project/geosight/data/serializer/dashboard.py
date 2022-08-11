@@ -39,6 +39,7 @@ class DashboardSerializer(serializers.ModelSerializer):
     widgets = serializers.SerializerMethodField()
     extent = serializers.SerializerMethodField()
     filters = serializers.SerializerMethodField()
+    filtersAllowModify = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     group = serializers.SerializerMethodField()
 
@@ -123,6 +124,10 @@ class DashboardSerializer(serializers.ModelSerializer):
         else:
             return []
 
+    def get_filtersAllowModify(self, obj: Dashboard):
+        """Return Allow Modify."""
+        return obj.filters_allow_modify
+
     def get_category(self, obj: Dashboard):
         """Return dashboard category name."""
         return obj.group.name if obj.group else ''
@@ -137,7 +142,8 @@ class DashboardSerializer(serializers.ModelSerializer):
             'id', 'icon', 'name', 'description',
             'referenceLayer', 'indicators',
             'basemapsLayers', 'contextLayers',
-            'widgets', 'extent', 'filters', 'category', 'group'
+            'widgets', 'extent', 'filters', 'filtersAllowModify',
+            'category', 'group'
         )
 
 

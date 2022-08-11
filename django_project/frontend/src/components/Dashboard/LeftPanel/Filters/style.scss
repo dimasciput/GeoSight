@@ -70,10 +70,10 @@
       align-items: flex-start;
 
       &.Mui-checked {
-        -webkit-transform: translateX(36px);
-        -moz-transform: translateX(36px);
-        -ms-transform: translateX(36px);
-        transform: translateX(36px);
+        -webkit-transform: translateX(34px);
+        -moz-transform: translateX(34px);
+        -ms-transform: translateX(34px);
+        transform: translateX(34px);
 
         .MuiSwitch-thumb {
           border-radius: 0;
@@ -89,7 +89,7 @@
       border-radius: 0;
       border-bottom-left-radius: $border-radius;
       border-top-left-radius: $border-radius;
-      width: 30px;
+      width: 32px;
       height: 16px;
     }
 
@@ -169,6 +169,10 @@
 
         .FilterGroupEnd {
           width: 5px;
+        }
+
+        .OperatorIdentifier {
+          padding: 3px 0 0 5px;
         }
 
         .MuiButtonLike {

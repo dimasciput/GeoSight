@@ -180,7 +180,8 @@ export function DashboardSaveForm(
     basemapsLayers,
     contextLayers,
     widgets,
-    extent
+    extent,
+    filtersAllowModify
   } = useSelector(state => state.dashboard.data);
   const { data } = useSelector(state => state.dashboard);
   const filtersData = useSelector(state => state.filtersData);
@@ -251,7 +252,8 @@ export function DashboardSaveForm(
         }),
         'extent': extent,
         'widgets': widgets,
-        'filters': filtersData
+        'filters': filtersData,
+        'filtersAllowModify': filtersAllowModify
       }
 
       // onOpen();

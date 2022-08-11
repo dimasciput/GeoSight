@@ -82,4 +82,6 @@ class DashboardForm(forms.ModelForm):
         data['widgets'] = other_data['widgets']
 
         data['filters'] = json.dumps(other_data['filters'])
+        data['filters_allow_modify'] = other_data.get(
+            'filtersAllowModify', False)
         return data
