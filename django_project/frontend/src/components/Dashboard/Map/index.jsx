@@ -43,7 +43,7 @@ export default function Map() {
 
       const newMap = L.map('map', {
         center: [0, 0],
-        zoom: 6,
+        zoom: 2,
         layers: [basemapLayerGroup, contextLayerGroup, referenceLayerGroup],
         zoomControl: false,
         maxZoom: maxZoom
@@ -62,13 +62,18 @@ export default function Map() {
         [extent[1], extent[0]],
         [extent[3], extent[2]]
       ])
-      if(!navControl) {
-        setNavControl(
-          L.control.navbar({
-          position: 'topleft'
-        }).addTo(map)
-        )
-      }
+
+      // TODO:
+      //  Nav control initiate before fit bounds done
+      setTimeout(function () {
+        if (!navControl) {
+          setNavControl(
+            L.control.navbar({
+              position: 'topleft'
+            }).addTo(map)
+          )
+        }
+      }, 300);
     }
   }, [map, extent]);
 
