@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import App, { render } from '../../app';
 import { Actions, store } from '../../store/dashboard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import './style.scss';
 export default function Dashboard() {
   const dispatch = useDispatch();
   const { data } = useSelector(state => state.dashboard);
+  const [leftExpanded, setLeftExpanded] = useState(true);
 
   // Fetch data of dashboard
   useEffect(() => {
@@ -21,10 +22,10 @@ export default function Dashboard() {
 
   return (
     <App>
-      <div className='dashboard'>
+      <div className={'dashboard ' + (leftExpanded ? 'LeftExpanded' : "")}>
         {Object.keys(data).length > 0 ?
           <Fragment>
-            <LeftPanel/>
+            <LeftPanel setLeftExpanded={setLeftExpanded}/>
             <Map/>
             <RightPanel/>
           </Fragment> :

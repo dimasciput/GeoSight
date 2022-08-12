@@ -133,6 +133,7 @@ export function DashboardHistory(
 export function DashboardPreview({ currentMode, setCurrentMode }) {
   const dispatch = useDispatch();
   const { data } = useSelector(state => state.dashboard);
+  const [leftExpanded, setLeftExpanded] = useState(true);
 
   useEffect(() => {
     dispatch(
@@ -141,7 +142,7 @@ export function DashboardPreview({ currentMode, setCurrentMode }) {
   }, []);
 
   return (
-    <div className='dashboard'>
+    <div className={'dashboard ' + (leftExpanded ? 'LeftExpanded' : "")}>
       <div className='BackToForm'>
         <ThemeButton
           variant="secondary"
@@ -154,7 +155,7 @@ export function DashboardPreview({ currentMode, setCurrentMode }) {
       </div>
       {Object.keys(data).length > 0 ?
         <Fragment>
-          <LeftPanel/>
+          <LeftPanel setLeftExpanded={setLeftExpanded}/>
           <Map/>
           <RightPanel/>
         </Fragment> :

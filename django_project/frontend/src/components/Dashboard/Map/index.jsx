@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import L from 'leaflet';
+import Navbar from 'leaflet-navbar';
 
 import './style.scss';
 
@@ -24,6 +25,7 @@ export default function Map() {
   const [basemapLayerGroup, setBasemapLayerGroup] = useState(null);
   const [referenceLayerGroup, setReferenceLayerGroup] = useState(null);
   const [contextLayerGroup, setContextLayerGroup] = useState(null);
+  const [navControl, setNavControl] = useState(null);
 
   // Pane identifier
   const basemapPane = 'basemapPane';
@@ -60,6 +62,13 @@ export default function Map() {
         [extent[1], extent[0]],
         [extent[3], extent[2]]
       ])
+      if(!navControl) {
+        setNavControl(
+          L.control.navbar({
+          position: 'topleft'
+        }).addTo(map)
+        )
+      }
     }
   }, [map, extent]);
 

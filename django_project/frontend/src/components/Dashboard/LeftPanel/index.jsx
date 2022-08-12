@@ -18,7 +18,7 @@ import './style.scss';
 /**
  * Left panel.
  */
-export default function LeftPanel() {
+export default function LeftPanel({ setLeftExpanded }) {
   const {
     basemapsLayers
   } = useSelector(state => state.dashboard.data);
@@ -27,16 +27,22 @@ export default function LeftPanel() {
 
   const onLeft = () => {
     setState(LEFT);
+    if (setLeftExpanded) {
+      setLeftExpanded(true)
+    }
   };
   const onRight = () => {
     setState(RIGHT);
+    if (setLeftExpanded) {
+      setLeftExpanded(false)
+    }
   };
   const [expanded, setExpanded] = useState('indicators');
 
   const handleChange = (panel) => (event, isExpanded) => {
     if (panel === 'referenceLayer' && isExpanded) {
       setExpanded('referenceLayer')
-    }else {
+    } else {
       setExpanded(expanded === 'indicators' ? 'contextLayers' : 'indicators');
     }
   };
