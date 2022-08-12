@@ -71,4 +71,13 @@ Administrators who would like to set a username and password can do so in the fi
 
 Once all required boxes are complete and you have filled out the optional boxes of your choice click submit in the top right corner. In doing this, the context layer will be created.
 
-##Context Layers for Users
+## Context Layers for Users
+Users cannot adjust or add new context layers. Instead, they can only turn them on and off.
+
+To access context layers as a user from the GeoSight home page, choose a project and then click the tab in thr legened labeled "Context Layers". This wil allow you to see every available context layer which should be turned off as a default. 
+
+To activate context layers, click the slider next to the layer name. The layer is activated and viewable when the slider turns blue and an icon appears both in the legend, and on the map.
+
+Finally, the small black arrow next to a layer name when it is active allows the user to hide/unhide the layer's icon from the legend.
+
+With context layers activated users can use the real-time monitoring tools to compare various indicator to important environmental and socio-economic indicators. They can be an important tool for understanding the larger dynamics of risk and enable users to make decisions based on a more complete picture.
