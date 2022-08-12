@@ -42,7 +42,7 @@ export function COLUMNS_ACTION(
               <div className='error' onClick={
                 () => {
                   const api = detailUrl.replace('/0', `/${params.id}`);
-                  if (confirm(`Are you sure you want to delete : ${params.row.name}?`)) {
+                  if (confirm(`Are you sure you want to delete : ${params.row.name ? params.row.name : params.row.id}?`)) {
                     $.ajax({
                       url: api,
                       method: 'DELETE',
@@ -112,10 +112,12 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
  * @param {String} pageName Page Name.
  * @param {String} listUrl Url for list row.
  * @param {list} initData Init Data.
+ * @param {function} selectionChanged Function when selection changed.
  */
 export default function List(
   {
-    columns, pageName, listUrl, initData
+    columns, pageName, listUrl, initData,
+    selectionChanged
   }
 ) {
   const [data, setData] = useState(initData);
@@ -163,7 +165,8 @@ export default function List(
 
       <div className='AdminList'>
         <AdminTable
-          rows={rows} columns={columns}/>
+          rows={rows} columns={columns}
+          selectionChanged={selectionChanged}/>
       </div>
     </Fragment>
   );

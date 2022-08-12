@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from "@mui/x-data-grid";
 
 /**
  * Admin Table
  * @param {Array} rows List of data.
  * @param {Array} columns Columns for the table.
+ * @param {function} selectionChanged Function when selection changed.
  */
 export function AdminTable(
   {
-    rows, columns
+    rows, columns, selectionChanged = null
   }
 ) {
+  const [selectionModel, setSelectionModel] = useState([]);
+
+  // When selection model show
+  useEffect(() => {
+    if (selectionChanged) {
+      selectionChanged(selectionModel)
+    }
+  }, [selectionModel]);
+
   if (rows) {
     return (
       <div className='AdminTable'>
@@ -25,6 +35,12 @@ export function AdminTable(
             },
           }}
           disableSelectionOnClick
+
+          checkboxSelection={!!selectionChanged}
+          onSelectionModelChange={(newSelectionModel) => {
+            setSelectionModel(newSelectionModel);
+          }}
+          selectionModel={selectionModel}
         />
       </div>
     )

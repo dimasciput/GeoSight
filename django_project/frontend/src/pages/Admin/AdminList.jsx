@@ -13,11 +13,13 @@ import './style.scss';
  * @param {String} pageName Page Name.
  * @param {String} listUrl Url for list row.
  * @param {React.Component} children React component to be rendered
+ * @param {function} selectionChanged Function when selection changed.
  */
 export default function AdminList(
   {
     columns, pageName,
-    listUrl, rightHeader = null
+    listUrl, selectionChanged,
+    rightHeader = null,
   }
 ) {
 
@@ -36,7 +38,9 @@ export default function AdminList(
           </a>
         )
       }>
-      <List columns={columns} pageName={pageName} listUrl={listUrl}/>
+      <List
+        columns={columns} pageName={pageName} listUrl={listUrl}
+        selectionChanged={selectionChanged}/>
     </Admin>
   );
 }

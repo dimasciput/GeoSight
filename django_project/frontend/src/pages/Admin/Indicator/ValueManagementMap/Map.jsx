@@ -76,11 +76,8 @@ export default function Map() {
           onEachFeature: function (feature, layer) {
             const identifier = feature?.properties?.identifier?.admin;
             const id = identifier;
-            if (!identifier) {
-              console.log(feature)
-            }
             feature.properties['id'] = id;
-            feature.properties['url'] = urlValueByGeometry.replace('/0/', '/' + identifier + '/');
+            feature.properties['url'] = urlValueByGeometry.replace('/0', '/' + identifier);
 
             // update bind popup
             layer.bindPopup(
@@ -108,6 +105,7 @@ export default function Map() {
                       <div class="popup-content-table">
                           <table>
                               <tr>
+                                  <th><b>x</b></th>
                                   <th><b>Date</b></th>
                                   <th>Value</th>
                               </tr>
@@ -125,15 +123,40 @@ export default function Map() {
                 const $popup = $('.popup-content')
 
                 function loadData() {
+                  const url = urlValueByGeometry.replace('/0', '/' + id);
                   $.ajax({
-                    url: urlValueByGeometry.replace('/0/', '/' + id + '/'),
+                    url: url,
                     dataType: 'json',
                     success: function (data, textStatus, request) {
                       $('.loading').remove()
                       const $table = $popup.find('table');
+
+                      const onClick = (valueID) => {
+                        if (!valueID) {
+                          return
+                        }
+                        if (confirm(`Are you sure you want to delete this value?`)) {
+                          $.ajax({
+                            url: valueDetail.replace('/0', '/' + valueID),
+                            method: 'DELETE',
+                            success: function () {
+                              loadData()
+                            },
+                            beforeSend: beforeAjaxSend
+                          });
+                          return false;
+                        }
+                      }
                       $('.row-value').remove();
                       data.map(row => {
-                          $table.append(`<tr class="row-value"><td><b>${row.date}</b></td><td>${row.value}</td></tr>`)
+                          $table.append(
+                            `<tr class="row-value"><td class="DeleteButton" data-id="${row.id}"><b>x</b></td><td><b>${row.date}</b></td><td>${row.value}</td></tr>`
+                          )
+
+                          $($table.find('.DeleteButton').last()).click(function () {
+                            console.log($(this).data('id'))
+                            onClick($(this).data('id'))
+                          })
                         }
                       )
                     }

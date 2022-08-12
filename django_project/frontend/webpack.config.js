@@ -24,6 +24,7 @@ let conf = {
     AdminContextLayerForm: ['./src/pages/Admin/ContextLayer/Form'],
 
     // INDICATOR MANAGEMENT
+    IndicatorValueList: ['./src/pages/Admin/Indicator/IndicatorValueList'],
     IndicatorValueManagementMap: ['./src/pages/Admin/Indicator/ValueManagementMap'],
     IndicatorValueManagementForm: ['./src/pages/Admin/Indicator/ValueManagementForm'],
 

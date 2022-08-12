@@ -73,6 +73,47 @@ class IndicatorRuleSerializer(serializers.ModelSerializer):
 class IndicatorValueSerializer(serializers.ModelSerializer):
     """Serializer for IndicatorValue."""
 
+    reference_layer = serializers.SerializerMethodField()
+    indicator = serializers.SerializerMethodField()
+
+    def get_reference_layer(self, obj: IndicatorValue):
+        """Return reference layer."""
+        return obj.reference_layer.identifier
+
+    def get_indicator(self, obj: IndicatorValue):
+        """Return indicator name."""
+        return obj.indicator.__str__()
+
+    class Meta:  # noqa: D106
+        model = IndicatorValue
+        fields = '__all__'
+
+
+class IndicatorValueDetailSerializer(IndicatorValueSerializer):
+    """Serializer for IndicatorValue."""
+
+    details = serializers.SerializerMethodField()
+    extra_data = serializers.SerializerMethodField()
+
+    def get_details(self, obj: IndicatorValue):
+        """Return extra data."""
+        # for details
+        details = []
+        for row in obj.indicatorvalueextradetailrow_set.all():
+            columns = {}
+            for column in row.indicatorvalueextradetailcolumn_set.all():
+                columns[column.name] = column.value
+            details.append(columns)
+        return details
+
+    def get_extra_data(self, obj: IndicatorValue):
+        """Return extra data."""
+        # for details
+        extras = {}
+        for row in obj.indicatorextravalue_set.all():
+            extras[row.name] = row.value
+        return extras
+
     class Meta:  # noqa: D106
         model = IndicatorValue
         fields = '__all__'
@@ -83,4 +124,4 @@ class IndicatorValueBasicSerializer(serializers.ModelSerializer):
 
     class Meta:  # noqa: D106
         model = IndicatorValue
-        exclude = ('id', 'indicator', 'geom_identifier')
+        exclude = ('indicator', 'geom_identifier')

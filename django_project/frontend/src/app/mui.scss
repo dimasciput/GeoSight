@@ -107,6 +107,7 @@
     MUI Data Grid
    ========================================================================== */
 
+
 .MuiDataGrid-root {
   border: none !important;
 
@@ -141,6 +142,10 @@
   .MuiDataGrid-columnHeader,
   .MuiDataGrid-cell {
     padding: 0 1rem !important;
+
+    &.MuiDataGrid-columnHeaderCheckbox {
+      padding: 0 !important;
+    }
   }
 
   .MuiDataGrid-cell {
@@ -189,4 +194,12 @@
       }
     }
   }
+}
+
+
+.MuiButton-Div {
+  align-items: center;
+  display: inline-flex !important;
+  border-radius: $border-radius;
+  line-height: 1.5;
 }

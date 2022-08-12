@@ -16,5 +16,6 @@
       const reportingLevel = '{{ indicator.reporting_level }}';
       const urlValueByGeometry = "{{ url_value_by_geometry }}";
       const legends = {{ legends|safe }};
+      const valueDetail = '{% url 'indicator-value-detail' indicator.id 0%}'
     </script>
 {% endblock %}

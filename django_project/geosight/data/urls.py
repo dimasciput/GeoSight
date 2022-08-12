@@ -23,7 +23,8 @@ from geosight.data.api.indicator import (
 )
 from geosight.data.api.indicator_value import (
     IndicatorValuesByGeometry,
-    IndicatorValueDetail
+    IndicatorValueDetail,
+    IndicatorValueListAPI
 )
 
 # ------------------------------------------------------
@@ -65,17 +66,21 @@ indicator_api = [
         IndicatorValuesAPI.as_view(), name='indicator-values-api'
     ),
     url(
-        r'^(?P<pk>\d+)/values/by-geometry/(?P<geometry_code>.+)/',
+        r'^(?P<pk>\d+)/values/list',
+        IndicatorValueListAPI.as_view(), name='indicator-values-list-api'
+    ),
+    url(
+        r'^(?P<pk>\d+)/values/by-geometry/(?P<geometry_code>.+)$',
         IndicatorValuesByGeometry.as_view(),
         name='indicator-values-by-geometry'
     ),
     url(
-        r'^(?P<pk>\d+)/values/(?P<value_id>\d+)/details/',
+        r'^(?P<pk>\d+)/values/(?P<value_id>\d+)/details$',
         IndicatorValueDetail.as_view(),
         name='indicator-value-detail'
     ),
     url(
-        r'^(?P<pk>\d+)',
+        r'^(?P<pk>\d+)/detail',
         IndicatorDetailAPI.as_view(), name='indicator-detail-api'
     ),
 ]

@@ -1,5 +1,7 @@
 """API for indicator value."""
 
+import json
+
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -10,7 +12,10 @@ from core.permissions import AdminAuthenticationPermission
 from geosight.data.models.indicator import (
     Indicator, IndicatorValueRejectedError, IndicatorValue
 )
-from geosight.data.serializer.indicator import IndicatorValueBasicSerializer
+from geosight.data.serializer.indicator import (
+    IndicatorValueBasicSerializer, IndicatorValueSerializer,
+    IndicatorValueDetailSerializer
+)
 
 
 class IndicatorValuesByGeometry(APIView):
@@ -69,15 +74,47 @@ class IndicatorValueDetail(APIView):
         indicator = get_object_or_404(Indicator, pk=pk)
         try:
             indicator_value = indicator.indicatorvalue_set.get(pk=value_id)
-            # for details
-            details = []
-            for row in indicator_value.indicatorvalueextradetailrow_set.all():
-                columns = {}
-                for column in row.indicatorvalueextradetailcolumn_set.all():
-                    columns[column.name] = column.value
-                details.append(columns)
-            return Response({
-                'details': details
-            })
+            return Response(
+                IndicatorValueDetailSerializer(indicator_value).data
+            )
+        except IndicatorValue.DoesNotExist:
+            return HttpResponseNotFound('Not found')
+
+    def delete(self, request, pk, value_id):
+        """Delete an value."""
+        indicator = get_object_or_404(Indicator, pk=pk)
+        try:
+            indicator_value = indicator.indicatorvalue_set.get(pk=value_id)
+            indicator_value.delete()
+            return Response('Deleted')
+        except IndicatorValue.DoesNotExist:
+            return HttpResponseNotFound('Not found')
+
+
+class IndicatorValueListAPI(APIView):
+    """API for Values of indicator."""
+
+    permission_classes = (IsAuthenticated, AdminAuthenticationPermission)
+
+    def get(self, request, pk, **kwargs):
+        """Return Values."""
+        indicator = get_object_or_404(Indicator, pk=pk)
+        return Response(
+            IndicatorValueSerializer(
+                indicator.indicatorvalue_set.all(), many=True
+            ).data
+        )
+
+    def delete(self, request, pk):
+        """Delete an value."""
+        indicator = get_object_or_404(Indicator, pk=pk)
+        ids = request.POST.get('ids', None)
+        if not ids:
+            return HttpResponseNotFound('ids is needed')
+        ids = json.loads(ids)
+        try:
+            values = indicator.indicatorvalue_set.filter(pk__in=ids)
+            values.delete()
+            return Response('Deleted')
         except IndicatorValue.DoesNotExist:
             return HttpResponseNotFound('Not found')

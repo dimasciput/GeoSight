@@ -2,6 +2,7 @@ import React from 'react';
 import Tooltip from "@mui/material/Tooltip";
 import DynamicFormIcon from '@mui/icons-material/DynamicForm';
 import MapIcon from '@mui/icons-material/Map';
+import DataUsageIcon from '@mui/icons-material/DataUsage';
 import { GridActionsCellItem } from "@mui/x-data-grid";
 
 import { AddButton } from "../../../../components/Elements/Button";
@@ -24,7 +25,7 @@ export default function IndicatorList() {
   columns[4] = {
     field: 'actions',
     type: 'actions',
-    width: 160,
+    width: 250,
     getActions: (params) => {
       // Create actions
       const actions = [].concat(
@@ -35,6 +36,17 @@ export default function IndicatorList() {
 
       // Unshift before more & edit action
       actions.unshift(
+        <GridActionsCellItem
+          className='TextButton'
+          icon={
+            <a href={urls.api.values.replace('/0', `/${params.id}`)}>
+              <div className='MuiButton-Div MuiButtonBase-root MuiButton-secondary ThemeButton'>
+                <DataUsageIcon/> Value List
+              </div>
+            </a>
+          }
+          label="Value List"
+        />,
         <GridActionsCellItem
           icon={
             <Tooltip title={`Management Form`}>

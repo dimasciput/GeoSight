@@ -64,6 +64,15 @@ html, body {
   color: $error;
 }
 
+.DeleteButton {
+  color: $error;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
 .ThemeButton {
   svg {
     margin-right: 0.5rem;
