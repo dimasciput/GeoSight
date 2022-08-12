@@ -70,3 +70,5 @@ To require a token
 Administrators who would like to set a username and password can do so in the final two boxes.
 
 Once all required boxes are complete and you have filled out the optional boxes of your choice click submit in the top right corner. In doing this, the context layer will be created.
+
+##Context Layers for Users
