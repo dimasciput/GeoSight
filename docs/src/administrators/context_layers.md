@@ -7,31 +7,66 @@ Administrators are able to adjust, add and delete context layers on GeoSight. Th
 ### Accessing and Adjusting Context Layers
 As with other administrative abilities, the Context Layer UI can be accessed from the GeoSight home page. To access the administative UI, click the user profile photo and select "Admin".
 
-*photo*
+
 
 From here, select "Context Layers"
 
-*photo
+
 
 This will display the Admin UI for context layers and allow you to see, as well as search for, all context layers. In this tab, the context layers are listed and sorted by their name, a breif description and a category to help administators understand their purpose.
 
-*photo*
+
 
 On the far left, three horizontal dots, when selected, give the administrator to delete a context layer. This will delete the layer for every project and remove it from GeoSight entirely. 
 
-*photo*
+
 
 Finally, on the bottom right the two arrows allow administators to view the multiple pages of context layers.
 
-*photo*
+
 
 ### Adding Context Layers
 Context layers can be added from the Context Layer Admin tab. On the top right you can find the button "Add New Context Layer".
 
-*photo*
-
-This will bring you to the "Create Context Layer Screen".
-
-*photo*
 
 
+This will bring you to the "Create Context Layer Screen". Here, administrators can provide information required to connect the context layer to GeoSight, describe the context layer and attach security requirements for sensitive information.
+
+
+
+Under name enter what you would like the user to call the layer.
+
+
+
+Although this is optional, you can provide a brief description of the context layer including identifying information or a citation
+
+
+
+Under category select what data group or country you would like to indentify the context layer with.
+
+
+
+Enter the URL of the WMS or data source in order to connect GeoSight with the API.
+
+
+
+The next step is optional. Here you can URL LEGEND (what is this)
+
+
+
+Select the type of geospatial data the context layer is in. 
+- "ArcGIS" is a datasource connected to ESRI's ArcGIS Online platform which provides an API link.
+- "GeoJSON" is a open-source code based format that keeps data files small before they are displayed.
+- "Raster Tile" is data displayed in regular square-shaped intervals that allow for easier data storage.
+
+If you wish to add security to the context layer you can either require a token or a standard username and password that the administator can provide to approved users.
+
+
+
+To require a token
+
+
+
+Administrators who would like to set a username and password can do so in the final two boxes.
+
+Once all required boxes are complete and you have filled out the optional boxes of your choice click submit in the top right corner. In doing this, the context layer will be created.
