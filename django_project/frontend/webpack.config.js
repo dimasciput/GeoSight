@@ -13,7 +13,7 @@ let conf = {
   entry: {
     Home: ['./src/pages/Home'],
     Login: ['./src/pages/Login'],
-    Dashboard: ['./src/pages/Dashboard'],
+    Dashboard: ['./src/pages/Dashboard/Page'],
     DashboardForm: ['./src/pages/Admin/Dashboard/Form'],
     AdminDashboardList: ['./src/pages/Admin/Dashboard/List'],
     AdminIndicatorList: ['./src/pages/Admin/Indicator/List'],

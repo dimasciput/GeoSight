@@ -12,6 +12,7 @@ import App, { render } from '../../../../app';
 import { pageNames } from '../../index';
 import { Actions, store } from '../../../../store/dashboard';
 import SideNavigation from "../../Components/SideNavigation";
+import Dashboard from "../../../Dashboard/index";
 import {
   SaveButton,
   ThemeButton
@@ -27,9 +28,6 @@ import WidgetForm from './Widgets'
 
 // Dashboard Preview
 import { postData } from "../../../../Requests";
-import LeftPanel from '../../../../components/Dashboard/LeftPanel'
-import RightPanel from '../../../../components/Dashboard/RightPanel'
-import Map from '../../../../components/Dashboard/Map'
 
 import '../../../Dashboard/style.scss';
 import './style.scss';
@@ -124,45 +122,6 @@ export function DashboardHistory(
       <RedoIcon/>
     </ThemeButton>
   </Fragment>
-}
-
-/**
- * Dashboard Preview Section
- */
-
-export function DashboardPreview({ currentMode, setCurrentMode }) {
-  const dispatch = useDispatch();
-  const { data } = useSelector(state => state.dashboard);
-  const [leftExpanded, setLeftExpanded] = useState(true);
-
-  useEffect(() => {
-    dispatch(
-      Actions.Dashboard.fetch(dispatch)
-    )
-  }, []);
-
-  return (
-    <div className={'dashboard ' + (leftExpanded ? 'LeftExpanded' : "")}>
-      <div className='BackToForm'>
-        <ThemeButton
-          variant="secondary"
-          onClick={() => {
-            setCurrentMode('FormMode')
-          }}
-        >
-          <ViewHeadlineIcon/>Back to Form
-        </ThemeButton>
-      </div>
-      {Object.keys(data).length > 0 ?
-        <Fragment>
-          <LeftPanel setLeftExpanded={setLeftExpanded}/>
-          <Map/>
-          <RightPanel/>
-        </Fragment> :
-        <div></div>
-      }
-    </div>
-  )
 }
 
 /**
@@ -452,8 +411,18 @@ export default function DashboardFormApp() {
         setCurrentMode('PreviewMode')
       }}/>
       {/* DASHBOARD SECTION */}
-      <DashboardPreview currentMode={currentMode}
-                        setCurrentMode={setCurrentMode}/>
+      <Dashboard>
+        <div className='BackToForm'>
+          <ThemeButton
+            variant="secondary"
+            onClick={() => {
+              setCurrentMode('FormMode')
+            }}
+          >
+            <ViewHeadlineIcon/>Back to Form
+          </ThemeButton>
+        </div>
+      </Dashboard>
     </App>
   )
 }
