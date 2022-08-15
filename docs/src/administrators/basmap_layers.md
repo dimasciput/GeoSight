@@ -30,12 +30,15 @@ Under "Type" you will indicate the type of basemap service, which can be WMS or 
 
 Finally, under "Category" you will indicate the category the basemap belongs to (e.g. UN). 
 
-Select the type of geospatial data the context layer is in.
-
-If you wish to add security to the context layer you can either require a token or a standard username and password that the administator can provide to approved users.
-
-To require a token
-
-Administrators who would like to set a username and password can do so in the final two boxes.
-
 Once all required boxes are complete and you have filled out the optional boxes of your choice click submit in the top right corner. In doing this, the basemap will be loaded to the visualization.
+
+### Context Layers for Users
+Users cannot adjust or add new basemaps. Instead, they can only toggle between them.
+
+To access basemaps as a user from the GeoSight home page, choose a project and then hover with the mouse the little squared box to the bottom left of the map. This wil allow you to see every available basemap.
+
+To change the basemap, click on one of the boxes from the list. The basemap will update automatically.
+
+Finally, to hide the basemap's list, simply move the mouse away from the boxes. The list will collapse and disappear. Hover on it with the mouse to access it again.
+
+Different basemaps can provide the users with varied broad overviews on the regions they are looking at and put the other layers in several contexts. They can help change perspective and/or offer a more complete picture to allow for better final decisions.
