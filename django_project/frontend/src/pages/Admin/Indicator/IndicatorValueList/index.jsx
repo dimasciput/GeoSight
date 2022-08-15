@@ -31,6 +31,7 @@ export function COLUMNS(pageName, redirectUrl, onDetails, editUrl = null, detail
   return [
     { field: 'id', headerName: 'id', hide: true, width: 30, },
     { field: 'reference_layer', headerName: 'Reference Layer', flex: 1 },
+    { field: 'name', headerName: 'Reference Layer name', flex: 1 },
     { field: 'geom_identifier', headerName: 'Geometry Code', flex: 1 },
     { field: 'date', headerName: 'Date', flex: 1 },
     { field: 'value', headerName: 'Value', flex: 1 },

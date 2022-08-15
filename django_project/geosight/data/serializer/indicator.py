@@ -74,11 +74,18 @@ class IndicatorValueSerializer(serializers.ModelSerializer):
     """Serializer for IndicatorValue."""
 
     reference_layer = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
     indicator = serializers.SerializerMethodField()
 
     def get_reference_layer(self, obj: IndicatorValue):
         """Return reference layer."""
         return obj.reference_layer.identifier
+
+    def get_name(self, obj: IndicatorValue):
+        """Return reference layer."""
+        references_map = self.context.get('references_map', {})
+        name = references_map[obj.reference_layer.identifier]
+        return name if name else obj.reference_layer.identifier
 
     def get_indicator(self, obj: IndicatorValue):
         """Return indicator name."""

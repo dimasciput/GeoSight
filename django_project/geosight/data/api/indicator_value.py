@@ -1,7 +1,7 @@
 """API for indicator value."""
-
 import json
 
+import requests
 from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -16,6 +16,7 @@ from geosight.data.serializer.indicator import (
     IndicatorValueBasicSerializer, IndicatorValueSerializer,
     IndicatorValueDetailSerializer
 )
+from geosight.georepo.request import GeorepoUrl
 
 
 class IndicatorValuesByGeometry(APIView):
@@ -99,9 +100,17 @@ class IndicatorValueListAPI(APIView):
     def get(self, request, pk, **kwargs):
         """Return Values."""
         indicator = get_object_or_404(Indicator, pk=pk)
+        georepo = GeorepoUrl()
+        r = requests.get(georepo.reference_layer_list)
+        references_map = {}
+        for reference in r.json():
+            references_map[reference['identifier']] = reference['name']
+
         return Response(
             IndicatorValueSerializer(
-                indicator.indicatorvalue_set.all(), many=True
+                indicator.indicatorvalue_set.all(), many=True, context={
+                    'references_map': references_map
+                }
             ).data
         )
 
