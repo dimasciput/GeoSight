@@ -8,6 +8,7 @@ import filtersDataReducer from "./filtersData";
 import geometriesReducer from "./geometries";
 import filteredGeometriesReducer from "./filteredGeometries";
 import selectedIndicatorReducer from "./selectedIndicator";
+import selectedBookmarkReducer from "./selectedBookmark";
 
 
 export default combineReducers({
@@ -20,5 +21,6 @@ export default combineReducers({
   filtersData: filtersDataReducer,
   geometries: geometriesReducer,
   filteredGeometries: filteredGeometriesReducer,
-  selectedIndicator: selectedIndicatorReducer
+  selectedIndicator: selectedIndicatorReducer,
+  selectedBookmark: selectedBookmarkReducer,
 });

@@ -106,12 +106,7 @@ export function Indicators() {
   const indicatorsData = useSelector(state => state.indicatorsData);
   const geometries = useSelector(state => state.geometries);
 
-  const indicatorsEnabled = indicators.filter(indicator => {
-    return indicator.visible_by_default
-  })
-  const [currentIndicator, setCurrentIndicator] = useState(
-    indicatorsEnabled[0] ? indicatorsEnabled[0].id : 0
-  );
+  const [currentIndicator, setCurrentIndicator] = useState(0);
 
   const change = (checked, id) => {
     if (checked) {
@@ -149,6 +144,15 @@ export function Indicators() {
           );
         }
       })
+
+      // Change current indicator if indicators changed
+      const indicatorsEnabled = indicators.find(indicator => {
+        return indicator.visible_by_default
+      })
+
+      if (indicatorsEnabled) {
+        setCurrentIndicator(indicatorsEnabled.id)
+      }
     }
   }, [indicators]);
 

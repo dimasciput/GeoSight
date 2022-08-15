@@ -3,7 +3,7 @@
  */
 
 export const SELECTED_INDICATOR_NAME = 'SELECTED_INDICATOR';
-export const SELECTED_INDICATOR_ACTION_TYPE_CHANGE = 'INDICATOR/ADD';
+export const SELECTED_INDICATOR_ACTION_TYPE_CHANGE = 'SELECTED_INDICATOR/ADD';
 
 const initialState = {}
 export default function selectedIndicatorReducer(state = initialState, action) {

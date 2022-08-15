@@ -58,6 +58,9 @@ export default function Basemaps({ data }) {
           layer = L.tileLayer(selectedBasemapData.url, parameters);
         }
       }
+      if (layer) {
+        layer.id = selected
+      }
       dispatch(
         Actions.Map.changeBasemap(layer)
       )

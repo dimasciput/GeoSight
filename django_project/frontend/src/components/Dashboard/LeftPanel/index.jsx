@@ -23,7 +23,7 @@ export default function LeftPanel({ setLeftExpanded }) {
     basemapsLayers
   } = useSelector(state => state.dashboard.data);
   const [state, setState] = useState(LEFT);
-  const [tab, setTab] = useState('DATASET');
+  const [tab, setTab] = useState('LAYERS');
 
   const onLeft = () => {
     setState(LEFT);
@@ -57,13 +57,13 @@ export default function LeftPanel({ setLeftExpanded }) {
         onRight={onRight}/>
       <div className={classNameWrapper}>
         <div className='dashboard__content-wrapper__navbar'>
-          <div onClick={() => setTab('DATASET')}
-               className={tab === 'DATASET' ? 'active' : ''}>
-            DATASET
+          <div onClick={() => setTab('LAYERS')}
+               className={tab === 'LAYERS' ? 'active' : ''}>
+            LAYERS
           </div>
-          <div onClick={() => setTab('FILTER')}
-               className={tab === 'FILTER' ? 'active' : ''}>
-            FILTER
+          <div onClick={() => setTab('FILTERS')}
+               className={tab === 'FILTERS' ? 'active' : ''}>
+            FILTERS
           </div>
         </div>
         <div className='dashboard__content-wrapper__inner dataset-wrapper'>

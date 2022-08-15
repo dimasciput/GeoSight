@@ -13,6 +13,9 @@
     <script>
       {# specified url for dashboard #}
       urls.dashboardData = '{% url 'dashboard-data-api' slug=dashboard.id %}'
+      urls.bookmarkCreate = '{% url 'dashboard-bookmarks-create' slug=dashboard.id %}'
+      urls.bookmarkList = '{% url 'dashboard-bookmarks' slug=dashboard.id %}'
+      urls.bookmarkDetail = '{% url 'dashboard-bookmarks-edit' slug=dashboard.id pk=0 %}'
 
       const definition = {{ definition|safe }};
       const maxZoom = 24;

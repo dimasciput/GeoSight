@@ -117,6 +117,8 @@ function ContextLayerInput({ data }) {
   useEffect(() => {
     if (data.visible_by_default) {
       change(true)
+    } else {
+      change(false)
     }
     if (!layer) {
       const layer = getLayer(data);
@@ -124,7 +126,7 @@ function ContextLayerInput({ data }) {
         setLayer(layer)
       }
     }
-  }, [])
+  }, [data])
 
   // When checked changes
   useEffect(() => {

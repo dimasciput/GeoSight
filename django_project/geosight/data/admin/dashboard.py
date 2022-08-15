@@ -4,7 +4,7 @@ from django.contrib import admin
 from geosight.data.models.dashboard import (
     Dashboard, Widget,
     DashboardBasemap, DashboardIndicator, DashboardContextLayer,
-    DashboardIndicatorRule
+    DashboardIndicatorRule, DashboardBookmark
 )
 
 
@@ -62,5 +62,14 @@ class DashboardIndicatorRuleAdmin(admin.ModelAdmin):
         return obj.indicator.__str__()
 
 
+class DashboardBookmarkAdmin(admin.ModelAdmin):
+    """DashboardBookmark admin."""
+
+    list_display = ('dashboard', 'name',)
+    list_filter = ('dashboard',)
+    filter_horizontal = ('selected_indicators', 'selected_context_layers')
+
+
 admin.site.register(Dashboard, DashboardAdmin)
 admin.site.register(DashboardIndicatorRule, DashboardIndicatorRuleAdmin)
+admin.site.register(DashboardBookmark, DashboardBookmarkAdmin)

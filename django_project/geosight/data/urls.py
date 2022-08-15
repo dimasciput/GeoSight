@@ -13,6 +13,11 @@ from geosight.data.api.dashboard import (
     DashboardData, DashboardDetail, DashboardListAPI,
     DashboardIndicatorValuesAPI
 )
+from geosight.data.api.dashboard_bookmark import (
+    DashboardBookmarkAPI,
+    DashboardBookmarkCreateAPI,
+    DashboardBookmarkDetailAPI
+)
 from geosight.data.api.download_file import (
     DownloadSharepointFile,
     DownloadBackupsFile
@@ -28,27 +33,45 @@ from geosight.data.api.indicator_value import (
 )
 
 # ------------------------------------------------------
+dashboard_specific_api = [
+    url(
+        r'^data$',
+        DashboardData.as_view(),
+        name='dashboard-data-api'
+    ),
+    url(
+        r'^$',
+        DashboardDetail.as_view(),
+        name='dashboard-detail-api'
+    ),
+    url(
+        r'^indicator/(?P<pk>\d+)/values/latest',
+        DashboardIndicatorValuesAPI.as_view(),
+        name='dashboard-indicator-values-api'
+    ),
+    url(
+        r'^bookmarks/create',
+        DashboardBookmarkCreateAPI.as_view(),
+        name='dashboard-bookmarks-create'
+    ),
+    url(
+        r'^bookmarks/(?P<pk>\d+)',
+        DashboardBookmarkDetailAPI.as_view(),
+        name='dashboard-bookmarks-edit'
+    ),
+    url(
+        r'^bookmarks',
+        DashboardBookmarkAPI.as_view(),
+        name='dashboard-bookmarks'
+    ),
+]
 # DASHBOARD API
 dashboard_api = [
     url(
         r'^list',
         DashboardListAPI.as_view(), name='dashboard-list-api'
     ),
-    url(
-        r'^(?P<slug>[^/]+)/data$',
-        DashboardData.as_view(),
-        name='dashboard-data-api'
-    ),
-    url(
-        r'^(?P<slug>[^/]+)$',
-        DashboardDetail.as_view(),
-        name='dashboard-detail-api'
-    ),
-    url(
-        r'^(?P<slug>[^/]+)/indicator/(?P<pk>\d+)/values/latest',
-        DashboardIndicatorValuesAPI.as_view(),
-        name='dashboard-indicator-values-api'
-    ),
+    url(r'^(?P<slug>[^/]+)/', include(dashboard_specific_api)),
 ]
 # ------------------------------------------------------
 # INDICATOR API

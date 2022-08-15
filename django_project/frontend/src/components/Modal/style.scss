@@ -44,6 +44,11 @@
     flex-grow: 1;
     padding-top: 3px;
   }
+
+  .helptext {
+    font-weight: $base-font-light;
+    margin-top: 0.5rem;
+  }
 }
 
 .modal--content {

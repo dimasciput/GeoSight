@@ -4,18 +4,6 @@
 
 @import '../../../app/variables';
 
-.leaflet-left {
-  left: 0;
-  transition: left 0.3s;
-  top: 40px;
-}
-
-.LeftExpanded {
-  .leaflet-left {
-    left: 20%;
-  }
-}
-
 .dashboard__left_side {
   left: 0;
   position: absolute;
@@ -49,11 +37,11 @@
     display: flex;
     flex-direction: column;
 
-    &.DATASET .filter-wrapper {
+    &.LAYERS .filter-wrapper {
       display: none !important;
     }
 
-    &.FILTER .dataset-wrapper {
+    &.FILTERS .dataset-wrapper {
       display: none !important;
     }
   }

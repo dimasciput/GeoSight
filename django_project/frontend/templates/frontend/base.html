@@ -57,6 +57,7 @@
 <script>
   {% if request.user.is_authenticated %}
     const user = {{ user|safe }};
+    user.is_staff = user.is_staff === 'true'
   {% else %}
     const user = {};
   {% endif %}

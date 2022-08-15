@@ -3,6 +3,7 @@ import {
   MAP_ADD_CONTEXTLAYERS,
   MAP_CENTER,
   MAP_CHANGE_BASEMAP,
+  MAP_EXTENT,
   MAP_REFERENCE_LAYER_CHANGED,
   MAP_REMOVE_CONTEXTLAYERS,
   MAP_REMOVE_CONTEXTLAYERS_ALL
@@ -81,11 +82,23 @@ function updateCenter(center) {
   };
 }
 
+/**
+ * Update extent of map.
+ */
+function updateExtent(center) {
+  return {
+    name: MAP_ACTION_NAME,
+    type: MAP_EXTENT,
+    payload: center
+  };
+}
+
 export default {
   updateCenter,
   changeBasemap,
   addContextLayer,
   removeContextLayer,
   changeReferenceLayer,
-  removeAllContextLayer
+  removeAllContextLayer,
+  updateExtent
 }

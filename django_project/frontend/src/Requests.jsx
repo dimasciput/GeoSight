@@ -5,9 +5,11 @@
  * @param {object} options Options of request
  * @param {object} params Params
  * @param {Function} receiveAction Function on receiving data
+ * @param {boolean} useCache Force to use cache or not
  */
 export const fetchingData = async function (
-  url, params, options, receiveAction
+  url, params, options,
+  receiveAction, useCache = true
 ) {
   if (params) {
     const paramsUrl = [];
@@ -17,7 +19,7 @@ export const fetchingData = async function (
     url += '?' + paramsUrl.join('&')
   }
   try {
-    const response = await fetchJSON(url, options);
+    const response = await fetchJSON(url, options, useCache);
     receiveAction(response, null);
   } catch (error) {
     receiveAction(null, error);
@@ -34,7 +36,10 @@ export const fetchingData = async function (
 //  Make cache in elegant way
 const responseCaches = {}
 
-export async function fetchJSON(url, options) {
+export async function fetchJSON(url, options, useCache = true) {
+  if (!useCache) {
+    responseCaches[url] = null
+  }
   if (!responseCaches[url]) {
     try {
       const response = await fetch(url, options);

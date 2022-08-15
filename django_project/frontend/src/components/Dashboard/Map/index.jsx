@@ -3,9 +3,16 @@
    ========================================================================== */
 
 import React, { useEffect, useState } from 'react';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import L from 'leaflet';
 import Navbar from 'leaflet-navbar';
+import StarIcon from '@mui/icons-material/Star';
+import SaveIcon from '@mui/icons-material/Save';
+
+import CustomPopover from '../../CustomPopover'
+import Bookmark from '../Bookmark'
+import { Plugin, PluginChild } from './Plugin'
+import { Actions } from '../../../store/dashboard/index'
 
 import './style.scss';
 
@@ -13,6 +20,7 @@ import './style.scss';
  * Map component.
  */
 export default function Map() {
+  const dispatch = useDispatch();
   const {
     basemapLayer,
     referenceLayer,
@@ -52,6 +60,16 @@ export default function Map() {
       newMap.createPane(referenceLayerPane);
       newMap.createPane(contextLayerPane);
       setMap(newMap);
+
+      // Save extent
+      newMap.on("moveend", function () {
+        const bounds = newMap.getBounds()
+        const newExtent = [
+          bounds._southWest.lng, bounds._southWest.lat,
+          bounds._northEast.lng, bounds._northEast.lat
+        ]
+        dispatch(Actions.Map.updateExtent(newExtent))
+      });
     }
   }, [basemapLayer]);
 
@@ -135,6 +153,30 @@ export default function Map() {
 
   return <section className='dashboard__map'>
     <div id="map"></div>
+    {
+      !editMode ?
+        <div className='leaflet-left leaflet-touch leaflet-custom-plugins'>
+          <Plugin>
+
+            <CustomPopover
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'center',
+                horizontal: 'left',
+              }}
+              Button={
+                <PluginChild title={'Bookmark'}>
+                  <StarIcon/>
+                </PluginChild>
+              }>
+              <Bookmark/>
+            </CustomPopover>
+          </Plugin>
+        </div> : ""
+    }
   </section>
 }
 
