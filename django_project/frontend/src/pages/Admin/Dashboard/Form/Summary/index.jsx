@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import Select from 'react-select'
 import { FormControl } from "@mui/material";
+import MDEditor from "@uiw/react-md-editor";
 
 import { fetchingData } from "../../../../../Requests";
 import { Actions } from "../../../../../store/dashboard";
@@ -118,15 +119,18 @@ export default function SummaryDashboardForm({ changed }) {
           <div>
             <label className="form-label" htmlFor="name">Description</label>
           </div>
-          <div>
-              <span className="form-input">
-              <textarea id="SummaryDescription" name="description"
-                        value={descriptionData} rows="4"
-                        onChange={(event) => {
-                          setDescriptionData(event.target.value)
-                          changed(true)
-                        }}/>
-              </span>
+          <div className='DescriptionInput'>
+            <div className="container">
+              <div data-color-mode="light">
+                <MDEditor
+                  id='SummaryDescription'
+                  height={200} value={descriptionData}
+                  onChange={(value) => {
+                    setDescriptionData(value)
+                    changed(true)
+                  }}/>
+              </div>
+            </div>
           </div>
         </div>
         <FormControl className='IconInput'>

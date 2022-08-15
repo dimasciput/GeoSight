@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import LeftRightToggleButton, { LEFT, RIGHT } from '../../ToggleButton'
 import MapInfo from './MapInfo'
 import Basemaps from './Basemaps'
-import ReferenceLayerSection from './ReferenceLayer'
+import ProjectOverviewSection from './ProjectOverview'
 import ContextLayersAccordion from './ContextLayers'
 import IndicatorsAccordion from './Indicators'
 import FiltersAccordion from './Filters'
@@ -40,8 +40,8 @@ export default function LeftPanel({ setLeftExpanded }) {
   const [expanded, setExpanded] = useState('indicators');
 
   const handleChange = (panel) => (event, isExpanded) => {
-    if (panel === 'referenceLayer' && isExpanded) {
-      setExpanded('referenceLayer')
+    if (panel === 'projectOverview' && isExpanded) {
+      setExpanded('projectOverview')
     } else {
       setExpanded(expanded === 'indicators' ? 'contextLayers' : 'indicators');
     }
@@ -67,8 +67,8 @@ export default function LeftPanel({ setLeftExpanded }) {
           </div>
         </div>
         <div className='dashboard__content-wrapper__inner dataset-wrapper'>
-          <ReferenceLayerSection
-            expanded={expanded === 'referenceLayer'}
+          <ProjectOverviewSection
+            expanded={expanded === 'projectOverview'}
             handleChange={handleChange}
           />
           <ContextLayersAccordion

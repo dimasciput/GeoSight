@@ -161,7 +161,7 @@ export function DashboardSaveForm(
     const target = event.currentTarget
     const errors = [];
     const name = $('#SummaryName').val();
-    const description = $('#SummaryDescription').val();
+    const description = $('#SummaryDescription textarea').val();
     const icon = $('#SummaryIcon')[0].files[0];
     const category = $('#SummaryCategory').val();
 

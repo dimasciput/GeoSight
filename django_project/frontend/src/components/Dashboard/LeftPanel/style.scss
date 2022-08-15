@@ -145,17 +145,6 @@
       font-weight: $base-font-light;
     }
 
-    .reference-dataset {
-
-      .MuiAccordionDetails-root {
-        padding-top: 0;
-      }
-
-      b {
-        font-weight: $base-font-medium;
-      }
-    }
-
     > div.Mui-expanded {
       flex-grow: 1;
     }
@@ -175,6 +164,7 @@
       .MuiAccordionSummary-content {
         margin: 0 !important;
         font-weight: $base-font-medium;
+        font-size: 1rem;
         color: $primary-color;
         display: flex;
 
@@ -217,7 +207,6 @@
 
   .LayerGroup {
     border: 1px solid #ddd;
-    font-size: 0.8rem;
     margin: -1px;
 
     .dashboard__left_side__row {

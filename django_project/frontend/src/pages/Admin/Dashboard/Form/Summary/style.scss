@@ -31,3 +31,16 @@
 .BasicForm {
   padding: 0 !important;
 }
+
+.DescriptionInput {
+  textarea {
+    border-radius: 0;
+    border: none;
+
+    &:hover,
+    &:focus,
+    &:focus-within {
+      border: none;
+    }
+  }
+}
