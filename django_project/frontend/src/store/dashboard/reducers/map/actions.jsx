@@ -3,7 +3,9 @@ import {
   MAP_ADD_CONTEXTLAYERS,
   MAP_CENTER,
   MAP_CHANGE_BASEMAP,
+  MAP_CONTEXTLAYERS_SHOW,
   MAP_EXTENT,
+  MAP_INDICATOR_SHOW,
   MAP_REFERENCE_LAYER_CHANGED,
   MAP_REMOVE_CONTEXTLAYERS,
   MAP_REMOVE_CONTEXTLAYERS_ALL
@@ -93,6 +95,28 @@ function updateExtent(center) {
   };
 }
 
+/**
+ * Show/Hide Indicator
+ */
+function showHideIndicator(payload) {
+  return {
+    name: MAP_ACTION_NAME,
+    type: MAP_INDICATOR_SHOW,
+    payload: payload
+  };
+}
+
+/**
+ * Show/Hide ContextLayer
+ */
+function showHideContextLayer(payload) {
+  return {
+    name: MAP_ACTION_NAME,
+    type: MAP_CONTEXTLAYERS_SHOW,
+    payload: payload
+  };
+}
+
 export default {
   updateCenter,
   changeBasemap,
@@ -100,5 +124,8 @@ export default {
   removeContextLayer,
   changeReferenceLayer,
   removeAllContextLayer,
-  updateExtent
+  updateExtent,
+
+  showHideIndicator,
+  showHideContextLayer
 }

@@ -19,6 +19,7 @@ import { layerInGroup } from '../../../../utils/layers'
 import { fetchingData } from "../../../../Requests";
 
 import './style.scss'
+import OnOffSwitcher from "../../../Switcher/OnOff";
 
 
 function ContextLayerInput({ data }) {
@@ -252,7 +253,9 @@ function LayerRow({ groupName, group }) {
  * @param {function} handleChange Function when the accordion show.
  */
 export default function ContextLayersAccordion({ expanded, handleChange }) {
+  const dispatch = useDispatch();
   const { contextLayers } = useSelector(state => state.dashboard.data);
+  const { contextLayersShow } = useSelector(state => state.map);
   const groups = layerInGroup(contextLayers)
 
   /** Render group and layers
@@ -267,12 +270,18 @@ export default function ContextLayersAccordion({ expanded, handleChange }) {
       className='ContextLayersAccordion'
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-        Context Layers
-        {
-          contextLayers !== undefined ?
-            <span></span> :
-            <i>&nbsp;(Loading)</i>
-        }
+        <div className='Name'>
+          Context Layers
+        </div>
+        <OnOffSwitcher
+          checked={contextLayersShow}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onChange={(e) => {
+            dispatch(Actions.Map.showHideContextLayer(!contextLayersShow))
+            e.stopPropagation();
+          }}/>
       </AccordionSummary>
       <AccordionDetails>
         {

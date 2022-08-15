@@ -13,6 +13,7 @@ import Accordion from "@mui/material/Accordion";
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
 import ReferenceLayer from '../../Map/ReferenceLayer'
+import OnOffSwitcher from "../../../Switcher/OnOff";
 
 
 /**
@@ -210,6 +211,9 @@ export function Indicators() {
  * @param {function} handleChange Function when the accordion show
  */
 export default function IndicatorsAccordion({ expanded, handleChange }) {
+  const dispatch = useDispatch();
+  const { indicatorShow } = useSelector(state => state.map);
+
   return (
     <Accordion
       expanded={expanded}
@@ -217,7 +221,18 @@ export default function IndicatorsAccordion({ expanded, handleChange }) {
     >
 
       <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-        Indicators
+        <div className='Name'>
+          Indicators
+        </div>
+        <OnOffSwitcher
+          checked={indicatorShow}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onChange={(e) => {
+            dispatch(Actions.Map.showHideIndicator(!indicatorShow))
+            e.stopPropagation();
+          }}/>
       </AccordionSummary>
       <AccordionDetails>
         <Indicators/>

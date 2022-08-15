@@ -1,0 +1,73 @@
+/* ==========================================================================
+   ON OFF SWITCHER
+   ========================================================================== */
+
+@import '../../../app/variables';
+
+.OnOffSwitcher {
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+
+  .MuiSwitch-root {
+    height: 20px;
+    width: 73px;
+    padding: 0;
+    border: 1px solid $primary-color;
+    border-radius: $border-radius;
+    overflow: hidden;
+  }
+
+  .MuiButtonBase-root {
+    padding: 0;
+    align-items: flex-start;
+
+    &.Mui-checked {
+      -webkit-transform: translateX(38px);
+      -moz-transform: translateX(38px);
+      -ms-transform: translateX(38px);
+      transform: translateX(38px);
+
+      .MuiSwitch-thumb {
+        border-radius: 0;
+        border-bottom-right-radius: $border-radius;
+        border-top-right-radius: $border-radius;
+      }
+    }
+  }
+
+  .MuiSwitch-thumb {
+    box-shadow: none;
+    background-color: $primary-color;
+    border-radius: 0;
+    width: 36px;
+    height: 22px;
+  }
+
+  .MuiSwitch-track {
+    background-color: $anti-primary-color !important;
+    border-radius: $border-radius;
+    opacity: 1 !important;
+
+    &:before, &:after {
+      content: '""';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 19px;
+      font-size: 0.8rem;
+    }
+
+    &:before {
+      content: 'ON';
+      left: 10px;
+      color: $primary-color;
+    }
+
+    &:after {
+      content: 'OFF';
+      right: 15px;
+      color: $primary-color;
+    }
+  }
+}

@@ -115,6 +115,7 @@ export default function ReferenceLayer({ currentIndicator }) {
   const indicatorsData = useSelector(state => state.indicatorsData);
   const filtersData = useSelector(state => state.filtersData);
   const filteredGeometries = useSelector(state => state.filteredGeometries);
+  const { indicatorShow } = useSelector(state => state.map);
 
   const [clickedFeature, setClickedFeature] = useState(null);
 
@@ -179,8 +180,11 @@ export default function ReferenceLayer({ currentIndicator }) {
               feature.properties.code, feature.properties
             )
           );
-          const indicatorData = indicatorsByGeom[feature.properties.code];
-          const style = indicatorData ? indicatorData : nodataRule;
+          let style = null;
+          if (indicatorShow) {
+            const indicatorData = indicatorsByGeom[feature.properties.code];
+            style = indicatorData ? indicatorData : nodataRule;
+          }
           let fillColor = style ? style.color : null;
           let color = style ? style.outline_color : '#000000';
           let weight = 0.5;
@@ -247,7 +251,7 @@ export default function ReferenceLayer({ currentIndicator }) {
     updateLayer()
   }, [
     referenceLayer, referenceLayerData, indicatorsData,
-    currentIndicator
+    currentIndicator, indicatorShow
   ]);
 
 

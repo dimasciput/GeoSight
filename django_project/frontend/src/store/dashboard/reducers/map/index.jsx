@@ -3,7 +3,9 @@
 export const MAP_ACTION_NAME = `MAP`;
 export const MAP_CHANGE_BASEMAP = `MAP/CHANGE_BASEMAP`;
 export const MAP_REFERENCE_LAYER_CHANGED = `MAP/REFERENCE_LAYER_CHANGED`;
+export const MAP_INDICATOR_SHOW = `MAP/INDICATOR_SHOW`;
 export const MAP_ADD_CONTEXTLAYERS = `MAP/ADD_CONTEXTLAYERS`;
+export const MAP_CONTEXTLAYERS_SHOW = `MAP/CONTEXTLAYERS_SHOW`;
 export const MAP_CENTER = `MAP/CENTER`;
 export const MAP_EXTENT = `MAP/EXTENT`;
 export const MAP_REMOVE_CONTEXTLAYERS = `MAP/REMOVE_CONTEXTLAYERS`;
@@ -14,7 +16,9 @@ const mapInitialState = {
   basemapLayer: null,
   contextLayers: {},
   center: null,
-  extent: null
+  extent: null,
+  indicatorShow: true,
+  contextLayersShow: true,
 };
 
 export default function mapReducer(state = mapInitialState, action) {
@@ -69,6 +73,18 @@ export default function mapReducer(state = mapInitialState, action) {
         return {
           ...state,
           extent: action.payload
+        }
+      }
+      case MAP_INDICATOR_SHOW: {
+        return {
+          ...state,
+          indicatorShow: action.payload
+        }
+      }
+      case MAP_CONTEXTLAYERS_SHOW: {
+        return {
+          ...state,
+          contextLayersShow: action.payload
         }
       }
     }

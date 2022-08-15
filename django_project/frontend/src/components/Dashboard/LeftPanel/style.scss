@@ -176,6 +176,11 @@
         margin: 0 !important;
         font-weight: $base-font-medium;
         color: $primary-color;
+        display: flex;
+
+        .Name {
+          flex-grow: 1;
+        }
       }
     }
 

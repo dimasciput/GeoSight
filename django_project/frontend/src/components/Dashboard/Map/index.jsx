@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import L from 'leaflet';
 import Navbar from 'leaflet-navbar';
 import StarIcon from '@mui/icons-material/Star';
-import SaveIcon from '@mui/icons-material/Save';
 
 import CustomPopover from '../../CustomPopover'
 import Bookmark from '../Bookmark'
@@ -27,6 +26,7 @@ export default function Map() {
     contextLayers,
     center
   } = useSelector(state => state.map);
+  const { contextLayersShow } = useSelector(state => state.map);
 
   const { extent } = useSelector(state => state.dashboard.data);
   const [map, setMap] = useState(null);
@@ -116,29 +116,36 @@ export default function Map() {
   /** CONTEXT LAYERS CHANGED */
   useEffect(() => {
     if (contextLayerGroup && contextLayers) {
-      const ids = []
-      const idsKeep = []
-      for (const [key, contextLayer] of Object.entries(contextLayers)) {
-        if (contextLayer.layer) {
-          ids.push(contextLayer.layer._leaflet_id);
+      if (contextLayersShow) {
+        const ids = []
+        const idsKeep = []
+        for (const [key, contextLayer] of Object.entries(contextLayers)) {
+          if (contextLayer.layer) {
+            ids.push(contextLayer.layer._leaflet_id);
+          }
         }
-      }
+        contextLayerGroup.eachLayer(function (layer) {
+          if (!ids.includes(layer._leaflet_id)) {
+            contextLayerGroup.removeLayer(layer);
+          } else {
+            idsKeep.push(layer._leaflet_id)
+          }
+        });
+        for (const [key, contextLayer] of Object.entries(contextLayers)) {
+          if (contextLayer.layer && !idsKeep.includes(contextLayer.layer._leaflet_id)) {
+            const layer = contextLayer.layer;
+            layer.options.pane = contextLayerPane;
+            contextLayerGroup.addLayer(contextLayer.layer);
+          }
+        }
+      }else{
+      // remove all layer
       contextLayerGroup.eachLayer(function (layer) {
-        if (!ids.includes(layer._leaflet_id)) {
-          contextLayerGroup.removeLayer(layer);
-        } else {
-          idsKeep.push(layer._leaflet_id)
-        }
+        contextLayerGroup.removeLayer(layer);
       });
-      for (const [key, contextLayer] of Object.entries(contextLayers)) {
-        if (contextLayer.layer && !idsKeep.includes(contextLayer.layer._leaflet_id)) {
-          const layer = contextLayer.layer;
-          layer.options.pane = contextLayerPane;
-          contextLayerGroup.addLayer(contextLayer.layer);
-        }
-      }
     }
-  }, [contextLayerGroup, contextLayers]);
+    }
+  }, [contextLayerGroup, contextLayers, contextLayersShow]);
 
   /** REFERENCE LAYER CHANGED */
   useEffect(() => {
