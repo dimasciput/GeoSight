@@ -32,7 +32,8 @@ class DashboardBookmarkAPI(APIView):
                 extent=dashboard.extent,
                 selected_basemap=dashboard.dashboardbasemap_set.filter(
                     visible_by_default=True
-                ).first().object
+                ).first().object,
+                filters=dashboard.filters
             )
         ).data
 
