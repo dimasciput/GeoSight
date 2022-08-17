@@ -11,19 +11,13 @@ As with other administrative abilities, the Context Layer UI can be accessed fro
 
 From here, select "Context Layers"
 
-
-
 This will display the Admin UI for context layers and allow you to see, as well as search for, all context layers. In this tab, the context layers are listed and sorted by their name, a breif description and a category to help administators understand their purpose.
-
-
 
 On the far left, three horizontal dots, when selected, give the administrator to delete a context layer. This will delete the layer for every project and remove it from GeoSight entirely. 
 
-
-
 Finally, on the bottom right the two arrows allow administators to view the multiple pages of context layers.
 
-
+![Admin Home Page](img/context_layers_adminUI_view.jpg)
 
 ### Adding Context Layers
 Context layers can be added from the Context Layer Admin tab. On the top right you can find the button "Add New Context Layer".
