@@ -56,7 +56,7 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
     rule.rule = ruleValue
     rule.color = color
     rule.outline_color = outlineColor
-    onChange(idx, rule)
+    onChange()
   }, [name, ruleValue, color, outlineColor])
 
   // Return rule value
@@ -241,7 +241,7 @@ export function IndicatorOtherRule({ rule, idx, onChange }) {
     rule.color = color
     rule.outline_color = outlineColor
     rule.active = active
-    onChange(idx, rule)
+    onChange()
   }, [name, color, outlineColor, active])
 
   return (
@@ -319,7 +319,48 @@ export function IndicatorOtherRule({ rule, idx, onChange }) {
  * @param {Function} onRulesChanged OnChange.
  */
 export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
-  const [rules, setRules] = useState(indicatorRules);
+
+  /** Adding new rule **/
+  const newRule = (theRules, active, defaultValue, defaultName, defaultColor, defaultIdx) => {
+    let idx = defaultIdx ? defaultIdx : Math.max(...theRules.map(rule => {
+      return rule.id
+    }))
+
+    return {
+      "id": idx + 1,
+      "name": defaultName ? defaultName : "",
+      "rule": defaultValue ? defaultValue : "",
+      "color": defaultColor ? defaultColor : "#000000",
+      "outline_color": "#000000",
+      "active": active,
+    }
+  }
+
+  /** Update rule for adding NO DATA RULE and OTHER RULE **/
+  const updateRules = (oldRules) => {
+    const theRules = [...oldRules]
+    const newRules = []
+    theRules.map(rule => {
+      if (![NO_DATA_RULE, OTHER_DATA_RULE].includes(rule.rule)) {
+        newRules.push(rule)
+      }
+    })
+    const noDataRule = theRules.find(rule => rule.rule === NO_DATA_RULE)
+    if (!noDataRule) {
+      newRules.push(newRule(theRules, false, NO_DATA_RULE, NO_DATA_RULE, "#FFFFFF", -2))
+    } else {
+      newRules.push(noDataRule)
+    }
+    const otherDataRule = theRules.find(rule => rule.rule === OTHER_DATA_RULE)
+    if (!otherDataRule) {
+      newRules.push(newRule(theRules, false, OTHER_DATA_RULE, OTHER_DATA_RULE, "#FFFFFF", -1))
+    } else {
+      newRules.push(otherDataRule)
+    }
+    return newRules
+  }
+
+  const [rules, setRules] = useState(updateRules(indicatorRules));
   const [items, setItems] = useState([]);
 
   const prevState = useRef();
@@ -346,14 +387,7 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
 
   // When the rule changed
   useEffect(() => {
-    const theRules = [...indicatorRules]
-    if (!theRules.filter(rule => rule.rule === NO_DATA_RULE).length) {
-      theRules.push(newRule(theRules, false, NO_DATA_RULE, NO_DATA_RULE, "#FFFFFF"))
-    }
-    if (!theRules.filter(rule => rule.rule === OTHER_DATA_RULE).length) {
-      theRules.push(newRule(theRules, false, OTHER_DATA_RULE, OTHER_DATA_RULE, "#FFFFFF"))
-    }
-    setRules(theRules)
+    setRules(updateRules(indicatorRules))
   }, [indicatorRules])
 
   useEffect(() => {
@@ -378,40 +412,19 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
     setRules([...newRules]);
   }
 
-  /** Adding new rule **/
-  const newRule = (theRules, active, defaultValue, defaultName, defaultColor) => {
-    let idx = Math.max(...theRules.map(rule => {
-      return rule.id
-    }))
-    return {
-      "id": idx + 1,
-      "name": defaultName ? defaultName : "",
-      "rule": defaultValue ? defaultValue : "",
-      "color": defaultColor ? defaultColor : "#000000",
-      "outline_color": "#000000",
-      "active": active,
-    }
-  }
   const addNewRule = () => {
-    let idx = Math.max(...rules.map(rule => {
-      return rule.id
-    }))
-
     const newRules = []
     items.map(item => {
       newRules.push(rules[item - 1])
     })
     setRules(
-      [...newRules, newRule(rules, true)]
+      updateRules([...newRules, newRule(rules, true)])
     )
   }
-  const onChange = (idx, rule) => {
-    rules[idx] = rule
-    const newRules = []
-    items.map(item => {
-      newRules.push(rules[item - 1])
-    })
-    setRules([...newRules]);
+  const onChange = () => {
+    if (onRulesChanged) {
+      onRulesChanged(rules)
+    }
   }
 
   /** When drag event ended **/
