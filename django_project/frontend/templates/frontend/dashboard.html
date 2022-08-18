@@ -18,7 +18,6 @@
       urls.bookmarkDetail = '{% url 'dashboard-bookmarks-edit' slug=dashboard.id pk=0 %}'
 
       const definition = {{ definition|safe }};
-      const maxZoom = 24;
       let editMode = {% if edit_mode %} true {% else %} false {% endif %};
       if (editMode) {
         urls.api = {

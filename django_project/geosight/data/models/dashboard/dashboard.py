@@ -70,7 +70,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         """Save all relationship data."""
         from geosight.data.models.dashboard import (
             DashboardIndicator, DashboardIndicatorRule, DashboardBasemap,
-            DashboardContextLayer
+            DashboardContextLayer, DashboardContextLayerField
         )
         self.save_widgets(data['widgets'])
 
@@ -87,7 +87,6 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                     indicator_rule, created = \
                         DashboardIndicatorRule.objects.get_or_create(
                             object=dashboard_indicator,
-                            indicator=dashboard_indicator.object,
                             name=rule['name']
                         )
                     indicator_rule.rule = rule['rule']
@@ -107,6 +106,27 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
             DashboardContextLayer, ContextLayer,
             self.dashboardcontextlayer_set.all(),
             data['contextLayers'])
+
+        # Save fields
+        for context_layer in data['contextLayers']:
+            try:
+                dashbaord_context_layer = self.dashboardcontextlayer_set.get(
+                    object_id=context_layer['id'])
+                dashbaord_context_layer.dashboardcontextlayerfield_set.all(
+
+                ).delete()
+                for idx, field in enumerate(context_layer['data_fields']):
+                    DashboardContextLayerField.objects.get_or_create(
+                        object=dashbaord_context_layer,
+                        name=field['name'],
+                        alias=field['alias'],
+                        visible=field.get('visible', True),
+                        type=field.get('type', 'string'),
+                        order=idx
+                    )
+
+            except DashboardContextLayer.DoesNotExist:
+                pass
 
     def save_relation(self, ModelClass, ObjectClass, modelQuery, inputData):
         """Save relation from data."""
@@ -140,6 +160,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
             model.order = data.get('order', 0)
             model.group = data.get('group', '')
             model.visible_by_default = data.get('visible_by_default', False)
+            model.styles = data.get('styles', None)
             model.save()
 
     def save_widgets(self, widget_data):

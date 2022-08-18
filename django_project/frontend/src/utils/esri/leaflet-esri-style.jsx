@@ -1,3 +1,12 @@
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length === 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 /**
  * Read Symbol
  */
@@ -10,8 +19,8 @@ const readSymbol = (symbol) => {
             type: 'circle',
             style: {
               radius: symbol.size,
-              fillColor: symbol.color ? `rgba(${symbol.color.join(',')})` : null,
-              color: symbol.outline && symbol.outline.color ? `rgba(${symbol.outline.color.join(',')})` : null,
+              fillColor: symbol.color ? rgbToHex(...symbol.color) : null,
+              color: symbol.outline && symbol.outline.color ? rgbToHex(...symbol.outline.color) : null,
               weight: symbol.outline && symbol.outline.width ? symbol.outline.width : null,
               fillOpacity: 1
             },
@@ -21,8 +30,8 @@ const readSymbol = (symbol) => {
             type: 'square',
             style: {
               radius: symbol.size,
-              fillColor: symbol.color ? `rgba(${symbol.color.join(',')})` : null,
-              color: symbol.outline && symbol.outline.color ? `rgba(${symbol.outline.color.join(',')})` : null,
+              fillColor: symbol.color ? rgbToHex(...symbol.color) : null,
+              color: symbol.outline && symbol.outline.color ? rgbToHex(...symbol.outline.color) : null,
               weight: symbol.outline && symbol.outline.width ? symbol.outline.width : null,
               fillOpacity: 1
             },
@@ -49,7 +58,7 @@ const readSymbol = (symbol) => {
       return {
         type: 'line',
         style: {
-          color: `rgba(${symbol.color.join(',')})`,
+          color: rgbToHex(...symbol.color),
           width: symbol.width,
           fillOpacity: 1
         },
@@ -61,20 +70,20 @@ const readSymbol = (symbol) => {
         style: {
           color: style ? style['style']?.color : null,
           weight: style ? style['style']?.width : 0,
-          fillColor: `rgba(${symbol.color.join(',')})`,
+          fillColor: rgbToHex(...symbol.color),
           fillOpacity: 1
         },
       };
     case 'esriPFS': {
       let style = symbol.outline ? readSymbol(symbol.outline) : {};
       let icon = {
-        iconUrl: `data:image/png;base64,${symbol.imageData}`,
+        iconUrl: symbol.imageData.includes('data:image') ? symbol.imageData : `data:image/png;base64,${symbol.imageData}`,
         rotation: symbol.angle,
         color: style ? style['style']?.color : null,
         weight: style ? style['style']?.width : 0
       };
       if (symbol.color) {
-        icon['fillColor'] = `rgba(${symbol.color.join(',')})`
+        icon['fillColor'] = rgbToHex(...symbol.color)
         icon['fillOpacity'] = 1
       } else {
         icon['fillColor'] = icon.color

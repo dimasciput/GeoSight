@@ -1,9 +1,12 @@
 """Context Layer serializer."""
+import json
 import urllib.parse
 
 from rest_framework import serializers
 
-from geosight.data.models.context_layer import ContextLayer, ContextLayerStyle
+from geosight.data.models.context_layer import (
+    ContextLayer, ContextLayerField
+)
 
 
 class ContextLayerSerializer(serializers.ModelSerializer):
@@ -11,8 +14,9 @@ class ContextLayerSerializer(serializers.ModelSerializer):
 
     url = serializers.SerializerMethodField()
     parameters = serializers.SerializerMethodField()
-    style = serializers.SerializerMethodField()
+    styles = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
+    data_fields = serializers.SerializerMethodField()
 
     def get_url(self, obj: ContextLayer):
         """Url."""
@@ -29,30 +33,28 @@ class ContextLayerSerializer(serializers.ModelSerializer):
                     parameters[params[0]] = '='.join(params[1:])
         return parameters
 
-    def get_style(self, obj: ContextLayer):
-        """Style."""
-        style = {}
-        for contextlayerstyle in obj.contextlayerstyle_set.all():
-            value = contextlayerstyle.value if \
-                contextlayerstyle.value else None
-            if not value:
-                value = contextlayerstyle.icon.url \
-                    if contextlayerstyle.icon else None
-            style[contextlayerstyle.name] = value
-        return style
-
     def get_category(self, obj: ContextLayer):
         """Return category name."""
         return obj.group.name if obj.group else ''
+
+    def get_data_fields(self, obj: ContextLayer):
+        """Return category name."""
+        return ContextLayerFieldSerializer(
+            obj.contextlayerfield_set.all(), many=True
+        ).data
+
+    def get_styles(self, obj: ContextLayer):
+        """Return category name."""
+        return json.loads(obj.styles) if obj.styles else None
 
     class Meta:  # noqa: D106
         model = ContextLayer
         exclude = ('group',)
 
 
-class ContextLayerStyleSerializer(serializers.ModelSerializer):
-    """Serializer for ContextLayerStyle."""
+class ContextLayerFieldSerializer(serializers.ModelSerializer):
+    """Serializer for ContextLayerField."""
 
     class Meta:  # noqa: D106
-        model = ContextLayerStyle
+        model = ContextLayerField
         fields = '__all__'

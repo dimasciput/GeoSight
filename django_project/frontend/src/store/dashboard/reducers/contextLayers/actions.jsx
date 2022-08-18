@@ -1,9 +1,10 @@
 import {
   CONTEXT_LAYER_ACTION_NAME,
   CONTEXT_LAYER_ACTION_TYPE_ADD,
+  CONTEXT_LAYER_ACTION_TYPE_REARRANGE,
   CONTEXT_LAYER_ACTION_TYPE_REMOVE,
-  CONTEXT_LAYER_ACTION_TYPE_UPDATE,
-  CONTEXT_LAYER_ACTION_TYPE_REARRANGE
+  CONTEXT_LAYER_ACTION_TYPE_STYLE,
+  CONTEXT_LAYER_ACTION_TYPE_UPDATE
 } from './index'
 
 
@@ -42,6 +43,7 @@ export function update(payload) {
     payload: payload
   };
 }
+
 /**
  * Rearrange context layer.
  * @param {object} payload Context layer data.
@@ -54,6 +56,18 @@ export function rearrange(payload) {
   };
 }
 
+/**
+ * Rearrange context layer.
+ * @param {object} payload Context layer data.
+ */
+export function updateStyle(payload) {
+  return {
+    name: CONTEXT_LAYER_ACTION_NAME,
+    type: CONTEXT_LAYER_ACTION_TYPE_STYLE,
+    payload: payload
+  };
+}
+
 export default {
-  add, remove, update, rearrange
+  add, remove, update, rearrange, updateStyle
 }

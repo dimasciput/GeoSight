@@ -7,6 +7,7 @@ export const CONTEXT_LAYER_ACTION_TYPE_ADD = 'CONTEXT_LAYER/ADD';
 export const CONTEXT_LAYER_ACTION_TYPE_REMOVE = 'CONTEXT_LAYER/REMOVE';
 export const CONTEXT_LAYER_ACTION_TYPE_UPDATE = 'CONTEXT_LAYER/UPDATE';
 export const CONTEXT_LAYER_ACTION_TYPE_REARRANGE = 'CONTEXT_LAYER/REARRANGE';
+export const CONTEXT_LAYER_ACTION_TYPE_STYLE = 'CONTEXT_LAYER/STYLE';
 
 const initialState = []
 export default function contextLayersReducer(state = initialState, action) {
@@ -55,6 +56,21 @@ export default function contextLayersReducer(state = initialState, action) {
             }
           })
         }
+        return contextLayers
+      }
+      case CONTEXT_LAYER_ACTION_TYPE_STYLE: {
+        const contextLayers = []
+        state.forEach(function (contextLayer) {
+          if (contextLayer.id === action.payload.id) {
+            if (action.payload.data_fields) {
+              contextLayer.data_fields = action.payload.data_fields
+            }
+            if (action.payload.styles) {
+              contextLayer.styles = action.payload.styles
+            }
+          }
+          contextLayers.push(contextLayer)
+        })
         return contextLayers
       }
       default:

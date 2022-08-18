@@ -1,4 +1,6 @@
 """ContextLayer form."""
+import json
+
 from django import forms
 from django.forms.models import model_to_dict
 
@@ -13,6 +15,16 @@ class ContextLayerForm(forms.ModelForm):
         widget=forms.Select(
             attrs={'data-autocreated': 'True'}
         )
+    )
+
+    data_fields = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
+    styles = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
     )
 
     def __init__(self, *args, **kwargs):
@@ -45,6 +57,9 @@ class ContextLayerForm(forms.ModelForm):
     @staticmethod
     def model_to_initial(model: ContextLayer):
         """Return model data as json."""
+        from geosight.data.serializer.context_layer import (
+            ContextLayerFieldSerializer
+        )
         initial = model_to_dict(model)
         try:
             initial['group'] = ContextLayerGroup.objects.get(
@@ -52,4 +67,12 @@ class ContextLayerForm(forms.ModelForm):
             ).name
         except ContextLayerGroup.DoesNotExist:
             initial['group'] = None
+        try:
+            initial['data_fields'] = json.dumps(
+                ContextLayerFieldSerializer(
+                    model.contextlayerfield_set.all(), many=True
+                ).data
+            )
+        except ContextLayerGroup.DoesNotExist:
+            initial['data_fields'] = ''
         return initial

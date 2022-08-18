@@ -1,15 +1,15 @@
-"""COntext layer Admin."""
+"""Context layer Admin."""
 from django.contrib import admin
 
 from geosight.data.models.context_layer import (
-    ContextLayerGroup, ContextLayer, ContextLayerStyle
+    ContextLayerGroup, ContextLayer, ContextLayerField
 )
 
 
-class ContextLayerStyleInline(admin.TabularInline):
-    """ContextLayerStyle inline."""
+class ContextLayerFieldInline(admin.TabularInline):
+    """ContextLayerField inline."""
 
-    model = ContextLayerStyle
+    model = ContextLayerField
     extra = 0
 
 
@@ -17,7 +17,7 @@ class ContextLayerAdmin(admin.ModelAdmin):
     """ContextLayer admin."""
 
     list_display = ('name', 'layer_type', 'group', 'url')
-    inlines = (ContextLayerStyleInline,)
+    inlines = (ContextLayerFieldInline,)
     list_filter = ('group',)
     list_editable = ('group',)
 

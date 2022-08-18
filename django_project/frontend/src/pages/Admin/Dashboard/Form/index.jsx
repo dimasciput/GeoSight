@@ -208,6 +208,8 @@ export function DashboardSaveForm(
             order: model.order,
             visible_by_default: model.visible_by_default,
             group: model.group,
+            data_fields: model.data_fields,
+            styles: JSON.stringify(model.styles),
           }
         }),
         'extent': extent,

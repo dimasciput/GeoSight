@@ -36,6 +36,13 @@ export function setCookie(cname, cvalue, exdays) {
   document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
 }
 
+/**
+ * Deep copy of dictionary
+ */
+export function dictDeepCopy(dict) {
+  return JSON.parse(JSON.stringify(dict))
+}
+
 
 /**
  * return translation of message
@@ -120,7 +127,14 @@ export function featurePopupContent(title, properties) {
       color = prop
     }
     if (!['color', 'outline_color', 'detail_url'].includes(key.toLowerCase())) {
-      let value = typeof prop === 'object' ? JSON.stringify(prop) : numberWithCommas(prop);
+      let value = numberWithCommas(prop)
+      if (prop) {
+        if (typeof prop === 'object') {
+          if (Object.keys(prop)) {
+            value = JSON.stringify(prop)
+          }
+        }
+      }
       defaultHtml += `<tr><td valign="top"><b>${capitalize(key)}</b></td><td valign="top">${value}</td></tr>`
     }
   }
@@ -128,4 +142,30 @@ export function featurePopupContent(title, properties) {
     defaultHtml += '<tr><td colspan="2" style="padding: 5px"><button data-url="' + properties.detail_url + '" data-name="' + properties.name + '"class="popup-details MuiButtonLike" style="width: 100%;" disabled>Details</button></tr>'
   }
   return `<div class="table__header" style="background: ${color}"><b>` + title + '</b></div><div class="table__content"><table><tbody>' + defaultHtml + '</tbody></table></div>'
+}
+
+/**
+ * JSON TO PARAMS
+ */
+export function jsonToUrlParams(object) {
+  const params = []
+  for (const [key, value] of Object.entries(object)) {
+    params.push(`${key}=${value}`)
+  }
+  return params.join('&')
+}
+
+/***
+ * Hex to RGBA
+ */
+export function hexToRGB(hex, alpha) {
+  var r = parseInt(hex.slice(1, 3), 16),
+    g = parseInt(hex.slice(3, 5), 16),
+    b = parseInt(hex.slice(5, 7), 16);
+
+  if (alpha !== undefined) {
+    return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+  } else {
+    return "rgb(" + r + ", " + g + ", " + b + ")";
+  }
 }

@@ -74,32 +74,53 @@ class ContextLayer(AbstractTerm):
             "Password to access the layer if needed."
         )
     )
+    styles = models.TextField(
+        null=True, blank=True
+    )
+
+    def save_relations(self, data):
+        """Save all relationship data."""
+        self.contextlayerfield_set.all().delete()
+        for idx, field in enumerate(data['data_fields']):
+            ContextLayerField.objects.get_or_create(
+                context_layer=self,
+                name=field['name'],
+                alias=field['alias'],
+                type=field['type'],
+                visible=field.get('visible', True),
+                order=idx
+            )
 
 
-class ContextLayerStyle(models.Model):
-    """Overridden style of leaflet."""
+class ContextLayerFieldAbstract(models.Model):
+    """Field data of context layer."""
+
+    name = models.CharField(
+        max_length=512
+    )
+    alias = models.CharField(
+        max_length=512
+    )
+    visible = models.BooleanField(
+        default=True
+    )
+    type = models.CharField(
+        max_length=512,
+        default='string'
+    )
+    order = models.IntegerField(
+        default=0
+    )
+
+    class Meta:  # noqa: D106
+        abstract = True
+
+
+class ContextLayerField(ContextLayerFieldAbstract):
+    """Field data of context layer."""
 
     context_layer = models.ForeignKey(
         ContextLayer, on_delete=models.CASCADE
-    )
-    name = models.CharField(
-        max_length=128,
-        help_text=_(
-            "The name of style"
-        )
-    )
-    value = models.CharField(
-        max_length=1024,
-        null=True, blank=True,
-        help_text=_(
-            "The value of style"
-        )
-    )
-    icon = models.FileField(
-        null=True, blank=True,
-        help_text=_(
-            "The icon of the style"
-        )
     )
 
     class Meta:  # noqa: D106

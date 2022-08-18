@@ -1,0 +1,168 @@
+/* ==========================================================================
+   Context Layer Style Config
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+
+.ContextLayerConfig-Wrapper {
+  text-align: center;
+
+  .form-helptext {
+    margin-bottom: 1rem;
+  }
+
+  .ContextLayerConfig-Tab {
+    display: flex;
+    margin-bottom: -1px;
+
+    div {
+      border: 1px solid $secondary-color;
+      border-bottom: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+
+      &:hover {
+        opacity: $base-hovered-opacity;
+      }
+
+      &.Selected {
+        background: $secondary-color;
+        cursor: default;
+        color: $anti-secondary-color;
+      }
+    }
+  }
+
+  .error {
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  &.MAP {
+    .MAP {
+      display: flex !important;
+    }
+  }
+
+  &.FIELDS {
+    .FIELDS {
+      display: block !important;
+    }
+  }
+
+  &.STYLES {
+    .STYLES {
+      display: block !important;
+    }
+  }
+}
+
+#ContextLayerConfig {
+  border: 1px solid $secondary-color;
+  border-radius: $border-radius;
+  border-top-left-radius: 0;
+  text-align: left;
+
+  & > div {
+    display: none;
+  }
+
+
+  .ArcgisConfig {
+    padding: 1rem;
+
+    input {
+      width: fit-content;
+
+      &:focus {
+        border: 1px solid $primary-color;
+        outline: none;
+      }
+    }
+
+    table {
+      width: 100%;
+
+      th, td {
+        border: 1px solid $primary-color;
+        padding: 0.2rem 0.5rem;
+      }
+
+      thead {
+        td {
+          background: $primary-color;
+          color: $anti-primary-color;
+        }
+      }
+    }
+
+    input[type=checkbox] {
+      cursor: pointer;
+    }
+
+    .ContextLayerConfigInput {
+      input {
+        width: 100%;
+
+        &[type=color] {
+          cursor: pointer;
+          padding: 0 2px;
+        }
+      }
+
+      .ContextLayerConfig-IconSize {
+        display: flex;
+
+        input {
+          flex-grow: 1;
+        }
+
+        .ContextLayerConfig-IconSize-X {
+          padding: 0.5rem 2rem;
+        }
+      }
+    }
+
+    .Classification {
+      border: 1px solid $secondary-color;
+      padding: 0.5rem;
+
+      b {
+        display: block;
+        width: 100%;
+        text-align: center;
+        color: $secondary-color;
+      }
+    }
+  }
+
+  .DragDropItem-Drag {
+    svg {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+}
+
+.MapWrapper {
+  display: flex;
+  height: 500px;
+
+  .legend {
+    width: 200px;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 0.5rem;
+
+    .title {
+      text-align: center;
+    }
+  }
+
+  #StyleMapConfig {
+    flex-grow: 1;
+    height: 100%;
+  }
+}

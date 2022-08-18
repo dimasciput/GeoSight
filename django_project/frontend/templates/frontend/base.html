@@ -55,6 +55,7 @@
 <script type="text/javascript"
         src="{% static 'libs/fuzzysort.js' %}"></script>
 <script>
+  const maxZoom = 24;
   {% if request.user.is_authenticated %}
     const user = {{ user|safe }};
     user.is_staff = user.is_staff === 'true'

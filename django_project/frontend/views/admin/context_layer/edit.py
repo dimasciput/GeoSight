@@ -1,5 +1,6 @@
 """Admin ContextLayer Edit View."""
 
+import json
 from braces.views import SuperuserRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
@@ -56,12 +57,16 @@ class ContextLayerEditView(SuperuserRequiredMixin, BaseView):
         basemap = get_object_or_404(
             ContextLayer, id=self.kwargs.get('pk', '')
         )
+        data = request.POST.copy()
+        data['data_fields'] = json.loads(request.POST.get('data_fields', '[]'))
         form = ContextLayerForm(
-            request.POST,
+            data,
             instance=basemap
         )
+
         if form.is_valid():
-            form.save()
+            context_layer = form.save()
+            context_layer.save_relations(data)
             return redirect(reverse('admin-context-layer-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form

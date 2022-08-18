@@ -7,11 +7,23 @@ import L from 'leaflet';
 import { featureLayer } from 'esri-leaflet';
 import parseArcRESTStyle from './leaflet-esri-style'
 import { fetchJSON } from '../../Requests'
+import { hexToRGB, jsonToUrlParams } from '../../utils/main'
 
 export default class EsriLeafletLayer {
   constructor(name, url, params, options, style, onEachFeature) {
+    const urls = url.split('?')
+    if (urls[1]) {
+      let updatedParams = urls[1].split('&')
+      updatedParams.map(param => {
+        const split = param.split('=')
+        const value = split.splice(1);
+        params[split[0]] = value.join('=')
+      })
+    }
+
     this.name = name;
-    this.url = url;
+    this.url = urls[0];
+    this.data = null;
     this.params = params;
 
     // for the options
@@ -53,9 +65,12 @@ export default class EsriLeafletLayer {
      * ESRI Alpha is scaled up tp 255 - use maxTrans ceiling
      * Return Leaflet layer
      */
-    const url = this.url;
     const that = this;
-    return fetchJSON(...this.preFetch(url + '?f=json'))
+    const urls = this.url.split('?')
+    const params = JSON.parse(JSON.stringify(this.params))
+    params['f'] = 'json'
+    const url = urls[0] + '?' + jsonToUrlParams(params)
+    return fetchJSON(...this.preFetch(url))
       .then(data => {
         if (data.error) {
           return {
@@ -71,6 +86,7 @@ export default class EsriLeafletLayer {
             }
           }
         }
+        this.data = data;
         return {
           layer: that.toLeafletLayer(data),
           error: null
@@ -84,13 +100,11 @@ export default class EsriLeafletLayer {
       })
   }
 
-  overrideStyle() {
-    try {
-      if (this.defaultStyle.icon) {
-        this.style.style.style.iconUrl = this.defaultStyle.icon
-      }
-    } catch (e) {
-
+  overrideStyle(style) {
+    if (this.defaultStyle) {
+      return this.defaultStyle
+    } else {
+      return style
     }
   }
 
@@ -99,11 +113,9 @@ export default class EsriLeafletLayer {
    */
   toLeafletLayer(data) {
     this.style = parseArcRESTStyle(data);
-    const style = this.style;
     const self = this;
-    this.overrideStyle();
-
-    const params = JSON.parse(JSON.stringify(this.params));
+    const style = this.overrideStyle(this.style);
+    const params = this.params ? JSON.parse(JSON.stringify(this.params)) : {};
     params.url = this.url;
     if (this.token) {
       params.token = this.token;
@@ -220,7 +232,6 @@ export default class EsriLeafletLayer {
         params['onEachFeature'] = self.onEachFeature;
         return featureLayer(params);
       }
-
     }
     return null;
   };
@@ -230,32 +241,57 @@ export default class EsriLeafletLayer {
    */
 
   getLegend() {
-    const style = this.style;
+    const style = this.overrideStyle(this.style);
     if (!style) {
       return null
     }
     const that = this;
     let legend = '';
+
+    /** CIRCLE LEGEND **/
+    const circle = (styleData, label) => {
+      const size = parseInt(styleData.radius) + 4;
+      const fillColor = hexToRGB(styleData.fillColor, styleData.fillOpacity);
+      const outlineColor = styleData.color;
+      const weight = styleData.weight;
+      return '<tr>' +
+        `<td><div class="circle" style="width: ${size}px; height: ${size}px; background-color: ${fillColor};border: ${weight ? weight : 1}px solid ${outlineColor}"></div></td>` +
+        `<td>${label ? label : ""}</td>` +
+        '</tr>'
+    }
+
+    /** SQUARE LEGEND **/
+    const square = (styleData, label) => {
+      const size = styleData.radius ? parseInt(styleData.radius) + 4 : 10;
+      const fillColor = hexToRGB(styleData.fillColor, styleData.fillOpacity);
+      const outlineColor = styleData.color;
+      const weight = styleData.weight;
+      return '<tr>' +
+        `<td><div class="square" style="width: ${size}px; height: ${size}px; background-color: ${fillColor};border: ${weight ? weight : 1}px solid ${outlineColor}"></div></td>` +
+        `<td>${label ? label : ""}</td>` +
+        '</tr>'
+    }
+
+    /** ICON LEGEND **/
+    const icon = (styleData, label) => {
+      const url = styleData.iconUrl
+      const size = styleData.iconSize ? styleData.iconSize : [0, 0]
+
+      return '<tr>' +
+        `<td><img src="${url}" width="${size[0]}" height="${size[1]}"></td>` +
+        `<td>${label ? label : ""}</td>` +
+        '</tr>'
+    }
+
     switch (style.geometryType) {
       // This is for polygon
       case "esriGeometryPolygon": {
         if (style.classifications) {
           style.classifications.forEach(function (classification, index) {
-            const color = classification.style.style.fillColor;
-            const outlineColor = classification.style.style.color;
-            legend += '' +
-              '<tr>' +
-              `<td><div class="polygon" style="background-color: ${color}; border: 1px solid ${outlineColor}"></div></td>` +
-              `<td>${classification.label}</td>` +
-              '</tr>'
+            legend += square(classification.style.style, classification.label)
           });
         } else {
-          const color = style.style.style.fillColor;
-          legend += '' +
-            '<tr>' +
-            `<td><div class="polygon" style="background-color: ${color}"></div></td>` +
-            `<td>${that.name}</td>` +
-            '</tr>'
+          legend += square(style.style.style, that.name)
         }
         break;
       }
@@ -280,50 +316,30 @@ export default class EsriLeafletLayer {
           style.classifications.forEach(function (classification, index) {
             switch (classification.style.type) {
               case 'circle': {
-                const size = classification.style.style.radius;
-                const fillColor = classification.style.style.fillColor;
-                legend += '' +
-                  '<tr>' +
-                  `<td><div class="circle" style="width: ${size}px; height: ${size}px; background-color: ${fillColor}"></div></td>` +
-                  `<td>${classification.label}</td>` +
-                  '</tr>'
+                legend += circle(classification.style.style, classification.label)
                 break
               }
               case 'square': {
-                const size = classification.style.style.radius;
-                const fillColor = classification.style.style.fillColor;
-                legend += '' +
-                  '<tr>' +
-                  `<td><div class="square" style="width: ${size}px; height: ${size}px; background-color: ${fillColor}"></div></td>` +
-                  `<td>${classification.label}</td>` +
-                  '</tr>'
+                legend += square(classification.style.style, classification.label)
                 break
               }
               case 'icon':
-                legend += '' +
-                  '<tr>' +
-                  `<td><img src="${classification.style.style.iconUrl}"></td>` +
-                  `<td>${classification.label}</td>` +
-                  '</tr>'
+                legend += icon(classification.style.style, classification.label)
                 break
             }
           });
         } else {
           switch (style.style.type) {
-            case 'circle':
-              const fillColor = style.style.style.fillColor;
-              legend += '' +
-                '<tr>' +
-                `<td><div class="circle" style="width: 10px; height: 10px; background-color: ${fillColor}"></div></td>` +
-                `<td>${that.name}</td>` +
-                '</tr>'
+            case 'circle': {
+              legend += circle(style.style.style, that.name)
               break
+            }
+            case 'square': {
+              legend += square(style.style.style, that.name)
+              break
+            }
             case 'icon':
-              legend += '' +
-                '<tr>' +
-                `<td><img src="${style.style.style.iconUrl}"></td>` +
-                `<td>${that.name}</td>` +
-                '</tr>'
+              legend += icon(style.style.style, that.name)
               break
           }
         }

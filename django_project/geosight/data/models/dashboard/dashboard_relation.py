@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 
 from geosight.data.models.basemap_layer import BasemapLayer
-from geosight.data.models.context_layer import ContextLayer
+from geosight.data.models.context_layer import ContextLayer, \
+    ContextLayerFieldAbstract
 from geosight.data.models.dashboard import Dashboard
 from geosight.data.models.indicator import Indicator
 from geosight.data.models.rule import RuleModel
@@ -59,11 +60,6 @@ class DashboardIndicatorRule(RuleModel):
         on_delete=models.CASCADE
     )
 
-    indicator = models.ForeignKey(
-        Indicator,
-        on_delete=models.CASCADE
-    )
-
     class Meta:  # noqa: D106
         unique_together = ('object', 'name')
         ordering = ('order',)
@@ -88,6 +84,21 @@ class DashboardContextLayer(DashboardRelation):
         ContextLayer,
         on_delete=models.CASCADE
     )
+    styles = models.TextField(
+        null=True, blank=True
+    )
 
     class Meta:  # noqa: D106
         ordering = ('order',)
+
+
+class DashboardContextLayerField(ContextLayerFieldAbstract):
+    """Indicator x Dashboard rule."""
+
+    object = models.ForeignKey(
+        DashboardContextLayer,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:  # noqa: D106
+        unique_together = ('object', 'name')

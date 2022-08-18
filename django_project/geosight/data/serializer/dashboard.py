@@ -97,9 +97,16 @@ class DashboardSerializer(serializers.ModelSerializer):
         output = []
         for model in obj.dashboardcontextlayer_set.all():
             data = ContextLayerSerializer(model.object).data
-            data.update(
-                DashboardContextLayerSerializer(model).data
-            )
+            dashboard_data = DashboardContextLayerSerializer(model).data
+            if dashboard_data['data_fields']:
+                del data['data_fields']
+            else:
+                del dashboard_data['data_fields']
+            if dashboard_data['styles']:
+                del data['styles']
+            else:
+                del dashboard_data['styles']
+            data.update(dashboard_data)
             output.append(data)
 
         return output

@@ -58,11 +58,13 @@ export default function AdminForm({ isSubmitted, submit, children }) {
       })
 
       if ($select.data('autocreated')) {
-        input = <Creatable options={options} defaultValue={initValue}
-                           name={$select.attr('name')}/>
+        input = <Creatable
+          options={options} defaultValue={initValue}
+          name={$select.attr('name')}/>
       } else {
-        input = <Select options={options} defaultValue={initValue}
-                        name={$select.attr('name')}/>
+        input = <Select
+          options={options} defaultValue={initValue}
+          name={$select.attr('name')}/>
       }
     } else {
       const $input = $(p).find('.form-input input');

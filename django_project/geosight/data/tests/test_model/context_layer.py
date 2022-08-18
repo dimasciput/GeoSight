@@ -2,9 +2,7 @@
 from django.test.testcases import TestCase
 
 from geosight.data.serializer.context_layer import ContextLayerSerializer
-from geosight.data.tests.model_factories import (
-    ContextLayerF, ContextLayerStyleF
-)
+from geosight.data.tests.model_factories import ContextLayerF
 
 
 class BasemapLayerTest(TestCase):
@@ -32,16 +30,8 @@ class BasemapLayerTest(TestCase):
                 [f'{key}={value}' for key, value in self.params.items()]
             )
         )
-        for name, value in self.style.items():
-            ContextLayerStyleF(
-                context_layer=context_layer,
-                name=name,
-                value=value
-            )
 
         context_layer_data = ContextLayerSerializer(context_layer).data
         self.assertEquals(context_layer_data['name'], self.name)
         for key, value in context_layer_data['parameters'].items():
             self.assertEquals(self.params[key], value)
-        for key, value in context_layer_data['style'].items():
-            self.assertEquals(self.style[key], value)

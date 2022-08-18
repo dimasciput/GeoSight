@@ -4,6 +4,7 @@ from django.contrib import admin
 from geosight.data.models.dashboard import (
     Dashboard, Widget,
     DashboardBasemap, DashboardIndicator, DashboardContextLayer,
+    DashboardContextLayerField,
     DashboardIndicatorRule, DashboardBookmark
 )
 
@@ -22,11 +23,19 @@ class DashboardBasemapInline(admin.TabularInline):
     extra = 0
 
 
-class DashboardIndicatorInline(admin.TabularInline):
-    """DashboardIndicator inline."""
+class DashboardIndicatorRuleInline(admin.TabularInline):
+    """DashboardContextLayer inline."""
 
-    model = DashboardIndicator
+    model = DashboardIndicatorRule
     extra = 0
+
+
+class DashboardIndicatorAdmin(admin.ModelAdmin):
+    """DashboardIndicatorRule admin."""
+
+    list_display = ('dashboard', 'object', 'visible_by_default')
+    list_filter = ('dashboard', 'object')
+    inlines = (DashboardIndicatorRuleInline,)
 
 
 class DashboardContextLayerInline(admin.TabularInline):
@@ -41,25 +50,25 @@ class DashboardAdmin(admin.ModelAdmin):
 
     list_display = ('slug', 'name', 'creator')
     inlines = (
-        DashboardBasemapInline, DashboardIndicatorInline,
+        DashboardBasemapInline,
         DashboardContextLayerInline, WidgetInline
     )
     prepopulated_fields = {'slug': ('name',)}
 
 
-class DashboardIndicatorRuleAdmin(admin.ModelAdmin):
+class DashboardContextLayerFieldInline(admin.TabularInline):
+    """DashboardContextLayer inline."""
+
+    model = DashboardContextLayerField
+    extra = 0
+
+
+class DashboardContextLayerAdmin(admin.ModelAdmin):
     """DashboardIndicatorRule admin."""
 
-    list_display = ('dashboard', 'indicator', 'name', 'rule', 'active')
-    list_filter = ('object__dashboard', 'object__object')
-
-    def dashboard(self, obj: DashboardIndicatorRule):
-        """Return dashboard name."""
-        return obj.object.dashboard.__str__()
-
-    def indicator(self, obj: DashboardIndicatorRule):
-        """Return indicator name."""
-        return obj.indicator.__str__()
+    list_display = ('dashboard', 'object', 'visible_by_default')
+    list_filter = ('dashboard', 'object')
+    inlines = (DashboardContextLayerFieldInline,)
 
 
 class DashboardBookmarkAdmin(admin.ModelAdmin):
@@ -71,5 +80,6 @@ class DashboardBookmarkAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Dashboard, DashboardAdmin)
-admin.site.register(DashboardIndicatorRule, DashboardIndicatorRuleAdmin)
+admin.site.register(DashboardContextLayer, DashboardContextLayerAdmin)
+admin.site.register(DashboardIndicator, DashboardIndicatorAdmin)
 admin.site.register(DashboardBookmark, DashboardBookmarkAdmin)

@@ -4,7 +4,6 @@
 
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import L from 'leaflet';
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -13,16 +12,13 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Switch from '@mui/material/Switch';
 
 import { Actions } from '../../../../store/dashboard'
-import EsriLeafletLayer from '../../../../utils/esri/leaflet-esri-layer'
-import { featurePopupContent } from '../../../../utils/main'
 import { layerInGroup } from '../../../../utils/layers'
-import { fetchingData } from "../../../../Requests";
-
-import './style.scss'
+import { getLayer } from "./Layer"
 import OnOffSwitcher from "../../../Switcher/OnOff";
 
+import './style.scss'
 
-function ContextLayerInput({ data }) {
+function ContextLayerInput({ data, styles, data_fields }) {
   const dispatch = useDispatch();
   const id = data.id;
   const [checked, setChecked] = useState(false);
@@ -31,89 +27,6 @@ function ContextLayerInput({ data }) {
   const [legend, setLegend] = useState(null);
   const [showLegend, setShowLegend] = useState(false);
 
-  /**
-   * Initiate layer from the data.
-   */
-  const getLayer = function (layerData) {
-    const layerType = layerData.layer_type;
-
-    // this is for each feature
-    const onEachFeature = (feature, layer) => {
-      layer.bindPopup(
-        featurePopupContent(layerData.name, feature.properties)
-      );
-      layer.on('click', function (event) {
-        dispatch(
-          Actions.Map.updateCenter(event.latlng)
-        )
-      }, this);
-    }
-    switch (layerType) {
-      case 'Raster Tile': {
-        if (layerData.legend) {
-          setLegend(`<img src="${layerData.legend}"/>`)
-        }
-        layerData.parameters['maxNativeZoom'] = 19;
-        layerData.parameters['maxZoom'] = maxZoom;
-        return L.tileLayer.wms(
-          layerData.url, layerData.parameters
-        );
-      }
-      case 'ARCGIS': {
-        const options = {
-          token: layerData.token
-        };
-        const argisLayer = new EsriLeafletLayer(
-          layerData.name, layerData.url,
-          layerData.parameters, options,
-          layerData.style, onEachFeature
-        );
-        argisLayer.load().then(output => {
-          if (output.layer) {
-            setLayer(output.layer);
-            const legend = argisLayer.getLegend();
-            setLegend(legend);
-          } else {
-            setError(output.error);
-          }
-        });
-        break;
-      }
-      case 'Geojson': {
-        fetchingData(layerData.url, layerData.params, {}, (data) => {
-          const layer = L.geoJson(data, {
-            style: function (feature) {
-              switch (feature.geometry.type) {
-                default:
-                  return {
-                    "color": "#ff7800",
-                    "weight": 1,
-                    "opacity": 1
-                  }
-              }
-            },
-            onEachFeature: onEachFeature,
-            pointToLayer: function (feature, latlng) {
-              var icon = L.icon({
-                iconSize: [25, 30],
-                iconAnchor: [10, 30],
-                popupAnchor: [2, -31],
-                iconUrl: feature.properties.icon
-              });
-              return L.marker(
-                latlng, { icon: icon }
-              );
-            }
-          });
-          setLayer(layer);
-        })
-        break;
-      }
-      default:
-        return null
-    }
-  }
-
   // Onload for default checked and the layer
   useEffect(() => {
     if (data.visible_by_default) {
@@ -121,13 +34,23 @@ function ContextLayerInput({ data }) {
     } else {
       change(false)
     }
-    if (!layer) {
-      const layer = getLayer(data);
-      if (layer) {
-        setLayer(layer)
-      }
-    }
+    rerender()
   }, [data])
+
+  // Rerender
+  const rerender = () => {
+    setLayer(null)
+    dispatch(
+      Actions.Map.removeContextLayer(id)
+    )
+    getLayer(
+      data, setLayer, setLegend, setError, dispatch
+    );
+  }
+
+  useEffect(() => {
+    rerender()
+  }, [styles, data_fields])
 
   // When checked changes
   useEffect(() => {
@@ -238,9 +161,12 @@ function LayerRow({ groupName, group }) {
     <div className='LayerGroupList'>
       {
         group.map(
-          layer => (
-            <ContextLayerInput key={layer.id} data={layer}/>
-          )
+          layer => {
+            return <ContextLayerInput
+              key={layer.id} data={layer}
+              styles={layer.styles}
+              data_fields={layer.data_fields}/>
+          }
         )
       }
     </div>
@@ -262,7 +188,6 @@ export default function ContextLayersAccordion({ expanded, handleChange }) {
    * @param {str} groupName Name of group.
    * @param {dict} group Data of group.
    */
-
   return (
     <Accordion
       expanded={expanded}

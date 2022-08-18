@@ -1,5 +1,7 @@
 """Admin ContextLayer Create View."""
 
+import json
+
 from braces.views import SuperuserRequiredMixin
 from django.shortcuts import redirect, reverse, render
 
@@ -32,7 +34,6 @@ class ContextLayerCreateView(SuperuserRequiredMixin, BaseView):
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""
         context = super().get_context_data(**kwargs)
-        rules = []
         initial = None
 
         # from_id used for duplication
@@ -43,23 +44,25 @@ class ContextLayerCreateView(SuperuserRequiredMixin, BaseView):
                 initial = ContextLayerForm.model_to_initial(model)
                 initial['name'] = None
                 initial['description'] = None
-                rules = model.rules_dict()
             except ContextLayer.DoesNotExist:
                 pass
 
         context.update(
             {
-                'form': ContextLayerForm(initial=initial),
-                'rules': rules
+                'form': ContextLayerForm(initial=initial)
             }
         )
         return context
 
     def post(self, request, **kwargs):
         """Create indicator."""
-        form = ContextLayerForm(request.POST)
+        data = request.POST.copy()
+        data['data_fields'] = json.loads(data.get('data_fields', '[]'))
+        form = ContextLayerForm(data)
+
         if form.is_valid():
-            form.save()
+            context_layer = form.save()
+            context_layer.save_relations(data)
             return redirect(reverse('admin-context-layer-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form
