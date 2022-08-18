@@ -1,5 +1,5 @@
 # Context Layers
-Context layers are datasets that are not bound to administrative layers and represent a variety of conditions on a global scale. Context layers are the layers that are not the direct data being analyzed, but independent variables that can be used to improve ones understanding of the given situation. These layers include a variety of environmental and humanitarian conditions such as storm forecasts, drought monitors and displacement camp sites. Similarly, these layers can include pieces of basemaps  such as roads, towns and waterways. 
+Context layers are datasets that are not bound to administrative layers and represent a variety of conditions on a global scale. Context layers are the layers that are not the direct indicators being analyzed, but independent variables that can be used to improve ones understanding of the given situation. These layers include a variety of environmental and humanitarian conditions such as storm forecasts, drought monitors and displacement camp sites. Similarly, these layers can include pieces of basemaps such as roads, towns and waterways. 
 
 ## Context Layers for Administrators
 Administrators are able to adjust, add and delete context layers on GeoSight. This allows them to control the availability of layers.
@@ -13,7 +13,7 @@ From here, select "Context Layers"
 
 This will display the Admin UI for context layers and allow you to see, as well as search for, all context layers. In this tab, the context layers are listed and sorted by their name, a breif description and a category to help administators understand their purpose.
 
-On the far left, three horizontal dots, when selected, give the administrator to delete a context layer. This will delete the layer for every project and remove it from GeoSight entirely. 
+On the far right there are three horizontal dots that when selected, give the administrator the option to delete a context layer. This will delete the layer for every project and remove it from GeoSight entirely. 
 
 Finally, on the bottom right the two arrows allow administators to view the multiple pages of context layers.
 
@@ -26,46 +26,52 @@ Context layers can be added from the Context Layer Admin tab. On the top right y
 
 This will bring you to the "Create Context Layer Screen". Here, administrators can provide information required to connect the context layer to GeoSight, describe the context layer and attach security requirements for sensitive information.
 
-Under name enter what you would like the user to call the layer.
+![First half of information required for adding a context layer](img/context_layers_addnewlayerUI1.jpg)
 
-Although this is optional, you can provide a brief description of the context layer including identifying information or a citation
+**Name:** Under name enter what you would like the user to call the layer.
 
-Under category select what data group or country you would like to indentify the context layer with.
+**Description:** Although this is optional, you can provide a brief description of the context layer including identifying information or a citation
 
+**Category:** Under category select what data group or country you would like to indentify the context layer with.
 
+**URL:** Enter the URL of the WMS or data source in order to connect GeoSight with the API.
 
-Enter the URL of the WMS or data source in order to connect GeoSight with the API.
+**URL Legend:** The next step is optional. Here you can (??)
 
-
-
-The next step is optional. Here you can URL LEGEND (what is this)
-
-
-
-Select the type of geospatial data the context layer is in. 
+**Layer Type:** Select the type of geospatial data the context layer is formatted as.
 - "ArcGIS" is a datasource connected to ESRI's ArcGIS Online platform which provides an API link.
 - "GeoJSON" is a open-source code based format that keeps data files small before they are displayed.
 - "Raster Tile" is data displayed in regular square-shaped intervals that allow for easier data storage.
 
 If you wish to add security to the context layer you can either require a token or a standard username and password that the administator can provide to approved users.
 
+![Security information for adding a context layer](img/context_layers_addnewlayerUI2.jpg)
 
-
-To require a token
-
-
+**Token:** To require a token (??)
 
 Administrators who would like to set a username and password can do so in the final two boxes.
+
+![Check data viability](img/context_layers_checkdata.jpg)
+
+The tool also allows for adminsitrators to check the viability of data before it is uploaded.
+
+**Map:** The map option allows administators to view the spatial extent of data, and if it will visualize correctly.
+
+**Fields:** This option allows for administrators to check the attribute table of the desired data.
+
+![Context layers submit button](img/context_layers_submit.jpg)
 
 Once all required boxes are complete and you have filled out the optional boxes of your choice click submit in the top right corner. In doing this, the context layer will be created.
 
 ## Context Layers for Users
 Users cannot adjust or add new context layers. Instead, they can only turn them on and off.
 
-To access context layers as a user from the GeoSight home page, choose a project and then click the tab in thr legened labeled "Context Layers". This wil allow you to see every available context layer which should be turned off as a default. 
+![Context layers for users](img/context_layers_users.jpg)
 
-To activate context layers, click the slider next to the layer name. The layer is activated and viewable when the slider turns blue and an icon appears both in the legend, and on the map.
+To access context layers as a user from the GeoSight home page, choose a project and then click the tab in the legend labeled "Context Layers". This will allow you to see every available context layer which should be turned off as a default. 
 
-Finally, the small black arrow next to a layer name when it is active allows the user to hide/unhide the layer's icon from the legend.
+**Slider:** To activate context layers, click the slider next to the layer name. The layer is activated and viewable when the slider turns blue and an icon appears both in the legend, and on the map.
 
-With context layers activated users can use the real-time monitoring tools to compare various indicator to important environmental and socio-economic indicators. They can be an important tool for understanding the larger dynamics of risk and enable users to make decisions based on a more complete picture.
+**Symbology:** Finally, the small black arrow next to a layer name when it is active allows the user to hide/unhide the layer's icon from the legend.
+
+With context layers activated users can use the real-time monitoring tools to compare various indicator to important environmental and socio-economic layers. They can be an important tool for understanding the larger dynamics of risk and enable users to make decisions based on a more holistic picture.
