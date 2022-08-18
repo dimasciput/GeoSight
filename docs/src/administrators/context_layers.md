@@ -22,7 +22,7 @@ Finally, on the bottom right the two arrows allow administators to view the mult
 ### Adding Context Layers
 Context layers can be added from the Context Layer Admin tab. On the top right you can find the button "Add New Context Layer".
 
-![Add Context Layer Button](context_layers_addnewcontextlayer.jpg)
+![Add Context Layer Button](img/context_layers_addnewcontextlayer.jpg)
 
 This will bring you to the "Create Context Layer Screen". Here, administrators can provide information required to connect the context layer to GeoSight, describe the context layer and attach security requirements for sensitive information.
 
