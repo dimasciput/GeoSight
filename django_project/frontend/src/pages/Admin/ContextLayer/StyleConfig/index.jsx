@@ -30,7 +30,7 @@ export default function StyleConfig({ data, setData }) {
     setLegend(null)
     setLayerDataClass(null)
 
-    if (tab === 'MAP') {
+    if (!layerDataClass || tab === 'MAP') {
       const layerDataOut = getLayer(data, setLayer, setLegend, setError, dispatch);
       if (layerDataOut) {
         setLayerDataClass(layerDataOut)
