@@ -94,6 +94,14 @@ class Indicator(AbstractTerm, AbstractSource):
         return 0
 
     @property
+    def last_update(self):
+        """Return reporting level."""
+        first_value = self.query_values().first()
+        if self.query_values().first():
+            return first_value.date
+        return None
+
+    @property
     def create_harvester_url(self):
         """Create the first harvester url for this indicator."""
         from geosight.harvester.models.harvester import HARVESTERS

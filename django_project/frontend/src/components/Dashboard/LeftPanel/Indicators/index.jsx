@@ -9,11 +9,13 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from "@mui/material/Accordion";
+import InfoIcon from '@mui/icons-material/Info';
 
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
 import ReferenceLayer from '../../Map/ReferenceLayer'
 import OnOffSwitcher from "../../../Switcher/OnOff";
+import CustomPopover from "../../../CustomPopover";
 
 
 /**
@@ -47,6 +49,40 @@ export function Indicator({ checked, layer, onChange }) {
         <td>
           <div className='text title'>
             <div>{layer.name}</div>
+          </div>
+        </td>
+        <td className='InfoIcon'>
+          <div className='InfoIcon'>
+            <CustomPopover
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'center',
+                horizontal: 'left',
+              }}
+              Button={
+                <InfoIcon/>
+              }
+              showOnHover={true}
+            >
+              <div className='LayerInfoPopover'>
+                <div className='title'>
+                  <b className='light'>{layer.name}
+                  </b>
+                </div>
+                <div>
+                  <b className='light'>Last Update: </b>{layer.last_update}
+                </div>
+                <div>
+                  <b className='light'>Description: </b>
+                  {
+                    layer.description ? layer.description : '-'
+                  }
+                </div>
+              </div>
+            </CustomPopover>
           </div>
         </td>
         <td>

@@ -35,7 +35,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
         model = Indicator
         fields = (
             'id', 'name', 'category', 'source', 'description', 'url',
-            'reporting_level', 'rules')
+            'reporting_level', 'rules', 'last_update')
 
 
 class BasicIndicatorSerializer(serializers.ModelSerializer):

@@ -17,6 +17,8 @@ import { getLayer } from "./Layer"
 import OnOffSwitcher from "../../../Switcher/OnOff";
 
 import './style.scss'
+import CustomPopover from "../../../CustomPopover";
+import InfoIcon from "@mui/icons-material/Info";
 
 function ContextLayerInput({ data, styles, data_fields }) {
   const dispatch = useDispatch();
@@ -105,6 +107,37 @@ function ContextLayerInput({ data, styles, data_fields }) {
           <td>
             <div className='text title'>
               <div>{data.name}</div>
+            </div>
+          </td>
+          <td className='InfoIcon'>
+            <div className='InfoIcon'>
+              <CustomPopover
+                anchorOrigin={{
+                  vertical: 'center',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'center',
+                  horizontal: 'left',
+                }}
+                Button={
+                  <InfoIcon/>
+                }
+                showOnHover={true}
+              >
+                <div className='LayerInfoPopover'>
+                  <div className='title'>
+                    <b className='light'>{data.name}
+                    </b>
+                  </div>
+                  <div>
+                    <b className='light'>Description: </b>
+                    {
+                      data.description ? data.description : '-'
+                    }
+                  </div>
+                </div>
+              </CustomPopover>
             </div>
           </td>
           <td>
