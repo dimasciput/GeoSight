@@ -27,6 +27,11 @@ class ContextLayerForm(forms.ModelForm):
         widget=forms.HiddenInput()
     )
 
+    label_styles = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput()
+    )
+
     def __init__(self, *args, **kwargs):
         """Init."""
         super().__init__(*args, **kwargs)

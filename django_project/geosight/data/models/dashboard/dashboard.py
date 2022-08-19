@@ -121,6 +121,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                         name=field['name'],
                         alias=field['alias'],
                         visible=field.get('visible', True),
+                        as_label=field.get('as_label', False),
                         type=field.get('type', 'string'),
                         order=idx
                     )
@@ -161,6 +162,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
             model.group = data.get('group', '')
             model.visible_by_default = data.get('visible_by_default', False)
             model.styles = data.get('styles', None)
+            model.label_styles = data.get('label_styles', None)
             model.save()
 
     def save_widgets(self, widget_data):

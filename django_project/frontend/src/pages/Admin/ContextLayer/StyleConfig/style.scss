@@ -93,6 +93,14 @@
         td {
           background: $primary-color;
           color: $anti-primary-color;
+
+          .form-helptext {
+            color: $anti-primary-color;
+          }
+        }
+
+        .AsField {
+          width: 10rem;
         }
       }
     }
@@ -141,6 +149,25 @@
     svg {
       &:focus {
         outline: none;
+      }
+    }
+  }
+
+  .ArcgisConfigLabel {
+    margin-bottom: 2rem;
+
+    .BasicFormSection {
+      display: flex;
+      margin-bottom: 0.5rem;
+
+      .form-label {
+        width: 7rem;
+        display: block;
+        padding-top: 0.3rem;
+
+        &:after {
+          content: ":";
+        }
       }
     }
   }

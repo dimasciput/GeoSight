@@ -77,6 +77,9 @@ class ContextLayer(AbstractTerm):
     styles = models.TextField(
         null=True, blank=True
     )
+    label_styles = models.TextField(
+        null=True, blank=True
+    )
 
     def save_relations(self, data):
         """Save all relationship data."""
@@ -88,6 +91,7 @@ class ContextLayer(AbstractTerm):
                 alias=field['alias'],
                 type=field['type'],
                 visible=field.get('visible', True),
+                as_label=field.get('as_label', False),
                 order=idx
             )
 
@@ -110,6 +114,9 @@ class ContextLayerFieldAbstract(models.Model):
     )
     order = models.IntegerField(
         default=0
+    )
+    as_label = models.BooleanField(
+        default=False
     )
 
     class Meta:  # noqa: D106

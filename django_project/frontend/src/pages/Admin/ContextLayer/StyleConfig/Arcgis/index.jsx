@@ -9,6 +9,7 @@ import PointInput from './PointInput'
 import PolygonInput from './PolygonInput'
 import PolylineInput from './PolylineInput'
 import ArcgisConfigFields from './Fields'
+import ArcgisConfigLabels from './Labels'
 
 export function ArcgisConfigStyle({ data, update }) {
   const style = data.styles;
@@ -77,18 +78,28 @@ export default function ArcgisConfig({ originalData, setData, ArcgisData }) {
   const update = () => {
     setData({
       ...data,
-      data_fields: data.data_fields
+      data_fields: data.data_fields,
+      label_styles: data.label_styles,
     })
   }
 
   return <Fragment>
     {
-      data.data_fields ? <ArcgisConfigFields
-          data_fields={data.data_fields}
-          update={(fields) => {
-            data.data_fields = fields
-            update()
-          }}/> :
+      data.data_fields ?
+        <div className='ArcgisConfig FIELDS'>
+          <ArcgisConfigLabels
+            label_styles={data.label_styles}
+            update={(label_styles) => {
+              data.label_styles = label_styles
+              update()
+            }}/>
+          <ArcgisConfigFields
+            data_fields={data.data_fields}
+            update={(fields) => {
+              data.data_fields = fields
+              update()
+            }}/>
+        </div> :
         <div>Loading</div>
     }
     {

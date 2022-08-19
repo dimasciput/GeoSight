@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import L from 'leaflet';
+import $ from 'jquery';
 import Navbar from 'leaflet-navbar';
 import StarIcon from '@mui/icons-material/Star';
 
@@ -40,6 +41,27 @@ export default function Map() {
   const referenceLayerPane = 'referenceLayerPane';
   const contextLayerPane = 'contextLayerPane';
 
+  /** Check tooltip zoom **/
+  const checkTooltipZoom = (map) => {
+    var zoom = map.getZoom();
+    map.eachLayer(function (l) {
+      if (l.getTooltip) {
+        var toolTip = l.getTooltip();
+        if (toolTip) {
+          const className = toolTip.options.className.split(' ').map(cls => {
+            return `.${cls}`
+          }).join('')
+
+          if (zoom >= toolTip.options.minZoom && zoom <= toolTip.options.maxZoom) {
+            $(className).show()
+          } else {
+            $(className).hide()
+          }
+        }
+      }
+    });
+  }
+
   useEffect(() => {
     if (!map && basemapLayer) {
       const basemapLayerGroup = L.layerGroup([]);
@@ -70,6 +92,10 @@ export default function Map() {
         ]
         dispatch(Actions.Map.updateExtent(newExtent))
       });
+
+      newMap.on('zoomend', function () {
+        checkTooltipZoom(newMap)
+      })
     }
   }, [basemapLayer]);
 
@@ -138,12 +164,13 @@ export default function Map() {
             contextLayerGroup.addLayer(contextLayer.layer);
           }
         }
-      }else{
-      // remove all layer
-      contextLayerGroup.eachLayer(function (layer) {
-        contextLayerGroup.removeLayer(layer);
-      });
-    }
+        checkTooltipZoom(map)
+      } else {
+        // remove all layer
+        contextLayerGroup.eachLayer(function (layer) {
+          contextLayerGroup.removeLayer(layer);
+        });
+      }
     }
   }, [contextLayerGroup, contextLayers, contextLayersShow]);
 

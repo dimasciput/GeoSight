@@ -103,6 +103,7 @@ export const getLayer = function (
     }
     if (fields) {
       properties = []
+      const tooltip = []
       fields.map(field => {
         if (field.visible !== false) {
           properties[field.alias] = feature.properties[field.name]
@@ -114,7 +115,28 @@ export const getLayer = function (
             }
           }
         }
+
+        if (field.as_label) {
+          tooltip.push(`<div>${feature.properties[field.name]}</div>`)
+        }
       })
+
+      const label_styles = layerData.label_styles;
+      if (tooltip.length && label_styles) {
+        layer.bindTooltip(
+          `<div style="font-size: ${label_styles.fontSize ? label_styles.fontSize : 14}px">
+            ${tooltip.join('')}
+            </div>`,
+          {
+            permanent: true,
+            className: `Leaflet-Label ${layerData.id}`,
+            direction: "top",
+            offset: [0, 0],
+            minZoom: label_styles.minZoom ? label_styles.minZoom : 0,
+            maxZoom: label_styles.maxZoom ? label_styles.maxZoom : 0
+          }
+        );
+      }
     }
 
     layer.bindPopup(

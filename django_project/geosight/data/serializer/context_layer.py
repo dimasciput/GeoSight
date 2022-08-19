@@ -17,6 +17,7 @@ class ContextLayerSerializer(serializers.ModelSerializer):
     styles = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     data_fields = serializers.SerializerMethodField()
+    label_styles = serializers.SerializerMethodField()
 
     def get_url(self, obj: ContextLayer):
         """Url."""
@@ -46,6 +47,10 @@ class ContextLayerSerializer(serializers.ModelSerializer):
     def get_styles(self, obj: ContextLayer):
         """Return category name."""
         return json.loads(obj.styles) if obj.styles else None
+
+    def get_label_styles(self, obj: ContextLayer):
+        """Return category name."""
+        return json.loads(obj.label_styles) if obj.label_styles else {}
 
     class Meta:  # noqa: D106
         model = ContextLayer

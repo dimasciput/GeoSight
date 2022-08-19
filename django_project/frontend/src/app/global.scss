@@ -147,6 +147,19 @@ textarea {
   }
 }
 
+.Leaflet-Label {
+  text-align: center;
+  background-color: unset;
+  box-shadow: unset;
+  border: none;
+  font-family: $base-font-family !important;
+  display: none;
+
+  &:before {
+    display: none;
+  }
+}
+
 .wmde-markdown {
   .anchor {
     display: none;

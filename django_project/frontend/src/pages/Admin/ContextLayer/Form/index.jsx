@@ -30,6 +30,9 @@ export function ContextLayerConfig() {
     if (formData['styles']) {
       formData['styles'] = JSON.parse(formData['styles'])
     }
+    if (formData['label_styles']) {
+      formData['label_styles'] = JSON.parse(formData['label_styles'])
+    }
     formData['parameters'] = formData['parameters'] ? formData['parameters'] : {}
     setData(JSON.parse(JSON.stringify(formData)))
   }
@@ -46,6 +49,7 @@ export function ContextLayerConfig() {
   const updateData = (newData) => {
     if (JSON.stringify(newData) !== JSON.stringify(data)) {
       setData(newData)
+      $('*[name="label_styles"]').val(JSON.stringify(newData['label_styles']))
       $('*[name="data_fields"]').val(JSON.stringify(newData['data_fields']))
       $('*[name="styles"]').val(JSON.stringify(newData['styles']))
     }

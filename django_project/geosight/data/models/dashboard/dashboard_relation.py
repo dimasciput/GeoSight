@@ -87,6 +87,9 @@ class DashboardContextLayer(DashboardRelation):
     styles = models.TextField(
         null=True, blank=True
     )
+    label_styles = models.TextField(
+        null=True, blank=True
+    )
 
     class Meta:  # noqa: D106
         ordering = ('order',)

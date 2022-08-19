@@ -65,6 +65,7 @@ class DashboardContextLayerSerializer(serializers.ModelSerializer):
     group = serializers.SerializerMethodField()
     data_fields = serializers.SerializerMethodField()
     styles = serializers.SerializerMethodField()
+    label_styles = serializers.SerializerMethodField()
 
     def get_group(self, obj: DashboardContextLayer):
         """Return dashboard group name."""
@@ -79,10 +80,14 @@ class DashboardContextLayerSerializer(serializers.ModelSerializer):
         """Return dashboard group name."""
         return json.loads(obj.styles) if obj.styles else None
 
+    def get_label_styles(self, obj: DashboardContextLayer):
+        """Return dashboard group name."""
+        return json.loads(obj.label_styles) if obj.label_styles else None
+
     class Meta:  # noqa: D106
         model = DashboardContextLayer
         fields = ('order', 'group', 'visible_by_default',
-                  'data_fields', 'styles')
+                  'data_fields', 'styles', 'label_styles')
 
 
 class DashboardContextLayerFieldSerializer(serializers.ModelSerializer):

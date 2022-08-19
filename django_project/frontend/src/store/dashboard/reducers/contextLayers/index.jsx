@@ -68,6 +68,9 @@ export default function contextLayersReducer(state = initialState, action) {
             if (action.payload.styles) {
               contextLayer.styles = action.payload.styles
             }
+            if (action.payload.label_styles) {
+              contextLayer.label_styles = action.payload.label_styles
+            }
           }
           contextLayers.push(contextLayer)
         })

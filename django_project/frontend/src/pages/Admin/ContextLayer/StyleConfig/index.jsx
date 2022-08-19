@@ -22,7 +22,7 @@ export default function StyleConfig({ data, setData }) {
 
   const [layerData, setLayerData] = useState(null);
   const [layerDataClass, setLayerDataClass] = useState(null);
-  const [tab, setTab] = useState('MAP');
+  const [tab, setTab] = useState('FIELDS');
 
   useEffect(() => {
     setLayer(null)
@@ -73,7 +73,7 @@ export default function StyleConfig({ data, setData }) {
                   setTab('FIELDS')
                 }}
                 className={tab === 'FIELDS' ? 'Selected' : ""}
-              >FIELDS
+              >FIELDS & LABELS
               </div>
               <div
                 onClick={() => {

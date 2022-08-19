@@ -106,6 +106,10 @@ class DashboardSerializer(serializers.ModelSerializer):
                 del data['styles']
             else:
                 del dashboard_data['styles']
+            if dashboard_data['label_styles']:
+                del data['label_styles']
+            else:
+                del dashboard_data['label_styles']
             data.update(dashboard_data)
             output.append(data)
 

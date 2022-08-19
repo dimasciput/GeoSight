@@ -210,6 +210,7 @@ export function DashboardSaveForm(
             group: model.group,
             data_fields: model.data_fields,
             styles: JSON.stringify(model.styles),
+            label_styles: JSON.stringify(model.label_styles),
           }
         }),
         'extent': extent,
