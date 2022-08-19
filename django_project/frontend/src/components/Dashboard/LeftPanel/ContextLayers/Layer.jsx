@@ -14,8 +14,8 @@ import { fetchingData } from "../../../../Requests";
 export function RasterTileLayer(
   layerData, layerFn, legendFn, errorFn, onEachFeature
 ) {
-  if (layerData.legend) {
-    legendFn(`<img src="${layerData.legend}"/>`)
+  if (layerData.url_legend) {
+    legendFn(`<img src="${layerData.url_legend}"/>`)
   }
   layerData.parameters['maxNativeZoom'] = 19;
   layerData.parameters['maxZoom'] = maxZoom;
