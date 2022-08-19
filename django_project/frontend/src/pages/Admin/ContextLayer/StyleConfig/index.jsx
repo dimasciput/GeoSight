@@ -22,7 +22,7 @@ export default function StyleConfig({ data, setData }) {
 
   const [layerData, setLayerData] = useState(null);
   const [layerDataClass, setLayerDataClass] = useState(null);
-  const [tab, setTab] = useState('FIELDS');
+  const [tab, setTab] = useState(data.layer_type === 'ARCGIS' ? 'FIELDS' : 'MAP');
 
   useEffect(() => {
     setLayer(null)
@@ -43,6 +43,7 @@ export default function StyleConfig({ data, setData }) {
       setLayerData(layerDataClass)
     }
   }, [layer, error, legend]);
+
 
   return (
     <div className={'ContextLayerConfig-Wrapper ' + tab}>

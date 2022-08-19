@@ -122,7 +122,7 @@ export const getLayer = function (
       })
 
       const label_styles = layerData.label_styles;
-      if (tooltip.length && label_styles) {
+      if (tooltip.length) {
         layer.bindTooltip(
           `<div style="font-size: ${label_styles.fontSize ? label_styles.fontSize : 14}px">
             ${tooltip.join('')}
@@ -133,7 +133,7 @@ export const getLayer = function (
             direction: "top",
             offset: [0, 0],
             minZoom: label_styles.minZoom ? label_styles.minZoom : 0,
-            maxZoom: label_styles.maxZoom ? label_styles.maxZoom : 0
+            maxZoom: label_styles.maxZoom ? label_styles.maxZoom : 24
           }
         );
       }
