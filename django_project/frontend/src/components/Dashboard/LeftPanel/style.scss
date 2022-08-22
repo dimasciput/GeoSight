@@ -246,7 +246,7 @@
     }
 
     .LayerGroupList {
-      padding: 0 0 0 10px;
+      padding: 0 10px 0 10px;
     }
   }
 }
@@ -359,6 +359,13 @@
 
   .toggler {
     cursor: pointer;
+    font-size: 28px;
+
+    > div {
+      height: 20px;
+      width: 10px;
+      margin-top: -23px;
+    }
 
     &:hover {
       opacity: 0.8;

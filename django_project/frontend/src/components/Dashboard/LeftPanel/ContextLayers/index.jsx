@@ -146,14 +146,14 @@ function ContextLayerInput({ data, styles, data_fields }) {
                 <Fragment>
                   {
                     showLegend ?
-                      <span className='toggler' onClick={(e) => {
+                      <div className='toggler' onClick={(e) => {
                         showLegendHandler(false)
                         e.stopPropagation();
-                      }}>▴</span> :
-                      <span className='toggler' onClick={(e) => {
+                      }}><div>▴</div></div> :
+                      <div className='toggler' onClick={(e) => {
                         showLegendHandler(true)
                         e.stopPropagation();
-                      }}>▾</span>
+                      }}><div>▾</div></div>
                   }
                 </Fragment>
               ) : ''

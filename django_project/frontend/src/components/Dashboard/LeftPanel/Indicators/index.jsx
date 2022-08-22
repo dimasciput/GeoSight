@@ -91,14 +91,14 @@ export function Indicator({ checked, layer, onChange }) {
               <Fragment>
                 {
                   showLegend ?
-                    <span className='toggler' onClick={(e) => {
+                    <div className='toggler' onClick={(e) => {
                       e.stopPropagation()
                       showLegendHandler(false)
-                    }}>▴</span> :
-                    <span className='toggler' onClick={(e) => {
+                    }}><div>▴</div></div> :
+                    <div className='toggler' onClick={(e) => {
                       e.stopPropagation()
                       showLegendHandler(true)
-                    }}>▾</span>
+                    }}><div>▾</div></div>
                 }
               </Fragment>
             ) : ''
