@@ -24,6 +24,10 @@ class BasemapLayerSerializer(serializers.ModelSerializer):
 
         for parameter in obj.basemaplayerparameter_set.all():
             value = parameter.value
+            try:
+                value = float(value)
+            except ValueError:
+                pass
             parameters[parameter.name] = value
 
         if len(urls) > 1:
