@@ -135,14 +135,14 @@ export default function MultiIndicatorStyle({ data, indicators, updateData }) {
                     }}/>
                 </td>
                 <td>
-                  <div className='RuleSectionColor'>
+                  <div className='ColorConfig'>
                     <input type="text" value={indicator.color}
                            onChange={evt => {
                              indicator.color = evt.target.value
                              updateData()
                            }}
                            spellCheck="false"/>
-                    <div className='RuleSectionColor-Preview'>
+                    <div className='ColorConfigPreview'>
                       <input type="color" spellCheck="false"
                              value={indicator.color}
                              onChange={evt => {

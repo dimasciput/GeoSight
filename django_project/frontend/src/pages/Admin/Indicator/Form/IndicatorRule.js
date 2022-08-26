@@ -189,22 +189,22 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
         </div>
       </td>
       <td>
-        <div className='RuleSectionColor'>
+        <div className='ColorConfig'>
           <input type="text" name={ruleNameColor} value={color}
                  onChange={evt => setColor(evt.target.value)}
                  spellCheck="false"/>
-          <div className='RuleSectionColor-Preview'>
+          <div className='ColorConfigPreview'>
             <input type="color" spellCheck="false" value={color}
                    onChange={evt => setColor(evt.target.value)}/>
           </div>
         </div>
       </td>
       <td>
-        <div className='RuleSectionColor'>
+        <div className='ColorConfig'>
           <input type="text" name={ruleNameOutlineColor} value={outlineColor}
                  onChange={evt => setOutlineColor(evt.target.value)}
                  spellCheck="false"/>
-          <div className='RuleSectionColor-Preview'>
+          <div className='ColorConfigPreview'>
             <input type="color" spellCheck="false" value={outlineColor}
                    onChange={evt => setOutlineColor(evt.target.value)}/>
           </div>
@@ -287,22 +287,22 @@ export function IndicatorOtherRule({ rule, idx, onChange }) {
         </div>
       </td>
       <td>
-        <div className='RuleSectionColor'>
+        <div className='ColorConfig'>
           <input type="text" name={ruleNameColor} value={color}
                  onChange={evt => setColor(evt.target.value)}
                  spellCheck="false"/>
-          <div className='RuleSectionColor-Preview'>
+          <div className='ColorConfigPreview'>
             <input type="color" spellCheck="false" value={color}
                    onChange={evt => setColor(evt.target.value)}/>
           </div>
         </div>
       </td>
       <td>
-        <div className='RuleSectionColor'>
+        <div className='ColorConfig'>
           <input type="text" name={ruleNameOutlineColor} value={outlineColor}
                  onChange={evt => setOutlineColor(evt.target.value)}
                  spellCheck="false"/>
-          <div className='RuleSectionColor-Preview'>
+          <div className='ColorConfigPreview'>
             <input type="color" spellCheck="false" value={outlineColor}
                    onChange={evt => setOutlineColor(evt.target.value)}/>
           </div>

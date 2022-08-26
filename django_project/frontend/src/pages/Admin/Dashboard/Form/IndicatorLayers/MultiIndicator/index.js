@@ -116,9 +116,6 @@ export default function MultiIndicatorConfig(
     setOpen(false)
   }
 
-  console.log('-------------')
-  console.log(indicatorLayer)
-  console.log(data.indicators)
   if (indicatorLayer && !indicators.length) {
     return ""
   }

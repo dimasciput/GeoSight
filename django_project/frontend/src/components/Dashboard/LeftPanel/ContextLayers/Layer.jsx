@@ -121,10 +121,33 @@ export const getLayer = function (
         }
       })
 
-      const label_styles = layerData.label_styles;
       if (tooltip.length) {
+        const style = Object.assign({}, {
+          minZoom: 0,
+          maxZoom: 24,
+          fontFamily: '"Rubik", sans-serif',
+          fontSize: 14,
+          fontColor: '#000000',
+          fontWeight: 300,
+          strokeColor: '#FFFFFF',
+          strokeWeight: 0
+        }, layerData.label_styles);
+
+        const styles = [
+          'font-size: ' + style.fontSize + 'px',
+          'font-weight: ' + style.fontWeight,
+          'font-family: ' + style.fontFamily + '!important',
+          '-webkit-text-fill-color: ' + style.fontColor,
+          '-webkit-text-stroke-color: ' + style.strokeColor,
+          '-webkit-text-stroke-width: ' + style.strokeWeight + 'px',
+        ]
+        console.log(style)
+        if (style.haloWeight) {
+          styles.push(`text-shadow : 0px 0px ${style.haloWeight}px ${style.haloColor}, 0px 0px ${style.haloWeight}px ${style.haloColor}`)
+        }
+        console.log(styles)
         layer.bindTooltip(
-          `<div style="font-size: ${label_styles.fontSize ? label_styles.fontSize : 14}px">
+          `<div style='${styles.join(';')}'>
             ${tooltip.join('')}
             </div>`,
           {
@@ -132,8 +155,8 @@ export const getLayer = function (
             className: `Leaflet-Label ${layerData.id}`,
             direction: "top",
             offset: [0, 0],
-            minZoom: label_styles.minZoom ? label_styles.minZoom : 0,
-            maxZoom: label_styles.maxZoom ? label_styles.maxZoom : 24
+            minZoom: style.minZoom,
+            maxZoom: style.maxZoom
           }
         );
       }
