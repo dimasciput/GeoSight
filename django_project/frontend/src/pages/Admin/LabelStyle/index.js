@@ -59,7 +59,10 @@ export default function LabelStyle({ label_styles, update }) {
     <table>
       <tbody>
       <tr className="BasicFormSection">
-        <td></td>
+        <td rowSpan="9" className='LabelStylePreview' valign={"middle"}
+            style={style}>
+          Preview
+        </td>
         <td>
           <label className="form-label">
             Visible Zoom
@@ -96,10 +99,6 @@ export default function LabelStyle({ label_styles, update }) {
         </td>
       </tr>
       <tr className="BasicFormSection">
-        <td rowSpan="8" className='LabelStylePreview' valign={"middle"}
-            style={style}>
-          Preview
-        </td>
         <td>
           <label className="form-label">Font Family</label>
         </td>
