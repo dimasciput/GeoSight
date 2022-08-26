@@ -141,11 +141,9 @@ export const getLayer = function (
           '-webkit-text-stroke-color: ' + style.strokeColor,
           '-webkit-text-stroke-width: ' + style.strokeWeight + 'px',
         ]
-        console.log(style)
         if (style.haloWeight) {
           styles.push(`text-shadow : 0px 0px ${style.haloWeight}px ${style.haloColor}, 0px 0px ${style.haloWeight}px ${style.haloColor}`)
         }
-        console.log(styles)
         layer.bindTooltip(
           `<div style='${styles.join(';')}'>
             ${tooltip.join('')}
