@@ -22,6 +22,7 @@ import SortableContainer from "./SortableContainer";
 /**
  * List that can be sortable
  * @param {dict} groups Groups data.
+ * @param {string} groupLabel Group label
  * @param {Function} removeGroup Function of remove group.
  * @param {Function} changeGroupName Function of change group name.
  * @param {Function} removeLayer Function of remove layer.
@@ -34,6 +35,7 @@ import SortableContainer from "./SortableContainer";
 export default function SortableList(
   {
     groups,
+    groupLabel,
     removeGroup,
     changeGroupName,
     removeLayer,
@@ -261,6 +263,7 @@ export default function SortableList(
               key={groupName}
               id={groupName}
               groupIdx={idx}
+              groupLabel={groupLabel}
               data={data}
               items={items[groupName]}
               groupName={groupName}

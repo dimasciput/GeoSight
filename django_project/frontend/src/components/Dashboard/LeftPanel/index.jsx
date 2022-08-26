@@ -10,7 +10,7 @@ import MapInfo from './MapInfo'
 import Basemaps from './Basemaps'
 import ProjectOverviewSection from './ProjectOverview'
 import ContextLayersAccordion from './ContextLayers'
-import IndicatorsAccordion from './Indicators'
+import IndicatorLayersAccordion from './IndicatorLayers'
 import FiltersAccordion from './Filters'
 
 import './style.scss';
@@ -75,7 +75,7 @@ export default function LeftPanel({ setLeftExpanded }) {
             expanded={expanded === 'contextLayers'}
             handleChange={handleChange}
           />
-          <IndicatorsAccordion
+          <IndicatorLayersAccordion
             expanded={expanded === 'indicators'}
             handleChange={handleChange}
           />

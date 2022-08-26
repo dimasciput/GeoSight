@@ -95,7 +95,7 @@ function ContextLayerInput({ data, styles, data_fields }) {
             change(!checked)
           }
         }}>
-          <td>
+          <td valign="top">
             <Switch
               disabled={!layer}
               size="small"
@@ -104,12 +104,12 @@ function ContextLayerInput({ data, styles, data_fields }) {
               }}
             />
           </td>
-          <td>
+          <td valign="top">
             <div className='text title'>
               <div>{data.name}</div>
             </div>
           </td>
-          <td className='InfoIcon'>
+          <td className='InfoIcon' valign="top">
             <div className='InfoIcon'>
               <CustomPopover
                 anchorOrigin={{
@@ -140,7 +140,7 @@ function ContextLayerInput({ data, styles, data_fields }) {
               </CustomPopover>
             </div>
           </td>
-          <td>
+          <td valign="top">
             {
               checked && legend ? (
                 <Fragment>

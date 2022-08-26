@@ -16,14 +16,16 @@ import Modal, { ModalHeader } from "../../../../../components/Modal";
  * @param {boolean} open Is Model Open.
  * @param {Function} setOpen Set modal open.
  * @param {Function} applyData Apply data that contains added and removed.
+ * @param {string} groupLabel Group label
  */
 export default function DataSelectionModal(
   {
     pageName, groupName,
     listData, selectedData,
     open, setOpen,
-    applyData
+    applyData, groupLabel
   }) {
+  const selectedDataList = JSON.parse(JSON.stringify(selectedData))
   const [groupSelectedDataIds, setGroupSelectedDataIds] = useState([]);
   const [groupSelectedData, setGroupSelectedData] = useState([]);
   const [nonGroupSelectedDataIds, setNonGroupSelectedDataIds] = useState([]);
@@ -39,10 +41,11 @@ export default function DataSelectionModal(
     // Remove the data from other group to table
     // Remove data from other group
     const groupSelectedDataIds = []
-    const groupSelectedData = selectedData.filter(function (row) {
+    const groupSelectedData = selectedDataList.filter(function (row) {
+      row.id = row.trueId ? row.trueId : row.id
       const condition = row.group === groupName;
       if (condition) {
-        groupSelectedDataIds.push(row.id)
+        groupSelectedDataIds.push(row.trueId ? row.trueId : row.id)
       }
       return condition
     })
@@ -50,7 +53,8 @@ export default function DataSelectionModal(
     setGroupSelectedData([...groupSelectedData])
 
     const nonGroupSelectedDataIds = []
-    const nonGroupSelectedData = selectedData.filter(function (row) {
+    const nonGroupSelectedData = selectedDataList.filter(function (row) {
+      row.id = row.trueId ? row.trueId : row.id
       const condition = row.group !== groupName;
       if (condition) {
         nonGroupSelectedDataIds.push(row.id)
@@ -97,9 +101,6 @@ export default function DataSelectionModal(
       ]
     },
   })
-  // columns.push(
-  //   { field: 'group', headerName: 'Group', flex: 1 }
-  // )
 
   /**
    * Apply save data
@@ -117,7 +118,11 @@ export default function DataSelectionModal(
     const addedData = listData.filter(row => {
       return addedIds.includes(row.id)
     }).map(row => {
-      row.group = groupName
+      if (groupLabel === 'Category') {
+        row.group = row.category ? row.category : groupName
+      } else {
+        row.group = groupName
+      }
       return row
     })
     const removedData = listData.filter(row => {

@@ -76,12 +76,13 @@ export function COLUMNS_ACTION(
  * @returns {list}
  */
 export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null) {
+  const singularPageName = pageName.substring(0, pageName.length - 1);
   editUrl = editUrl ? editUrl : urls.api.edit;
   detailUrl = detailUrl ? detailUrl : urls.api.detail;
   return [
     { field: 'id', headerName: 'id', hide: true, width: 30, },
     {
-      field: 'name', headerName: pageName + ' Name', flex: 1,
+      field: 'name', headerName: singularPageName + ' Name', flex: 1,
       renderCell: (params) => {
         if (editUrl) {
           return <a className='MuiButtonLike CellLink'

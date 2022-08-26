@@ -97,7 +97,7 @@ class Indicator(AbstractTerm, AbstractSource):
     def last_update(self):
         """Return reporting level."""
         first_value = self.query_values().first()
-        if self.query_values().first():
+        if first_value:
             return first_value.date
         return None
 

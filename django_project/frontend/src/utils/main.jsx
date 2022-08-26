@@ -115,36 +115,6 @@ export function capitalize(target) {
 }
 
 /**
- * Returning popup html
- * @param {string} title Title of data
- * @param {object} properties Properties that will be rendered
- */
-export function featurePopupContent(title, properties) {
-  let defaultHtml = '';
-  let color = '#eee';
-  for (const [key, prop] of Object.entries(properties)) {
-    if (key.toLowerCase() === 'color') {
-      color = prop
-    }
-    if (!['color', 'outline_color', 'detail_url'].includes(key.toLowerCase())) {
-      let value = numberWithCommas(prop)
-      if (prop) {
-        if (typeof prop === 'object') {
-          if (Object.keys(prop)) {
-            value = JSON.stringify(prop)
-          }
-        }
-      }
-      defaultHtml += `<tr><td valign="top"><b>${capitalize(key)}</b></td><td valign="top">${value}</td></tr>`
-    }
-  }
-  if (properties.detail_url) {
-    defaultHtml += '<tr><td colspan="2" style="padding: 5px"><button data-url="' + properties.detail_url + '" data-name="' + properties.name + '"class="popup-details MuiButtonLike" style="width: 100%;" disabled>Details</button></tr>'
-  }
-  return `<div class="table__header" style="background: ${color}"><b>` + title + '</b></div><div class="table__content"><table><tbody>' + defaultHtml + '</tbody></table></div>'
-}
-
-/**
  * JSON TO PARAMS
  */
 export function jsonToUrlParams(object) {
@@ -185,4 +155,58 @@ export function urlParams(url) {
   } else {
     return {}
   }
+}
+
+// ----------------------------------------------------------------------
+// LEAFLET POPUP
+// ----------------------------------------------------------------------
+/**
+ * Returning popup html just for header
+ * @param {string} title Title of data
+ * @param {object} properties Properties that will be rendered
+ */
+export function featurePopupContentHeader(title, properties) {
+  let color = '#eee';
+  for (const [key, prop] of Object.entries(properties)) {
+    if (key.toLowerCase() === 'color') {
+      color = prop
+    }
+  }
+  return `<div class="table__header" style="background: ${color}"><b>${title}</b></div>`
+}
+
+/**
+ * Returning popup html just for properties table
+ * @param {string} title Title of data
+ * @param {object} properties Properties that will be rendered
+ * @param {string} className Classname for this popup
+ */
+export function featurePopupContentPropertiesTable(title, properties, className) {
+  let defaultHtml = '';
+  for (const [key, prop] of Object.entries(properties)) {
+    if (!['color', 'outline_color', 'detail_url'].includes(key.toLowerCase())) {
+      let value = numberWithCommas(prop)
+      if (prop) {
+        if (typeof prop === 'object') {
+          if (Object.keys(prop)) {
+            value = JSON.stringify(prop)
+          }
+        }
+      }
+      defaultHtml += `<tr><td valign="top"><b>${capitalize(key)}</b></td><td valign="top">${value}</td></tr>`
+    }
+  }
+  if (properties.detail_url) {
+    defaultHtml += '<tr><td colspan="2" style="padding: 5px"><button data-url="' + properties.detail_url + '" data-name="' + properties.name + '" class="popup-details MuiButtonLike" style="width: 100%;" disabled>Details</button></tr>'
+  }
+  return `<div class="table__content ${className ? className : ''}"><table><tbody>${defaultHtml}</tbody></table></div>`
+}
+
+/**
+ * Returning popup html
+ * @param {string} title Title of data
+ * @param {object} properties Properties that will be rendered
+ */
+export function featurePopupContent(title, properties, className) {
+  return featurePopupContentHeader(title, properties) + featurePopupContentPropertiesTable(title, properties, className)
 }

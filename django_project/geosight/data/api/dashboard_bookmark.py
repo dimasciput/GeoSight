@@ -13,6 +13,9 @@ from geosight.data.forms.dashboard_bookmark import DashboardBookmarkForm
 from geosight.data.models.basemap_layer import BasemapLayer
 from geosight.data.models.dashboard import Dashboard
 from geosight.data.models.dashboard import DashboardBookmark
+from geosight.data.models.dashboard.dashboard_relation import (
+    DashboardIndicatorLayer
+)
 from geosight.data.serializer.dashboard_bookmark import (
     DashboardBookmarkSerializer
 )
@@ -24,6 +27,8 @@ class DashboardBookmarkAPI(APIView):
     def get(self, request, slug):
         """Return Dashboard Bookmark list."""
         dashboard = get_object_or_404(Dashboard, slug=slug)
+        first_layer = dashboard.dashboardindicatorlayer_set.filter(
+            visible_by_default=True).first()
         # default data
         default = DashboardBookmarkSerializer(
             DashboardBookmark(
@@ -33,14 +38,10 @@ class DashboardBookmarkAPI(APIView):
                 selected_basemap=dashboard.dashboardbasemap_set.filter(
                     visible_by_default=True
                 ).first().object,
+                selected_indicator_layer=first_layer,
                 filters=dashboard.filters
             )
         ).data
-
-        indicators = dashboard.dashboardindicator_set
-        default['selected_indicators'] = indicators.filter(
-            visible_by_default=True
-        ).values_list('object__id', flat=True)
 
         context_layers = dashboard.dashboardcontextlayer_set
         default['selected_context_layers'] = context_layers.filter(
@@ -73,6 +74,15 @@ class DashboardAPI(APIView):
         except BasemapLayer.DoesNotExist:
             return HttpResponseBadRequest(
                 f'{data["selectedBasemap"]} does not exist')
+
+        try:
+            layer = dashboard.dashboardindicatorlayer_set.get(
+                id=data['selectedIndicatorLayer']
+            )
+            data['selected_indicator_layer'] = layer
+        except DashboardIndicatorLayer.DoesNotExist:
+            return HttpResponseBadRequest(
+                f'{data["selectedIndicatorLayer"]} does not exist')
 
         form = DashboardBookmarkForm(data, instance=bookmark)
         if form.is_valid():

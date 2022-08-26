@@ -22,6 +22,7 @@ import {
 import SummaryDashboardForm from './Summary'
 import BasemapsForm from './Basemaps'
 import IndicatorsForm from './Indicators'
+import IndicatorLayersForm from './IndicatorLayers'
 import ContextLayerForm from './ContextLayer'
 import FiltersForm from './Filters'
 import WidgetForm from './Widgets'
@@ -136,6 +137,7 @@ export function DashboardSaveForm(
   const {
     id,
     referenceLayer,
+    indicatorLayers,
     indicators,
     basemapsLayers,
     contextLayers,
@@ -185,6 +187,7 @@ export function DashboardSaveForm(
     if (errors.length === 0) {
       const dashboardData = {
         'referenceLayer': referenceLayer.identifier,
+        'indicatorLayers': indicatorLayers,
         'indicators': indicators.map(function (model) {
           return {
             id: model.id,
@@ -302,6 +305,7 @@ export function DashboardFormContent({ changed }) {
           <SummaryDashboardForm changed={changed}/>
           <BasemapsForm/>
           <IndicatorsForm/>
+          <IndicatorLayersForm/>
           <ContextLayerForm/>
           <FiltersForm/>
           <WidgetForm/>
@@ -323,6 +327,7 @@ export function DashboardForm({ onPreview }) {
   const changePage = (page) => {
     setCurrentPage(page)
   }
+  const className = currentPage.replaceAll(' ', '')
   return (
     <div className='Admin'>
       <SideNavigation pageName={pageNames.Dashboard}/>
@@ -353,7 +358,7 @@ export function DashboardForm({ onPreview }) {
 
         {/* DASHBOARD FORM */}
         <div className='DashboardFormWrapper'>
-          <div className={'DashboardForm ' + currentPage}>
+          <div className={'DashboardForm ' + className}>
             <div className='DashboardFormHeader'>
               <div
                 className={currentPage === 'Summary' ? 'active' : 'MuiButtonLike'}
@@ -366,6 +371,12 @@ export function DashboardForm({ onPreview }) {
                 onClick={() => changePage('Indicators')}
               >
                 Indicators
+              </div>
+              <div
+                className={currentPage === 'Indicator Layers' ? 'active' : 'MuiButtonLike'}
+                onClick={() => changePage('Indicator Layers')}
+              >
+                Indicator Layers
               </div>
               <div
                 className={currentPage === 'Context Layers' ? 'active' : 'MuiButtonLike'}

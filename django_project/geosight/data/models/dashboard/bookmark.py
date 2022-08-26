@@ -7,7 +7,6 @@ from core.models.general import AbstractTerm
 from geosight.data.models.basemap_layer import BasemapLayer
 from geosight.data.models.context_layer import ContextLayer
 from geosight.data.models.dashboard.dashboard import Dashboard
-from geosight.data.models.indicator import Indicator
 
 User = get_user_model()
 
@@ -37,8 +36,10 @@ class DashboardBookmark(AbstractTerm):
         null=True, blank=True,
         on_delete=models.SET_NULL
     )
-    selected_indicators = models.ManyToManyField(
-        Indicator, blank=True
+    selected_indicator_layer = models.ForeignKey(
+        "DashboardIndicatorLayer",
+        null=True, blank=True,
+        on_delete=models.SET_NULL
     )
     selected_context_layers = models.ManyToManyField(
         ContextLayer, blank=True
@@ -50,15 +51,7 @@ class DashboardBookmark(AbstractTerm):
 
     def save_relations(self, data):
         """Save all relationship data."""
-        from geosight.data.models import Indicator, ContextLayer
-        try:
-            for row in data['selectedIndicators']:
-                self.selected_indicators.add(
-                    Indicator.objects.get(id=row)
-                )
-        except Indicator.DoesNotExist:
-            raise Exception('Indicator does not exist')
-
+        from geosight.data.models import ContextLayer
         try:
             for row in data['selectedContextLayers']:
                 self.selected_context_layers.add(

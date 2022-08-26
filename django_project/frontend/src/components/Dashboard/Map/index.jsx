@@ -9,9 +9,10 @@ import $ from 'jquery';
 import Navbar from 'leaflet-navbar';
 import StarIcon from '@mui/icons-material/Star';
 
+import ReferenceLayerCentroid from './ReferenceLayerCentroid'
+import { Plugin, PluginChild } from './Plugin'
 import CustomPopover from '../../CustomPopover'
 import Bookmark from '../Bookmark'
-import { Plugin, PluginChild } from './Plugin'
 import { Actions } from '../../../store/dashboard/index'
 
 import './style.scss';
@@ -40,6 +41,7 @@ export default function Map() {
   const basemapPane = 'basemapPane';
   const referenceLayerPane = 'referenceLayerPane';
   const contextLayerPane = 'contextLayerPane';
+  const referenceLayerCenterPane = 'referenceLayerCenterPane';
 
   /** Check tooltip zoom **/
   const checkTooltipZoom = (map) => {
@@ -49,13 +51,18 @@ export default function Map() {
         var toolTip = l.getTooltip();
         if (toolTip) {
           const className = toolTip.options.className.split(' ').map(cls => {
-            return `.${cls}`
+            if (cls) {
+              return `.${cls}`
+            } else {
+              return ''
+            }
           }).join('')
-
-          if (zoom >= toolTip.options.minZoom && zoom <= toolTip.options.maxZoom) {
-            $(className).show()
-          } else {
-            $(className).hide()
+          if (className) {
+            if (zoom >= toolTip.options.minZoom && zoom <= toolTip.options.maxZoom) {
+              $(className).show()
+            } else {
+              $(className).hide()
+            }
           }
         }
       }
@@ -81,6 +88,7 @@ export default function Map() {
       newMap.createPane(basemapPane);
       newMap.createPane(referenceLayerPane);
       newMap.createPane(contextLayerPane);
+      newMap.createPane(referenceLayerCenterPane);
       setMap(newMap);
 
       // Save extent
@@ -211,6 +219,7 @@ export default function Map() {
           </Plugin>
         </div> : ""
     }
+    {map ? <ReferenceLayerCentroid map={map} pane={referenceLayerCenterPane}/> : ""}
   </section>
 }
 

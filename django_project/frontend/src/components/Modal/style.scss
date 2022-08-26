@@ -54,10 +54,40 @@
 .modal--content {
   padding: 20px;
   overflow-x: auto;
+
+  .Header {
+    text-align: right;
+  }
 }
 
 .modal--footer {
   border-top: 1px solid #ddd;
   padding: 20px;
   overflow-x: auto;
+}
+
+.ModalSelection {
+  .modal--content {
+    background-color: #eee;
+  }
+
+  .ModalSelection-Option {
+    background-color: white;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 5px;
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+
+.MuiBox-Large {
+  .modal--box {
+    max-width: 90%;
+  }
 }

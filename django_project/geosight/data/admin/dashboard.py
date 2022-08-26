@@ -5,7 +5,9 @@ from geosight.data.models.dashboard import (
     Dashboard, Widget,
     DashboardBasemap, DashboardIndicator, DashboardContextLayer,
     DashboardContextLayerField,
-    DashboardIndicatorRule, DashboardBookmark
+    DashboardIndicatorRule, DashboardBookmark,
+    DashboardIndicatorLayer,
+    DashboardIndicatorLayerIndicator
 )
 
 
@@ -36,6 +38,21 @@ class DashboardIndicatorAdmin(admin.ModelAdmin):
     list_display = ('dashboard', 'object', 'visible_by_default')
     list_filter = ('dashboard', 'object')
     inlines = (DashboardIndicatorRuleInline,)
+
+
+class DashboardIndicatorLayerIndicatorInline(admin.TabularInline):
+    """DashboardIndicatorLayerIndicator inline."""
+
+    model = DashboardIndicatorLayerIndicator
+    extra = 0
+
+
+class DashboardIndicatorLayerAdmin(admin.ModelAdmin):
+    """DashboardIndicatorLayer admin."""
+
+    list_display = ('dashboard', 'label', 'visible_by_default')
+    list_filter = ('dashboard',)
+    inlines = (DashboardIndicatorLayerIndicatorInline,)
 
 
 class DashboardContextLayerInline(admin.TabularInline):
@@ -76,10 +93,11 @@ class DashboardBookmarkAdmin(admin.ModelAdmin):
 
     list_display = ('dashboard', 'name',)
     list_filter = ('dashboard',)
-    filter_horizontal = ('selected_indicators', 'selected_context_layers')
+    filter_horizontal = ('selected_context_layers',)
 
 
 admin.site.register(Dashboard, DashboardAdmin)
 admin.site.register(DashboardContextLayer, DashboardContextLayerAdmin)
 admin.site.register(DashboardIndicator, DashboardIndicatorAdmin)
+admin.site.register(DashboardIndicatorLayer, DashboardIndicatorLayerAdmin)
 admin.site.register(DashboardBookmark, DashboardBookmarkAdmin)

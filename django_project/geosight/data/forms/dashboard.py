@@ -77,6 +77,8 @@ class DashboardForm(forms.ModelForm):
         data['reference_layer'] = other_data['referenceLayer']
 
         data['indicators'] = other_data['indicators']
+        data['indicatorLayers'] = other_data['indicatorLayers']
+
         data['basemapsLayers'] = other_data['basemapsLayers']
         data['contextLayers'] = other_data['contextLayers']
         data['widgets'] = other_data['widgets']

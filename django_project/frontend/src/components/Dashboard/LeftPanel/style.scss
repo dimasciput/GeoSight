@@ -225,6 +225,7 @@
 
       .MuiRadio-root {
         height: 24px;
+        margin-top: 3px;
       }
     }
 
@@ -303,7 +304,7 @@
     .InfoIcon {
       height: 20px;
       width: 20px;
-      margin: 0 0.5rem;
+      margin: 5px 0.5rem 0 0.5rem;
 
       svg {
         height: 100%;
@@ -364,7 +365,7 @@
     > div {
       height: 20px;
       width: 10px;
-      margin-top: -23px;
+      margin-top: -9px;
     }
 
     &:hover {

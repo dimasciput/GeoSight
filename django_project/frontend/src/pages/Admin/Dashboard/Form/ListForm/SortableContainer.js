@@ -17,9 +17,10 @@ import { CSS } from "@dnd-kit/utilities";
 
 /**
  * Group container
- * @param {int} groupIdx Index of group.
  * @param {dict} data Actual layer data.
- * @param {list} layers Layers data.
+ * @param {int} groupIdx Index of group.
+ * @param {string} groupLabel Group label
+ * @param {list} items Layers data.
  * @param {string} groupName Group name.
  * @param {Function} removeGroup Function of remove group.
  * @param {Function} changeGroupName Function of change group name.
@@ -33,6 +34,7 @@ export default function SortableContainer(
   {
     data,
     groupIdx,
+    groupLabel,
     items,
     groupName,
     removeGroup,
@@ -43,6 +45,7 @@ export default function SortableContainer(
     editLayerInGroup,
     otherActionsFunction
   }) {
+
   const noGroup = '_noGroup'
   const [editName, setEditName] = useState(false);
   const [name, setName] = useState(groupName);
@@ -80,7 +83,8 @@ export default function SortableContainer(
                     {
                       item !== noGroup ?
                         <DragHandleIcon
-                          className='MuiButtonLike' {...attributes} {...listeners}/> : ''
+                          className='MuiButtonLike'
+                          {...attributes} {...listeners}/> : ''
                     }
                   </td>
                   <td colSpan={5}>
@@ -90,15 +94,16 @@ export default function SortableContainer(
                           {
                             editName ? (
                                 <Fragment>
-                                  <span>Group:</span>
+                                  <span>{groupLabel ? (groupLabel + ' : ') : 'Group : '}</span>
                                   <IconTextField
                                     iconEnd={
-                                      <DoneIcon className='MuiButtonLike'
-                                                onClick={() => {
-                                                  if (changeGroupName(groupName, name)) {
-                                                    setEditName(false)
-                                                  }
-                                                }}/>
+                                      <DoneIcon
+                                        className='MuiButtonLike'
+                                        onClick={() => {
+                                          if (changeGroupName(groupName, name)) {
+                                            setEditName(false)
+                                          }
+                                        }}/>
                                     }
                                     value={name}
                                     onChange={(evt) => {
@@ -109,8 +114,10 @@ export default function SortableContainer(
                               ) :
                               (
                                 <Fragment>
-                              <span>Group: {name ? name :
-                                <i>No Name</i>}</span>
+                                  <span>
+                                    {groupLabel ? (groupLabel + ' : ') : 'Group : '} {name ? name :
+                                    <i>No Name</i>}
+                                  </span>
                                   <EditIcon
                                     className='MuiButtonLike GroupEditName'
                                     onClick={() => {
@@ -143,7 +150,10 @@ export default function SortableContainer(
             return (
               <SortableItem key={item} id={item}>
                 <td title={layer.name}>
-                  <div className='DragDropItem-Name'>{layer.name}</div>
+                  <div className='DragDropItem-Name'>
+                    {layer.name}
+                    {layer.nameOtherElmt ? layer.nameOtherElmt : ""}
+                  </div>
                 </td>
                 <td title={layer.description}>
                   <div className='DragDropItem-Description'>
@@ -152,7 +162,7 @@ export default function SortableContainer(
                 </td>
                 {
                   otherActionsFunction ?
-                    <td>
+                    <td className='OtherActionFunctions'>
                       {
                         otherActionsFunction(layer)
                       }

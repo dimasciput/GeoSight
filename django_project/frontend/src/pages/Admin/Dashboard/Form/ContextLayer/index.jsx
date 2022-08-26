@@ -5,7 +5,6 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 import { Actions } from "../../../../../store/dashboard";
 import Modal, {
   ModalContent,
-  ModalFooter,
   ModalHeader
 } from "../../../../../components/Modal";
 import {
@@ -13,7 +12,6 @@ import {
   ThemeButton
 } from "../../../../../components/Elements/Button";
 import ListForm from '../ListForm'
-
 import StyleConfig from '../../../ContextLayer/StyleConfig'
 
 import './style.scss';
@@ -46,7 +44,7 @@ function ContextLayerStyle({ contextLayer }) {
   return (
     <Fragment>
       <Modal
-        className='BasicForm ContextLayerStyleModal'
+        className='BasicForm ContextLayerStyleModal MuiBox-Large'
         open={open}
         onClosed={() => {
           setOpen(false)
@@ -57,16 +55,16 @@ function ContextLayerStyle({ contextLayer }) {
         }}>
           Style for {contextLayer.name}
         </ModalHeader>
-        <ModalFooter>
-          <SaveButton
-            variant="secondary"
-            text={"Apply Changes"}
-            disabled={
-              JSON.stringify(contextLayer) === JSON.stringify(data)
-            }
-            onClick={apply}/>
-        </ModalFooter>
         <ModalContent>
+          <div className='Header'>
+            <SaveButton
+              variant="secondary"
+              text={"Apply Changes"}
+              disabled={
+                JSON.stringify(contextLayer) === JSON.stringify(data)
+              }
+              onClick={apply}/>
+          </div>
           {
             open ? <StyleConfig data={data} setData={updateData}/> : ""
 

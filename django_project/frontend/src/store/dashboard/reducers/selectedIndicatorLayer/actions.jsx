@@ -1,6 +1,6 @@
 import {
-  SELECTED_INDICATOR_ACTION_TYPE_CHANGE,
-  SELECTED_INDICATOR_NAME,
+  SELECTED_INDICATOR_LAYER_ACTION_TYPE_CHANGE,
+  SELECTED_INDICATOR_LAYER_NAME,
 } from './index'
 
 /**
@@ -9,8 +9,8 @@ import {
  */
 export function change(payload) {
   return {
-    name: SELECTED_INDICATOR_NAME,
-    type: SELECTED_INDICATOR_ACTION_TYPE_CHANGE,
+    name: SELECTED_INDICATOR_LAYER_NAME,
+    type: SELECTED_INDICATOR_LAYER_ACTION_TYPE_CHANGE,
     payload: payload
   };
 }

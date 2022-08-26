@@ -10,12 +10,13 @@ import Filters from './reducers/filters/actions'
 import FiltersData from './reducers/filtersData/actions'
 import FilteredGeometries from './reducers/filteredGeometries/actions'
 import Geometries from './reducers/geometries/actions'
-import IndicatorsData from './reducers/indicatorsData/actions'
+import IndicatorLayers from './reducers/indicatorLayers/actions'
 import Indicators from './reducers/indicators/actions'
+import IndicatorsData from './reducers/indicatorsData/actions'
 import Map from './reducers/map/actions'
 import ReferenceLayer from './reducers/referenceLayer/actions'
 import ReferenceLayerData from './reducers/referenceLayerData/actions'
-import SelectedIndicator from './reducers/selectedIndicator/actions'
+import SelectedIndicatorLayer from './reducers/selectedIndicatorLayer/actions'
 import SelectedBookmark from './reducers/selectedBookmark/actions'
 import Widgets from './reducers/widgets/actions'
 
@@ -28,12 +29,13 @@ const Actions = {
   FilteredGeometries,
   FiltersData,
   Geometries,
+  IndicatorLayers,
   Indicators,
   IndicatorsData,
   Map,
   ReferenceLayer,
   ReferenceLayerData,
-  SelectedIndicator,
+  SelectedIndicatorLayer,
   SelectedBookmark,
   Widgets
 }

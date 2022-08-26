@@ -57,7 +57,7 @@ export function FilterControl(
 ) {
   const dispatcher = useDispatch()
   const [filters, setFilters] = useState(filtersData)
-  const selectedIndicator = useSelector(state => state.selectedIndicator)
+  const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
 
   // Apply the filters query
   useEffect(() => {
@@ -262,7 +262,7 @@ export function FilterControl(
     // TODO: Reporting level
     //  Remove this after aggregation
     const reportingLevel = indicator?.reporting_level
-    const differentLevel = !editMode && reportingLevel !== selectedIndicator.reporting_level
+    const differentLevel = !editMode && reportingLevel !== selectedIndicatorLayer.reporting_level
 
     /**
      * Return filter input

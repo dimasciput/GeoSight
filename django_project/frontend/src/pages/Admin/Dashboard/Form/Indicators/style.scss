@@ -30,3 +30,15 @@
     }
   }
 }
+
+.TableForm.Indicators {
+
+  .VisibilityAction,
+  .DragDropItem-Drag,
+  .GroupEditName,
+  .AddGroupButton,
+  .AddButton {
+    display: none !important;
+  }
+
+}

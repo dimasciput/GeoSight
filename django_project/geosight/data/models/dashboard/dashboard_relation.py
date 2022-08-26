@@ -3,10 +3,12 @@ from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 
 from geosight.data.models.basemap_layer import BasemapLayer
-from geosight.data.models.context_layer import ContextLayer, \
+from geosight.data.models.context_layer import (
+    ContextLayer,
     ContextLayerFieldAbstract
+)
 from geosight.data.models.dashboard import Dashboard
-from geosight.data.models.indicator import Indicator
+from geosight.data.models.indicator import Indicator, IndicatorValue
 from geosight.data.models.rule import RuleModel
 
 User = get_user_model()
@@ -49,7 +51,7 @@ class DashboardIndicator(DashboardRelation):
     )
 
     class Meta:  # noqa: D106
-        ordering = ('order',)
+        ordering = ('object__name',)
 
 
 class DashboardIndicatorRule(RuleModel):
@@ -62,6 +64,95 @@ class DashboardIndicatorRule(RuleModel):
 
     class Meta:  # noqa: D106
         unique_together = ('object', 'name')
+        ordering = ('order',)
+
+
+# DASHBOARD INDICATOR LAYER
+class DashboardIndicatorLayer(DashboardRelation):
+    """Indicator Layer x Dashboard model."""
+
+    name = models.CharField(
+        max_length=512,
+        blank=True, null=True
+    )
+    description = models.TextField(
+        blank=True, null=True
+    )
+    style = models.TextField(
+        blank=True, null=True,
+        help_text=(
+            "This is specifically used for multi indicators layer."
+            "For single layer, it will use rule of indicator"
+        )
+    )
+
+    @property
+    def label(self):
+        """Return label data."""
+        indicators = self.dashboardindicatorlayerindicator_set
+
+        # If it is multi indicator
+        if indicators.count() >= 2:
+            return self.name if self.name else ''
+
+        layer_indicator = self.dashboardindicatorlayerindicator_set.first()
+        indicator = layer_indicator.indicator if layer_indicator else None
+        return indicator.name
+
+    @property
+    def desc(self):
+        """Return description data."""
+        indicators = self.dashboardindicatorlayerindicator_set
+
+        # If it is multi indicator
+        if indicators.count() >= 2:
+            return self.description if self.description else ''
+
+        layer_indicator = self.dashboardindicatorlayerindicator_set.first()
+        indicator = layer_indicator.indicator if layer_indicator else None
+        return indicator.description
+
+    @property
+    def last_update(self):
+        """Return description data."""
+        indicator_ids = self.dashboardindicatorlayerindicator_set.values_list(
+            'indicator__id', flat=True)
+
+        first_value = IndicatorValue.objects.filter(
+            indicator_id__in=indicator_ids).first()
+        if first_value:
+            return first_value.date
+        return None
+
+    class Meta:  # noqa: D106
+        ordering = ('order',)
+
+
+class DashboardIndicatorLayerIndicator(models.Model):
+    """Indicator Layer x Dashboard model."""
+
+    object = models.ForeignKey(
+        DashboardIndicatorLayer,
+        on_delete=models.CASCADE
+    )
+    indicator = models.ForeignKey(
+        Indicator,
+        on_delete=models.CASCADE
+    )
+    order = models.IntegerField(
+        default=0
+    )
+    name = models.CharField(
+        max_length=512,
+        blank=True, null=True
+    )
+    color = models.CharField(
+        max_length=16,
+        default='#000000',
+        blank=True, null=True
+    )
+
+    class Meta:  # noqa: D106
         ordering = ('order',)
 
 

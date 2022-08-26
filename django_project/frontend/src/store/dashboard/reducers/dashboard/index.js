@@ -1,5 +1,8 @@
 import { APIReducer } from '../../../reducers_api';
 import indicatorReducer, { INDICATOR_ACTION_NAME } from '../indicators'
+import indicatorLayersReducer, {
+  INDICATOR_LAYERS_ACTION_NAME
+} from '../indicatorLayers'
 import basemapsReducer, { BASEMAP_ACTION_NAME } from '../basemap'
 import widgetsReducer, { WIDGET_ACTION_NAME } from "../widgets";
 import extentReducer, { EXTENT_DEFAULT_ACTION_NAME } from "../extent";
@@ -59,6 +62,22 @@ export default function dashboardReducer(
         newState.data = {
           ...newState.data,
           indicators: newIndicator
+        }
+        return newState;
+      }
+      return state
+    }
+
+    /** INDICATOR LAYERS REDUCER **/
+    case INDICATOR_LAYERS_ACTION_NAME: {
+      const indicatorLayers = indicatorLayersReducer(
+        state.data.indicatorLayers, action
+      );
+      if (indicatorLayers !== state.data.indicatorLayers) {
+        const newState = { ...state }
+        newState.data = {
+          ...newState.data,
+          indicatorLayers: indicatorLayers
         }
         return newState;
       }

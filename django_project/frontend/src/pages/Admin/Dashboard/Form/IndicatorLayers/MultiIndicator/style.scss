@@ -1,0 +1,93 @@
+/* ==========================================================================
+   Multi indicator style
+   ========================================================================== */
+
+@import '../../../../../../app/variables';
+
+
+.MultiIndicatorConfig {
+  .IndicatorStyleSection {
+    display: flex;
+
+    .IndicatorsSelection {
+      .MuiInputBase-root {
+        min-height: 200px;
+        min-width: 200px;
+        height: 100%;
+      }
+
+      select {
+        border-radius: 0;
+        padding-right: 0.5rem;
+        height: 100%;
+      }
+
+      fieldset {
+        display: none;
+      }
+    }
+
+    .IndicatorsListButtons {
+      padding: 1rem 0.5rem;
+
+      div {
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    .IndicatorsSelected {
+      flex-grow: 1;
+      min-height: 200px;
+      border: 1px solid $primary-color;
+
+      table {
+        width: 100%;
+      }
+    }
+
+    .IndicatorsSelected {
+      table {
+        margin-bottom: 0 !important;
+
+        tbody {
+          tr:last-child {
+            border-bottom: none !important;
+          }
+        }
+      }
+
+      th {
+        font-weight: $base-font-regular;
+        text-align: left;
+      }
+
+      th, td {
+        padding: 0.5rem;
+      }
+
+      tr {
+        border: none !important;
+        border-bottom: 1px solid $primary-color !important;
+      }
+    }
+  }
+
+  .IndicatorsStyle {
+    display: flex;
+    margin-top: 2rem;
+
+    > div {
+      padding: 1rem;
+      margin-right: 1rem;
+    }
+
+    .IndicatorsStyle-Size {
+      margin-top: 1rem;
+
+      label {
+        margin: 0;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+}

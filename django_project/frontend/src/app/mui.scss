@@ -41,9 +41,18 @@
   background-color: $secondary-color !important;
   border-color: $secondary-color !important;
   color: $anti-secondary-color !important;
+
+  &.Basic {
+    padding: 0.5rem !important;
+    min-width: 0;
+
+    svg {
+      margin-right: 0;
+    }
+  }
 }
 
-.MuiButton-primary-text{
+.MuiButton-primary-text {
   color: $primary-color !important;
 }
 
@@ -62,12 +71,6 @@
 
   &:hover {
     opacity: $base-hovered-opacity;
-  }
-}
-
-.MuiBox-Large {
-  .modal--box {
-    max-width: 90%;
   }
 }
 

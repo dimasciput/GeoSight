@@ -103,9 +103,9 @@ export function IndicatorDetailsModal({ group, feature, onClose }) {
 
 /**
  * ReferenceLayer selector.
- * @param {dict} currentIndicator Indicator that will be used.
+ * @param {dict} currentIndicatorLayer Indicator that will be used.
  */
-export default function ReferenceLayer({ currentIndicator }) {
+export default function ReferenceLayer({ currentIndicatorLayer }) {
   const dispatch = useDispatch();
   const {
     referenceLayer,
@@ -126,11 +126,11 @@ export default function ReferenceLayer({ currentIndicator }) {
   // Also filter by levels that found on indicators
   let geometryCodes = filteredGeometries;
 
-  // If there is currentIndicator that selected
+  // If there is currentIndicatorLayer that selected
   // Use level from that
   let nodataRule = null
-  if (currentIndicator) {
-    nodataRule = currentIndicator.rules.filter(
+  if (currentIndicatorLayer?.rules) {
+    nodataRule = currentIndicatorLayer.rules.filter(
       rule => rule.active
     ).find(rule => rule.rule.toLowerCase() === 'no data')
   }
@@ -154,14 +154,23 @@ export default function ReferenceLayer({ currentIndicator }) {
       // Save indicator data per geom
       // This is needed for popup and rendering
       const indicatorsByGeom = {}
-      if (currentIndicator && indicatorsData[currentIndicator.id] && indicatorsData[currentIndicator.id].fetched) {
-        indicatorsData[currentIndicator.id].data.forEach(function (data) {
-          indicatorsByGeom[data.geometry_code] = data;
+      let currentLevel = 0
+      if (currentIndicatorLayer) {
+        currentIndicatorLayer.indicators.map(indicatorLayer => {
+          const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
+          if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
+            currentLevel = indicator.reporting_level
+            indicatorsData[indicator.id].data.forEach(function (data) {
+              if (!indicatorsByGeom[data.geometry_code]) {
+                indicatorsByGeom[data.geometry_code] = []
+              }
+              indicatorsByGeom[data.geometry_code].push(data);
+            })
+          }
         })
       }
 
       // Check current level
-      let currentLevel = currentIndicator?.reporting_level
       if (!levels[currentLevel]) {
         currentLevel = levels[0].level
       }
@@ -182,8 +191,12 @@ export default function ReferenceLayer({ currentIndicator }) {
           );
           let style = null;
           if (indicatorShow) {
-            const indicatorData = indicatorsByGeom[feature.properties.code];
-            style = indicatorData ? indicatorData : nodataRule;
+            if (currentIndicatorLayer?.indicators?.length === 1) {
+              if (indicatorsByGeom[feature.properties.code]) {
+                const indicatorData = indicatorsByGeom[feature.properties.code][0];
+                style = indicatorData ? indicatorData : nodataRule;
+              }
+            }
           }
           let fillColor = style ? style.color : null;
           let color = style ? style.outline_color : '#000000';
@@ -206,18 +219,23 @@ export default function ReferenceLayer({ currentIndicator }) {
       const layer = vectorTileLayer(url, options);
       layer.bindPopup(function (feature) {
         // CREATE POPUP
-        const properties = indicatorsByGeom[feature.properties.code]
-          ? Object.assign({}, indicatorsByGeom[feature.properties.code]) : Object.assign({}, feature.properties);
+        let properties = {}
+        if (currentIndicatorLayer?.indicators?.length === 1) {
+          if (indicatorsByGeom[feature.properties.code]) {
+            properties = Object.assign({}, indicatorsByGeom[feature.properties.code][0])
+          }
+        }
+        properties = Object.assign({}, properties, feature.properties)
         delete properties.geometry_code
         delete properties.indicator_id
-        properties[feature.properties.type] = feature.properties.label
-        properties['geometry_code'] = feature.properties.code
-        properties['name'] = currentIndicator.name
         delete properties.level
         delete properties.label
         delete properties.type
         delete properties.code
         delete properties.centroid
+        properties[feature.properties.type] = feature.properties.label
+        properties['geometry_code'] = feature.properties.code
+        properties['name'] = currentIndicatorLayer.name
         delete properties.parent_code
         return featurePopupContent(properties.name ? properties.name : 'Reference Layer', properties)
       });
@@ -251,7 +269,7 @@ export default function ReferenceLayer({ currentIndicator }) {
     updateLayer()
   }, [
     referenceLayer, referenceLayerData, indicatorsData,
-    currentIndicator, indicatorShow
+    currentIndicatorLayer, indicatorShow
   ]);
 
 

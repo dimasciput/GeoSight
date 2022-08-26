@@ -120,14 +120,14 @@ export default function FilterValueInput(
                       <div className='MuiInputSliderWithInput'>
                         <div className='MuiInputSlider'>
                           <Slider
-                            value={initValue === '' ? 0 : initValue}
+                            value={initValue === '' ? 0 : parseFloat(initValue)}
                             step={max >= 5 ? 1 : max <= 1 ? 0.01 : 0.1}
-                            min={min}
-                            max={max}
+                            min={min ? min : 0}
+                            max={max ? max : 0}
                             onChange={(event) => {
                               setInitValue(event.target.value);
                             }}
-                            track={['>', '>='].includes(operator) ? "inverted" : ""}
+                            track={['>', '>='].includes(operator) ? "inverted" : false}
                             onChangeCommitted={(e) => onChange(initValue)}
                             disabled={disabled}
                           />

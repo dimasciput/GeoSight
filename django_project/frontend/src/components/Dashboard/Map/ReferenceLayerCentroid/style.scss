@@ -1,0 +1,19 @@
+/* ==========================================================================
+   Reference Layer Centroid Container
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.PopupMultiData {
+  table {
+    .PopupMultiDataTable {
+      width: 150px;
+      display: flex;
+
+      .PopupMultiDataTableGraph {
+        height: 16px;
+        margin-right: 5px;
+      }
+    }
+  }
+}

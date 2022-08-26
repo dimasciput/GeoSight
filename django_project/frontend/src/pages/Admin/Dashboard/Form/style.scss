@@ -157,8 +157,14 @@ main {
       }
     }
 
-    &.Context {
-      .Context {
+    &.IndicatorLayers {
+      .IndicatorLayers {
+        display: block;
+      }
+    }
+
+    &.ContextLayers {
+      .ContextLayers {
         display: block;
       }
     }

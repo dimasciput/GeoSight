@@ -22,9 +22,10 @@ import CustomPopover from "../../../CustomPopover";
  * Indicator selector.
  * @param {bool} checked Is indicator checked.
  * @param {dict} layer Layer dictionary.
+ * @param {Array} rules Array of rules.
  * @param {function} onChange Function when on changed
  */
-export function Indicator({ checked, layer, onChange }) {
+export function IndicatorLayer({ checked, layer, rules, onChange }) {
   const [showLegend, setShowLegend] = useState(checked);
   const showLegendHandler = (show) => {
     setShowLegend(show);
@@ -39,19 +40,19 @@ export function Indicator({ checked, layer, onChange }) {
           onChange(!checked, layer.id)
         }
       }}>
-        <td>
+        <td valign="top">
           <Radio
             checked={checked}
             onChange={() => {
 
             }}/>
         </td>
-        <td>
+        <td valign="top">
           <div className='text title'>
             <div>{layer.name}</div>
           </div>
         </td>
-        <td className='InfoIcon'>
+        <td className='InfoIcon' valign="top">
           <div className='InfoIcon'>
             <CustomPopover
               anchorOrigin={{
@@ -85,7 +86,7 @@ export function Indicator({ checked, layer, onChange }) {
             </CustomPopover>
           </div>
         </td>
-        <td>
+        <td valign="top">
           {
             checked ? (
               <Fragment>
@@ -94,38 +95,45 @@ export function Indicator({ checked, layer, onChange }) {
                     <div className='toggler' onClick={(e) => {
                       e.stopPropagation()
                       showLegendHandler(false)
-                    }}><div>▴</div></div> :
+                    }}>
+                      <div>▴</div>
+                    </div> :
                     <div className='toggler' onClick={(e) => {
                       e.stopPropagation()
                       showLegendHandler(true)
-                    }}><div>▾</div></div>
+                    }}>
+                      <div>▾</div>
+                    </div>
                 }
               </Fragment>
             ) : ''
           }
         </td>
       </tr>
-      <tr className={showLegend ? 'legend showLegend' : 'legend'}>
+      <tr className={showLegend ? 'legend showLegend' : 'legend'} valign="top">
         <td></td>
         <td>
-          <div>
-            <table>
-              <tbody>
-              {
-                layer.rules.filter(rule => rule.active).map(rule => (
-                    <tr key={rule.id} className='IndicatorLegendRow'>
-                      <td>
-                        <div className='IndicatorLegendRow-Color'
-                             style={{ backgroundColor: rule.color }}></div>
-                      </td>
-                      <td>{rule.name}</td>
-                    </tr>
-                  )
-                )
-              }
-              </tbody>
-            </table>
-          </div>
+          {
+            rules ?
+              <div>
+                <table>
+                  <tbody>
+                  {
+                    rules.filter(rule => rule.active).map(rule => (
+                        <tr key={rule.id} className='IndicatorLegendRow'>
+                          <td>
+                            <div className='IndicatorLegendRow-Color'
+                                 style={{ backgroundColor: rule.color }}></div>
+                          </td>
+                          <td>{rule.name}</td>
+                        </tr>
+                      )
+                    )
+                  }
+                  </tbody>
+                </table>
+              </div> : ""
+          }
         </td>
         <td></td>
       </tr>
@@ -137,19 +145,20 @@ export function Indicator({ checked, layer, onChange }) {
 /**
  * Indicators selector.
  */
-export function Indicators() {
+export function IndicatorLayers() {
   const dispatch = useDispatch();
-  const { indicators } = useSelector(state => state.dashboard.data);
   const indicatorsData = useSelector(state => state.indicatorsData);
-  const geometries = useSelector(state => state.geometries);
-
-  const [currentIndicator, setCurrentIndicator] = useState(0);
+  const {
+    indicatorLayers,
+    indicators
+  } = useSelector(state => state.dashboard.data);
+  const [currentIndicatorLayer, setCurrentIndicatorLayer] = useState(0);
 
   const change = (checked, id) => {
     if (checked) {
-      setCurrentIndicator(id);
+      setCurrentIndicatorLayer(id);
     } else {
-      setCurrentIndicator(null);
+      setCurrentIndicatorLayer(null);
     }
   };
 
@@ -157,47 +166,50 @@ export function Indicators() {
    * Fetch indicator data
    */
   useEffect(() => {
-    const indicator = indicators.filter(indicator => {
-      return indicator.id === currentIndicator
+    const indicator = indicatorLayers.filter(indicator => {
+      return indicator.id === currentIndicatorLayer
     })[0]
     if (indicator) {
       const indicatorData = JSON.parse(JSON.stringify(indicator))
-      dispatch(Actions.SelectedIndicator.change(indicatorData))
+      dispatch(Actions.SelectedIndicatorLayer.change(indicatorData))
     }
-  }, [currentIndicator, indicatorsData]);
+  }, [currentIndicatorLayer, indicatorsData]);
 
   /**
    * Fetch indicator data
    */
   useEffect(() => {
-    if (indicators) {
-      indicators.map(indicator => {
-        const { id } = indicator
-        if (!indicatorsData[id]?.data) {
-          dispatch(
-            Actions.IndicatorsData.fetch(
-              dispatch, id, indicator.url, indicator.reporting_level
-            )
-          );
-        }
+    if (indicatorLayers) {
+      indicatorLayers.map(layer => {
+        layer.indicators.map(indicatorData => {
+          const indicator = indicators.find(row => row.id === indicatorData.id)
+          const { id } = indicator
+          if (!indicatorsData[id]?.data) {
+            dispatch(
+              Actions.IndicatorsData.fetch(
+                dispatch, id, indicator.url, indicator.reporting_level
+              )
+            );
+          }
+        })
       })
 
       // Change current indicator if indicators changed
-      const indicatorsEnabled = indicators.find(indicator => {
+      const indicatorsEnabled = indicatorLayers.find(indicator => {
         return indicator.visible_by_default
       })
 
       if (indicatorsEnabled) {
-        setCurrentIndicator(indicatorsEnabled.id)
+        setCurrentIndicatorLayer(indicatorsEnabled.id)
       }
     }
-  }, [indicators]);
+  }, [indicatorLayers]);
 
   // Get selected indicator data
-  let selectedIndicator = null;
-  if (indicators) {
-    selectedIndicator = indicators.filter(indicator => {
-      return indicator.id === currentIndicator
+  let selectedIndicatorLayer = null;
+  if (indicatorLayers) {
+    selectedIndicatorLayer = indicatorLayers.filter(indicatorLayer => {
+      return indicatorLayer.id === currentIndicatorLayer
     })[0]
   }
 
@@ -214,17 +226,29 @@ export function Indicators() {
         className='light'>{groupName}</b></div>
       <div className='LayerGroupList'>
         {
-          group.map(layer =>
-            <Indicator
-              key={layer.id} onChange={change} layer={layer}
-              checked={currentIndicator === layer.id}/>
+          group.map(layer => {
+              let rules = layer.rules
+              if (layer.indicators.length === 1) {
+                const indicator = indicators.find(
+                  data => layer.indicators[0]?.id === data.id)
+                if (indicator) {
+                  rules = indicator.rules
+                }
+              }
+              return <IndicatorLayer
+                key={layer.id}
+                layer={layer}
+                rules={rules}
+                onChange={change}
+                checked={currentIndicatorLayer === layer.id}/>
+            }
           )
         }
       </div>
     </div>
   }
 
-  const groups = layerInGroup(indicators)
+  const groups = layerInGroup(indicatorLayers)
   return (
     <Fragment>
       {
@@ -236,7 +260,7 @@ export function Indicators() {
           )
         )
       }
-      <ReferenceLayer currentIndicator={selectedIndicator}/>
+      <ReferenceLayer currentIndicatorLayer={selectedIndicatorLayer}/>
     </Fragment>
   )
 }
@@ -246,7 +270,7 @@ export function Indicators() {
  * @param {bool} expanded Is the accordion expanded
  * @param {function} handleChange Function when the accordion show
  */
-export default function IndicatorsAccordion({ expanded, handleChange }) {
+export default function IndicatorLayersAccordion({ expanded, handleChange }) {
   const dispatch = useDispatch();
   const { indicatorShow } = useSelector(state => state.map);
 
@@ -271,7 +295,7 @@ export default function IndicatorsAccordion({ expanded, handleChange }) {
           }}/>
       </AccordionSummary>
       <AccordionDetails>
-        <Indicators/>
+        <IndicatorLayers/>
       </AccordionDetails>
     </Accordion>
   )

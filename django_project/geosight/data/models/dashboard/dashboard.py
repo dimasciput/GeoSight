@@ -1,4 +1,6 @@
 """Dashboard model."""
+import json
+
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -70,10 +72,12 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         """Save all relationship data."""
         from geosight.data.models.dashboard import (
             DashboardIndicator, DashboardIndicatorRule, DashboardBasemap,
-            DashboardContextLayer, DashboardContextLayerField
+            DashboardContextLayer, DashboardContextLayerField,
+            DashboardIndicatorLayer, DashboardIndicatorLayerIndicator
         )
         self.save_widgets(data['widgets'])
 
+        # INDICATORS
         self.save_relation(
             DashboardIndicator, Indicator, self.dashboardindicator_set.all(),
             data['indicators'])
@@ -102,6 +106,8 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         self.save_relation(
             DashboardBasemap, BasemapLayer, self.dashboardbasemap_set.all(),
             data['basemapsLayers'])
+
+        # CONTEXT LAYERS
         self.save_relation(
             DashboardContextLayer, ContextLayer,
             self.dashboardcontextlayer_set.all(),
@@ -128,6 +134,58 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
 
             except DashboardContextLayer.DoesNotExist:
                 pass
+
+        # INDICATOR LAYERS
+        ids = []
+        indicatorLayers = data['indicatorLayers']
+        for data in indicatorLayers:
+            ids.append(data.get('id', 0))
+        modelQuery = self.dashboardindicatorlayer_set.all()
+
+        # Remove all not found ids
+        modelQuery.exclude(id__in=ids).delete()
+
+        for idx, data in enumerate(indicatorLayers):
+            try:
+                model = modelQuery.get(
+                    id=data.get('id', 0)
+                )
+            except (KeyError, DashboardIndicatorLayer.DoesNotExist):
+                model = DashboardIndicatorLayer(
+                    dashboard=self
+                )
+            model.order = idx
+            model.group = data.get('group', '')
+            model.visible_by_default = data.get('visible_by_default', False)
+            model.style = json.dumps(data.get('style', {}))
+
+            if len(data['indicators']) >= 2:
+                model.name = data.get('name', '')
+                model.description = data.get('description', '')
+            model.save()
+
+            indicatorsQuery = model.dashboardindicatorlayerindicator_set.all()
+            ids = []
+            for indicator in data['indicators']:
+                ids.append(indicator['id'])
+            indicatorsQuery.exclude(indicator__id__in=ids).delete()
+
+            for idx, indicator in enumerate(data['indicators']):
+                try:
+                    layer, created = \
+                        DashboardIndicatorLayerIndicator.objects.get_or_create(
+                            object=model,
+                            indicator=Indicator.objects.get(
+                                id=indicator['id']),
+                            defaults={
+                                'order': idx
+                            }
+                        )
+                    layer.name = indicator['name']
+                    layer.color = indicator['color']
+                    layer.save()
+                except Indicator.DoesNotExist:
+                    pass
 
     def save_relation(self, ModelClass, ObjectClass, modelQuery, inputData):
         """Save relation from data."""

@@ -24,7 +24,7 @@ import './style.scss';
 export default function Bookmark() {
   const dispatch = useDispatch();
   const dashboardData = useSelector(state => state.dashboard.data);
-  const selectedIndicator = useSelector(state => state.selectedIndicator);
+  const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
   const selectedBookmark = useSelector(state => state.selectedBookmark);
   const {
     basemapLayer,
@@ -36,7 +36,7 @@ export default function Bookmark() {
     return {
       name: name,
       selectedBasemap: basemapLayer?.id,
-      selectedIndicators: [selectedIndicator?.id],
+      selectedIndicatorLayer: selectedIndicatorLayer?.id,
       selectedContextLayers: Object.keys(contextLayers).map(id => parseInt(id)),
       filters: dashboardData.filters,
       extent: extent
@@ -75,8 +75,8 @@ export default function Bookmark() {
         dashboardData.basemapsLayers.map(layer => {
           layer.visible_by_default = layer.id === bookmark.selected_basemap
         })
-        dashboardData.indicators.map(layer => {
-          layer.visible_by_default = bookmark.selected_indicators.includes(layer.id)
+        dashboardData.indicatorLayers.map(layer => {
+          layer.visible_by_default = bookmark.selected_indicator_layer === layer.id
         })
         dashboardData.contextLayers.map(layer => {
           layer.visible_by_default = bookmark.selected_context_layers.includes(layer.id)
@@ -285,7 +285,7 @@ export default function Bookmark() {
                 onSaveAs()
               }
             }}
-            disabled={!name || !basemapLayer || !extent || !selectedIndicator}/>
+            disabled={!name || !basemapLayer || !extent || !selectedIndicatorLayer}/>
         </ModalFooter>
       </Modal>
     </Fragment>

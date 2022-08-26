@@ -9,7 +9,7 @@ from geosight.data.serializer.basemap_layer import BasemapLayerSerializer
 from geosight.data.serializer.context_layer import ContextLayerSerializer
 from geosight.data.serializer.dashboard_relation import (
     DashboardIndicatorSerializer, DashboardBasemapSerializer,
-    DashboardContextLayerSerializer
+    DashboardContextLayerSerializer, DashboardIndicatorLayerSerializer
 )
 from geosight.data.serializer.indicator import IndicatorSerializer
 
@@ -32,16 +32,17 @@ class DashboardSerializer(serializers.ModelSerializer):
     """Serializer for Dashboard."""
 
     description = serializers.SerializerMethodField()
-    referenceLayer = serializers.SerializerMethodField()
-    indicators = serializers.SerializerMethodField()
-    basemapsLayers = serializers.SerializerMethodField()
-    contextLayers = serializers.SerializerMethodField()
-    widgets = serializers.SerializerMethodField()
-    extent = serializers.SerializerMethodField()
-    filters = serializers.SerializerMethodField()
-    filtersAllowModify = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     group = serializers.SerializerMethodField()
+    widgets = serializers.SerializerMethodField()
+    extent = serializers.SerializerMethodField()
+    referenceLayer = serializers.SerializerMethodField()
+    indicators = serializers.SerializerMethodField()
+    indicatorLayers = serializers.SerializerMethodField()
+    basemapsLayers = serializers.SerializerMethodField()
+    contextLayers = serializers.SerializerMethodField()
+    filters = serializers.SerializerMethodField()
+    filtersAllowModify = serializers.SerializerMethodField()
 
     def get_description(self, obj: Dashboard):
         """Return description."""
@@ -79,6 +80,12 @@ class DashboardSerializer(serializers.ModelSerializer):
             output.append(data)
 
         return output
+
+    def get_indicatorLayers(self, obj: Dashboard):
+        """Return indicatorLayers."""
+        return DashboardIndicatorLayerSerializer(
+            obj.dashboardindicatorlayer_set.all(), many=True
+        ).data
 
     def get_basemapsLayers(self, obj: Dashboard):
         """Return basemapsLayers."""
@@ -151,10 +158,11 @@ class DashboardSerializer(serializers.ModelSerializer):
         model = Dashboard
         fields = (
             'id', 'icon', 'name', 'description',
-            'referenceLayer', 'indicators',
-            'basemapsLayers', 'contextLayers',
+            'category', 'group',
             'widgets', 'extent', 'filters', 'filtersAllowModify',
-            'category', 'group'
+            'referenceLayer', 'indicators', 'indicatorLayers',
+            'basemapsLayers', 'contextLayers',
+
         )
 
 

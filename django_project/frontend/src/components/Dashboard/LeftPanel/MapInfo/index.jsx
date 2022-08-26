@@ -11,17 +11,20 @@ import './style.scss';
  * MapInfo.
  */
 export default function MapInfo() {
-  const selectedIndicator = useSelector(state => state.selectedIndicator)
+  const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
 
   return <Fragment>
     {
-      Object.keys(selectedIndicator).length > 0 ?
+      Object.keys(selectedIndicatorLayer).length > 0 ?
         <div className="MapInfo">
-          <div>{selectedIndicator.category}/{selectedIndicator.name}</div>
+          <div>
+            {selectedIndicatorLayer.group ? selectedIndicatorLayer.group + '/' : ""}
+            {selectedIndicatorLayer.name}
+          </div>
           <div>
             {
-              selectedIndicator.reporting_level ?
-                <Fragment>Admin {selectedIndicator.reporting_level}</Fragment> : ""
+              selectedIndicatorLayer.reporting_level ?
+                <Fragment>Admin {selectedIndicatorLayer.reporting_level}</Fragment> : ""
             }
           </div>
         </div> : ""
