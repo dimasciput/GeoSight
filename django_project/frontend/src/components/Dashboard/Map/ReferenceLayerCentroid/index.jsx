@@ -199,14 +199,16 @@ export default function ReferenceLayerCentroid({ map, pane }) {
                 }
                 properties['total'] = total
                 properties['maxValue'] = maxFeatureValue
-                features.push({
-                  "type": "Feature",
-                  "properties": properties,
-                  "geometry": {
-                    "type": "Point",
-                    "coordinates": geometry.centroid.replace('POINT(', '').replace(')', '').split(' ').map(coord => parseFloat(coord))
-                  }
-                })
+                if (geometry.centroid) {
+                  features.push({
+                    "type": "Feature",
+                    "properties": properties,
+                    "geometry": {
+                      "type": "Point",
+                      "coordinates": geometry.centroid.replace('POINT(', '').replace(')', '').split(' ').map(coord => parseFloat(coord))
+                    }
+                  })
+                }
               }
             })
             switch (selectedIndicatorLayer.style.sizeType) {
