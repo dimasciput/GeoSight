@@ -6,21 +6,26 @@ Administrators are able to adjust and delete existing basemaps and add new ones.
 ### Accessing and adjusting basemaps
 As with other administrative abilities, the Basemaps UI can be accessed from the GeoSight home page. To access the administative UI, click the user profile photo and select "Admin".
 
+![Select admin](img/Admin.jpeg)
+
 From here, select "Basemaps"
 
-This will display the Admin UI for basemaps and allow you to see, as well as search for, all basemaps. In this tab, the basemaps are listed and sorted by their name, a breif description and a category to help administators understand their purpose.
+![Select basemap](img/capture-basemap.jpeg)
 
-On the far right, three horizontal dots, when selected, allow the administrator to delete a context layer. This will delete the layer for every project and remove it from GeoSight entirely.
+This will display the Admin UI for basemaps and allow you to see, as well as search for, all basemaps. In this tab, the basemaps are listed and sorted by their name, a brief description and a category to help administators understand their purpose.
 
-Finally, on the bottom right the two arrows allow administators to view the multiple pages of context layers.
 
-### Adding context layers
+### Adding basemaps
 
 Basemaps can be added from the Basemaps Admin tab. On the top right you can find the button "Add Basemap".
+
+![Add or delete basemap](img/add-delete-basemap.jpeg)
 
 This will bring you to the "Create Basemap Screen". Here, administrators can provide information required to connect the basemap to GeoSight, describe the basemap and attach security requirements for sensitive information.
 
 Under name enter what you would like the user to call the basemap.
+
+![Select name of basemap](img/name-basemap.jpeg)
 
 Although this is optional, you can provide a brief description of the context layer including identifying information or a citation. You can also select an icon of your choice as thumbnail.
 
@@ -30,9 +35,11 @@ Under "Type" you will indicate the type of basemap service, which can be WMS or 
 
 Finally, under "Category" you will indicate the category the basemap belongs to (e.g. UN). 
 
+![Select URL, type and category of basemap](img/type-basemap.jpeg)
+
 Once all required boxes are complete and you have filled out the optional boxes of your choice click submit in the top right corner. In doing this, the basemap will be loaded to the visualization.
 
-### Context Layers for Users
+### Basemaps for Users
 Users cannot adjust or add new basemaps. Instead, they can only toggle between them.
 
 To access basemaps as a user from the GeoSight home page, choose a project and then hover with the mouse the little squared box to the bottom left of the map. This wil allow you to see every available basemap.
