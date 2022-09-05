@@ -121,11 +121,16 @@
 }
 
 @mixin forward-icon($color) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M12 8V4l8 8-8 8v-4H4V8z'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z'%3E%3C/path%3E%3C/svg%3E");
 }
 
 @mixin backward-icon($color) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z'%3E%3C/path%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.leaflet-control-navbar{
+  position: relative;
+  width: 120px;
 }
 
 // TODO:
@@ -144,7 +149,10 @@
 }
 
 .leaflet-control-navbar-fwd {
-  @include forward-icon(str-replace('#1CABE2', '#', '%23'))
+  @include forward-icon(str-replace('#1CABE2', '#', '%23'));
+  position: absolute;
+  top: 0;
+  left: 80px;
 }
 
 .leaflet-control-navbar-fwd-disabled {
@@ -157,7 +165,10 @@
 }
 
 .leaflet-control-navbar-back {
-  @include backward-icon(str-replace('#1CABE2', '#', '%23'))
+  @include backward-icon(str-replace('#1CABE2', '#', '%23'));
+  position: absolute;
+  top: 0;
+  left: 40px;
 }
 
 .leaflet-control-navbar-back-disabled {
