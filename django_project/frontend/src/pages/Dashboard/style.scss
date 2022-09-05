@@ -35,6 +35,43 @@ html, body {
     height: 100%;
     position: relative;
     width: 100%;
+
+    .left-right-toggle-button {
+      background: $primary-color;
+      cursor: pointer;
+      height: 30px;
+      padding: 0.2rem 0.3rem;
+      color: $anti-primary-color;
+      position: absolute;
+      top: 55px;
+
+      div {
+        height: 1rem;
+        width: 0.6rem;
+      }
+
+      div:after {
+        font-size: 12px;
+      }
+
+      @include media(xsmall-only) {
+        div:after {
+          font-size: 16px;
+        }
+      }
+
+      &.left {
+        div:after {
+          content: '◀';
+        }
+      }
+
+      &.right {
+        div:after {
+          content: '▶';
+        }
+      }
+    }
   }
 
   .dashboard__panel {
@@ -45,7 +82,6 @@ html, body {
 
     .dashboard__content-wrapper {
       background-color: white;
-      box-shadow: $base-shadow-box;
       width: 100%;
     }
 

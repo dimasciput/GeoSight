@@ -124,6 +124,9 @@ export default function Map() {
               position: 'topleft'
             }).addTo(map)
           )
+          L.control.zoom({
+            position: 'topleft'
+          }).addTo(map)
         }
       }, 300);
     }
@@ -196,18 +199,18 @@ export default function Map() {
   return <section className='dashboard__map'>
     <div id="map"></div>
     {
-      !editMode ?
+      !editMode && navControl ?
         <div className='leaflet-left leaflet-touch leaflet-custom-plugins'>
           <Plugin>
 
             <CustomPopover
               anchorOrigin={{
-                vertical: 'center',
-                horizontal: 'right',
+                vertical: 'bottom',
+                horizontal: 'center',
               }}
               transformOrigin={{
-                vertical: 'center',
-                horizontal: 'left',
+                vertical: 'top',
+                horizontal: 'center',
               }}
               Button={
                 <PluginChild title={'Bookmark'}>

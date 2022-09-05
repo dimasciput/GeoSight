@@ -24,42 +24,6 @@ html, body {
   width: 100%;
 }
 
-
-.left-right-toggle-button {
-  background: $primary-color;
-  cursor: pointer;
-  height: 30px;
-  padding: 0.2rem 0.3rem;
-  color: $anti-primary-color;
-
-  div {
-    height: 1rem;
-    width: 0.6rem;
-  }
-
-  div:after {
-    font-size: 12px;
-  }
-
-  @include media(xsmall-only) {
-    div:after {
-      font-size: 16px;
-    }
-  }
-
-  &.left {
-    div:after {
-      content: '◀';
-    }
-  }
-
-  &.right {
-    div:after {
-      content: '▶';
-    }
-  }
-}
-
 .RemoveButton {
   color: $error;
 }

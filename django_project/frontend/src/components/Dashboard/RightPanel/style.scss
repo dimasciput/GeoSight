@@ -31,7 +31,8 @@
   .dashboard__content-wrapper {
     max-height: 100%;
     overflow-y: auto;
-    min-height: 3rem;
+    min-height: 100%;
+    background-color: #eee !important;
 
     @include media(small-down) {
       box-shadow: unset !important;
