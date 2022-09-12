@@ -240,7 +240,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         for data in widget_data:
             try:
                 try:
-                    widget = Widget.objects.get(
+                    widget = self.widget_set.get(
                         id=data['id']
                     )
                 except (KeyError, Widget.DoesNotExist):
