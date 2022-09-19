@@ -29,14 +29,14 @@ export default function AdminList(
       className='Indicator'
       pageName={pageName}
       rightHeader={
-        rightHeader ? rightHeader : (
+        rightHeader ? rightHeader : user.is_creator ? (
           <a href={urls.api.create}>
             <AddButton
               variant="secondary"
               text={"Add New " + pageName}
             />
           </a>
-        )
+        ) : ""
       }>
       <List
         columns={columns} pageName={pageName} listUrl={listUrl}

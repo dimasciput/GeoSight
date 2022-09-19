@@ -55,7 +55,9 @@ INSTALLED_APPS = INSTALLED_APPS + (
     'geosight.data',
     'geosight.georepo',
     'geosight.harvester',
+    'geosight.permission',
     'dashboard',
+    'frontend',
 )
 
 # -------------------------------------------------- #

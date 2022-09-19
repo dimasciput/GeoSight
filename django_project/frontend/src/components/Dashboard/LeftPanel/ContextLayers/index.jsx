@@ -10,15 +10,15 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Switch from '@mui/material/Switch';
+import InfoIcon from '@mui/icons-material/Info';
 
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from '../../../../utils/layers'
 import { getLayer } from "./Layer"
 import OnOffSwitcher from "../../../Switcher/OnOff";
+import CustomPopover from "../../../CustomPopover";
 
 import './style.scss'
-import CustomPopover from "../../../CustomPopover";
-import InfoIcon from "@mui/icons-material/Info";
 
 function ContextLayerInput({ data, styles, data_fields }) {
   const dispatch = useDispatch();
@@ -31,12 +31,16 @@ function ContextLayerInput({ data, styles, data_fields }) {
 
   // Onload for default checked and the layer
   useEffect(() => {
-    if (data.visible_by_default) {
-      change(true)
+    if (!data.permission.read) {
+      setError("You don't have permission to access this resource")
     } else {
-      change(false)
+      if (data.visible_by_default) {
+        change(true)
+      } else {
+        change(false)
+      }
+      rerender()
     }
-    rerender()
   }, [data])
 
   // Rerender
@@ -51,7 +55,9 @@ function ContextLayerInput({ data, styles, data_fields }) {
   }
 
   useEffect(() => {
-    rerender()
+    if (data.permission.read) {
+      rerender()
+    }
   }, [styles, data_fields])
 
   // When checked changes
@@ -87,17 +93,16 @@ function ContextLayerInput({ data, styles, data_fields }) {
   const className = layer ? 'dashboard__left_side__row' : 'dashboard__left_side__row disabled';
   return (
     <Fragment>
-      <table className={className}
-             title={error ? error : !layer ? 'Loading' : ''}>
+      <table className={className}>
         <tbody>
         <tr className='dashboard__left_side__row__title' onClick={() => {
-          if (layer) {
+          if (layer && !error) {
             change(!checked)
           }
         }}>
           <td valign="top">
             <Switch
-              disabled={!layer}
+              disabled={!layer || error}
               size="small"
               checked={checked}
               onChange={() => {
@@ -109,37 +114,62 @@ function ContextLayerInput({ data, styles, data_fields }) {
               <div>{data.name}</div>
             </div>
           </td>
-          <td className='InfoIcon' valign="top">
-            <div className='InfoIcon'>
-              <CustomPopover
-                anchorOrigin={{
-                  vertical: 'center',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'center',
-                  horizontal: 'left',
-                }}
-                Button={
-                  <InfoIcon/>
-                }
-                showOnHover={true}
-              >
-                <div className='LayerInfoPopover'>
-                  <div className='title'>
-                    <b className='light'>{data.name}
-                    </b>
-                  </div>
-                  <div>
-                    <b className='light'>Description: </b>
-                    {
-                      data.description ? data.description : '-'
+          {
+            !error ?
+              <td className='InfoIcon' valign="top">
+                <div className='InfoIcon'>
+                  <CustomPopover
+                    anchorOrigin={{
+                      vertical: 'center',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'center',
+                      horizontal: 'left',
+                    }}
+                    Button={
+                      <InfoIcon/>
                     }
-                  </div>
+                    showOnHover={true}
+                  >
+                    <div className='LayerInfoPopover'>
+                      <div className='title'>
+                        <b className='light'>{data.name}
+                        </b>
+                      </div>
+                      <div>
+                        <b className='light'>Description: </b>
+                        {
+                          data.description ? data.description : '-'
+                        }
+                      </div>
+                    </div>
+                  </CustomPopover>
                 </div>
-              </CustomPopover>
-            </div>
-          </td>
+              </td> :
+              <td className='InfoIcon Error' valign="top">
+                <div className='InfoIcon'>
+                  <CustomPopover
+                    anchorOrigin={{
+                      vertical: 'center',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'center',
+                      horizontal: 'left',
+                    }}
+                    Button={
+                      <InfoIcon/>
+                    }
+                    showOnHover={true}
+                  >
+                    <div className='LayerInfoPopover'>
+                      {error}
+                    </div>
+                  </CustomPopover>
+                </div>
+              </td>
+          }
           <td valign="top">
             {
               checked && legend ? (
@@ -149,11 +179,15 @@ function ContextLayerInput({ data, styles, data_fields }) {
                       <div className='toggler' onClick={(e) => {
                         showLegendHandler(false)
                         e.stopPropagation();
-                      }}><div>▴</div></div> :
+                      }}>
+                        <div>▴</div>
+                      </div> :
                       <div className='toggler' onClick={(e) => {
                         showLegendHandler(true)
                         e.stopPropagation();
-                      }}><div>▾</div></div>
+                      }}>
+                        <div>▾</div>
+                      </div>
                   }
                 </Fragment>
               ) : ''

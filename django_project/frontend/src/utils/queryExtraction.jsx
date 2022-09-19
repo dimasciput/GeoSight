@@ -164,7 +164,8 @@ export function queryFromDictionary(indicators, dictionary, ignoreActive) {
   let query = 'SELECT * FROM '
   let mainFrom = '';
   const dataList = [];
-  indicators.map((indicator, idx) => {
+  let idx = 0
+  indicators.map(indicator => {
     const data = indicator.data;
     if (data) {
       const id = `${IDENTIFIER}${indicator.id}`;
@@ -175,6 +176,7 @@ export function queryFromDictionary(indicators, dictionary, ignoreActive) {
         query += ` INNER JOIN ? ${id} ON ${mainFrom}.${JOIN_IDENTIFIER}=${id}.${JOIN_IDENTIFIER}`
       }
       dataList.push(data);
+      idx += 1
     }
   })
 
@@ -213,7 +215,6 @@ export function queryingFromDictionary(indicators, dictionary, ignoreActive) {
     }
     indicatorsPerLevel[group].push(indicator)
   })
-
   let data = []
   for (const [key, indicators] of Object.entries(indicatorsPerLevel)) {
     let {

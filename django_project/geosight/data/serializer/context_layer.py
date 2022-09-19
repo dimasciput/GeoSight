@@ -18,6 +18,7 @@ class ContextLayerSerializer(serializers.ModelSerializer):
     category = serializers.SerializerMethodField()
     data_fields = serializers.SerializerMethodField()
     label_styles = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
 
     def get_url(self, obj: ContextLayer):
         """Url."""
@@ -51,6 +52,12 @@ class ContextLayerSerializer(serializers.ModelSerializer):
     def get_label_styles(self, obj: ContextLayer):
         """Return category name."""
         return json.loads(obj.label_styles) if obj.label_styles else {}
+
+    def get_permission(self, obj: ContextLayer):
+        """Return permission."""
+        return obj.permission.all_permission(
+            self.context.get('user', None)
+        )
 
     class Meta:  # noqa: D106
         model = ContextLayer

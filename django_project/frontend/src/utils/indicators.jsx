@@ -29,6 +29,8 @@ export function cleanLayerData(
             }
           })
           return output;
+        } else if (layer.error) {
+          throw new Error(layer.error.data.detail);
         } else {
           return null;
         }

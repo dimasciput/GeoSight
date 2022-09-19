@@ -1,7 +1,14 @@
 """Core admin."""
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
 
-from core.models import SitePreferences, SitePreferencesImage
+from core.models import (
+    SitePreferences, SitePreferencesImage, Profile
+)
+
+User = get_user_model()
+admin.site.unregister(User)
 
 
 class SitePreferencesImageInline(admin.TabularInline):
@@ -34,3 +41,18 @@ class SitePreferencesAdmin(admin.ModelAdmin):
 
 
 admin.site.register(SitePreferences, SitePreferencesAdmin)
+
+
+class ProfileInline(admin.StackedInline):
+    """Profile inline."""
+
+    model = Profile
+
+
+class UserProfileAdmin(UserAdmin):
+    """User profile admin."""
+
+    inlines = (ProfileInline,)
+
+
+admin.site.register(User, UserProfileAdmin)

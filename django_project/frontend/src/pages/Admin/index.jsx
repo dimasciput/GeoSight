@@ -1,7 +1,7 @@
 import React from 'react';
 import App from '../../app';
-
 import SideNavigation from './Components/SideNavigation'
+
 import './style.scss';
 
 export const pageNames = {
@@ -10,6 +10,9 @@ export const pageNames = {
   Basemaps: 'Basemap',
   Harvester: 'Harvesters',
   ContextLayer: 'Context Layer',
+  Users: 'Users',
+  Groups: 'Groups',
+  DataAccess: 'Data Access',
 }
 /**
  * Base Admin App

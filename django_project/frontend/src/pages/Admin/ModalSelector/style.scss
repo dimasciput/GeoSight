@@ -1,0 +1,45 @@
+/* ==========================================================================
+   DataAccess Add style
+   ========================================================================== */
+@import '../../../app/variables';
+
+.ModalDataSelector {
+  .modal--box {
+    width: 90%;
+    max-width: 90%;
+
+    .AdminContent {
+      padding-top: 1rem;
+    }
+
+    .AdminList {
+      height: 500px;
+      padding: 0;
+    }
+
+    .Save-Button {
+      margin-left: auto;
+      padding: 0;
+    }
+  }
+}
+
+.ModalDataSelectorSelected {
+  display: flex;
+  flex-wrap: wrap;
+
+  .ModalDataSelectorSelectedObject {
+    border: 1px solid $primary-color;
+    border-radius: $border-radius;
+    padding: 0.5rem;
+    width: fit-content;
+    display: flex;
+
+    div {
+      white-space: nowrap;
+      overflow: hidden !important;
+      text-overflow: ellipsis;
+      max-width: 12rem;
+    }
+  }
+}

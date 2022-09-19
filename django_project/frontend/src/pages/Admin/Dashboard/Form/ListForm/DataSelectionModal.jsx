@@ -80,6 +80,7 @@ export default function DataSelectionModal(
     getActions: (params) => {
       return [
         <GridActionsCellItem
+          className='MuiDataGrid-cellCheckbox'
           icon={
             <Checkbox
               checked={groupSelectedDataIds.includes(params.id)}

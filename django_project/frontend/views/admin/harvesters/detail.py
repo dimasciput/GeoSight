@@ -1,7 +1,6 @@
 """Harvester Detail view."""
 import json
 
-from braces.views import SuperuserRequiredMixin
 from django.http import Http404, HttpResponseBadRequest
 from django.shortcuts import reverse, redirect
 
@@ -15,9 +14,10 @@ from geosight.harvester.serializer.harvester import (
     HarvesterSerializer, HarvesterLogSerializer, HarvesterAttributeSerializer
 )
 from geosight.harvester.tasks import run_harvester
+from geosight.permission.access import edit_permission_resource
 
 
-class HarvesterDetail(SuperuserRequiredMixin, BaseView):
+class HarvesterDetail(BaseView):
     """Harvester Detail View."""
 
     template_name = 'frontend/admin/harvesters/detail.html'
@@ -86,6 +86,7 @@ class HarvesterDetail(SuperuserRequiredMixin, BaseView):
         """Return context data."""
         context = super().get_context_data(**kwargs)
         harvester = self.harvester
+        edit_permission_resource(harvester, self.request.user)
         context.update(self.context_data(harvester))
         return context
 
@@ -95,6 +96,7 @@ class HarvesterDetail(SuperuserRequiredMixin, BaseView):
             harvester = Harvester.objects.get(
                 unique_id=self.kwargs.get('uuid', '')
             )
+            edit_permission_resource(harvester, self.request.user)
         except Indicator.DoesNotExist:
             raise Http404('Harvester does not exist')
         if harvester.harvester_class in [

@@ -14,8 +14,13 @@
         'list': '{% url 'dashboard-list-api' %}',
         'map': '{% url 'dashboard-detail-view' 0 %}',
         'detail': '{% url 'dashboard-detail-api' 0 %}',
-        'create': '{% url 'dashboard-create-view' %}',
-        'edit': '{% url 'dashboard-edit-view' 0 %}',
+        'create': '{% url 'admin-dashboard-create-view' %}',
+        'edit': '{% url 'admin-dashboard-edit-view' 0 %}',
+        'users': '{% url 'user-list-api'%}',
+        'groups': '{% url 'group-list-api'%}',
+
+        {# dashboard specified url#}
+        'permission': '{% url 'dashboard-permission-api' 0 %}',
       }
     </script>
 {% endblock %}

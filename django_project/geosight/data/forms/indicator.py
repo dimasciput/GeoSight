@@ -36,6 +36,7 @@ class IndicatorForm(forms.ModelForm):
     class Meta:  # noqa: D106
         model = Indicator
         exclude = (
+            'created_at', 'creator', 'modified_at',
             'order', 'geometry_reporting_units',
             'instance', 'show_in_context_analysis'
         )

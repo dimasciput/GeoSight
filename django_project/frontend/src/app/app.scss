@@ -24,6 +24,10 @@ html, body {
   width: 100%;
 }
 
+.AddButton {
+  color: green;
+}
+
 .RemoveButton {
   color: $error;
 }
@@ -40,5 +44,38 @@ html, body {
 .ThemeButton {
   svg {
     margin-right: 0.5rem;
+  }
+}
+
+
+.TabPrimary {
+  display: flex;
+
+  div {
+    border: 1px solid $primary-color;
+    padding: 0.5rem;
+    cursor: pointer;
+    margin-right: -1px;
+    min-width: 8rem;
+    border-bottom: none;
+    text-align: center;
+
+    &.Selected {
+      background-color: $primary-color;
+      color: $anti-primary-color;
+    }
+  }
+}
+
+
+.Popover-Submit {
+  padding: 0.5rem;
+
+  .FormError {
+    color: $error;
+  }
+
+  .FormOk {
+    color: $ok;
   }
 }

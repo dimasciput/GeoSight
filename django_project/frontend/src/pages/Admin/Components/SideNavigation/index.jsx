@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import LayersIcon from '@mui/icons-material/Layers';
 import MapIcon from '@mui/icons-material/Map';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
+import StorageIcon from '@mui/icons-material/Storage';
+
 import { pageNames } from '../../index'
 
 import './style.scss';
@@ -19,6 +23,9 @@ export default function SideNavigation({ pageName }) {
   const basemapList = urls.admin.basemapList; // eslint-disable-line no-undef
   const contextLayerList = urls.admin.contextLayerList; // eslint-disable-line no-undef
   const harvesterList = urls.admin.harvesterList; // eslint-disable-line no-undef
+  const userList = urls.admin.userList; // eslint-disable-line no-undef
+  const groupList = urls.admin.groupList; // eslint-disable-line no-undef
+  const dataAccess = urls.admin.dataAccess; // eslint-disable-line no-undef
   return (
     <div className='SideNavigation'>
       <a href='/' className='SideNavigation-Row'>
@@ -50,6 +57,25 @@ export default function SideNavigation({ pageName }) {
         <CloudSyncIcon className='SideNavigation-Row-Icon'/>
         <span className='SideNavigation-Row-Name'>Harvesters</span>
       </a>
+      {
+        user.is_admin ? <Fragment>
+          <a href={userList}
+             className={'SideNavigation-Row ' + (pageName === pageNames.Users ? 'active' : '')}>
+            <PersonIcon className='SideNavigation-Row-Icon'/>
+            <span className='SideNavigation-Row-Name'>Users</span>
+          </a>
+          <a href={groupList}
+             className={'SideNavigation-Row ' + (pageName === pageNames.Groups ? 'active' : '')}>
+            <GroupsIcon className='SideNavigation-Row-Icon'/>
+            <span className='SideNavigation-Row-Name'>Groups</span>
+          </a>
+          <a href={dataAccess}
+             className={'SideNavigation-Row ' + (pageName === pageNames.DataAccess ? 'active' : '')}>
+            <StorageIcon className='SideNavigation-Row-Icon'/>
+            <span className='SideNavigation-Row-Name'>Data Access</span>
+          </a>
+        </Fragment> : ""
+      }
     </div>
   );
 }

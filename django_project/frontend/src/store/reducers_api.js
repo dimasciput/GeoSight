@@ -19,7 +19,7 @@ export function APIReducer(state, action, actionName) {
         fetching: false,
         fetched: true,
         receivedAt: action.receivedAt,
-        data: {},
+        data: null,
         error: null
       };
 

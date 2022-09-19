@@ -1,16 +1,17 @@
 """Admin ContextLayer Edit View."""
 
 import json
-from braces.views import SuperuserRequiredMixin
+
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.context_layer import ContextLayerForm
 from geosight.data.models.context_layer import ContextLayer
+from geosight.permission.access import edit_permission_resource
 
 
-class ContextLayerEditView(SuperuserRequiredMixin, BaseView):
+class ContextLayerEditView(BaseView):
     """ContextLayer Edit View."""
 
     template_name = 'frontend/admin/context_layer/form.html'
@@ -39,14 +40,15 @@ class ContextLayerEditView(SuperuserRequiredMixin, BaseView):
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""
         context = super().get_context_data(**kwargs)
-        basemap = get_object_or_404(
+        instance = get_object_or_404(
             ContextLayer, id=self.kwargs.get('pk', '')
         )
+        edit_permission_resource(instance, self.request.user)
 
         context.update(
             {
                 'form': ContextLayerForm(
-                    initial=ContextLayerForm.model_to_initial(basemap)
+                    initial=ContextLayerForm.model_to_initial(instance)
                 )
             }
         )
@@ -54,14 +56,15 @@ class ContextLayerEditView(SuperuserRequiredMixin, BaseView):
 
     def post(self, request, **kwargs):
         """Edit basemap."""
-        basemap = get_object_or_404(
+        instance = get_object_or_404(
             ContextLayer, id=self.kwargs.get('pk', '')
         )
+        edit_permission_resource(instance, self.request.user)
         data = request.POST.copy()
         data['data_fields'] = json.loads(request.POST.get('data_fields', '[]'))
         form = ContextLayerForm(
             data,
-            instance=basemap
+            instance=instance
         )
 
         if form.is_valid():

@@ -4,7 +4,8 @@ from datetime import date
 from django.contrib.gis.db import models
 from django.shortcuts import reverse
 
-from core.models.general import AbstractTerm, AbstractSource
+from core.models.general import AbstractTerm, AbstractSource, AbstractEditData
+from geosight.permission.models.manager import PermissionManager
 
 
 # AGGREGATION BEHAVIOURS
@@ -39,7 +40,7 @@ class IndicatorGroup(AbstractTerm):
     pass
 
 
-class Indicator(AbstractTerm, AbstractSource):
+class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
     """The indicator model."""
 
     shortcode = models.CharField(
@@ -76,6 +77,8 @@ class Indicator(AbstractTerm, AbstractSource):
              'Aggregate data by sum of all data in the levels'),
         )
     )
+    objects = models.Manager()
+    permissions = PermissionManager()
 
     class Meta:  # noqa: D106
         ordering = ('group__name', 'name')

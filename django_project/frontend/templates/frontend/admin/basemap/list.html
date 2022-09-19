@@ -15,6 +15,11 @@
         'create': '{% url 'admin-basemap-create-view' %}',
         'edit': '{% url 'admin-basemap-edit-view' 0 %}',
         'detail': '{% url 'basemap-detail-api' 0 %}',
+        'users': '{% url 'user-list-api'%}',
+        'groups': '{% url 'group-list-api'%}',
+
+        {# basemap specified url#}
+        'permission': '{% url 'basemap-permission-api' 0 %}',
       }
     </script>
 {% endblock %}

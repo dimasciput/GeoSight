@@ -1,10 +1,12 @@
 import React from 'react';
+import { GridActionsCellItem } from "@mui/x-data-grid";
 
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
 import { pageNames } from '../../index';
-import { COLUMNS } from "../../Components/List";
+import { COLUMNS, COLUMNS_ACTION } from "../../Components/List";
 import AdminList from "../../AdminList";
+import PermissionModal from "../../Permission";
 
 import './style.scss';
 
@@ -13,8 +15,40 @@ import './style.scss';
  */
 export default function ContextLayerList() {
   const pageName = pageNames.ContextLayer
+  const columns = COLUMNS(pageName, urls.admin.contextLayerList);
+  columns[4] = {
+    field: 'actions',
+    type: 'actions',
+    cellClassName: 'MuiDataGrid-ActionsColumn',
+    width: 100,
+    getActions: (params) => {
+      const permission = params.row.permission
+      // Create actions
+      const actions = [].concat(
+        COLUMNS_ACTION(
+          params, urls.admin.contextLayerList, urls.api.edit, urls.api.detail
+        )
+      );
+
+      // Unshift before more & edit action
+      if (permission.share) {
+        actions.unshift(
+          <GridActionsCellItem
+            icon={
+              <a>
+                <PermissionModal
+                  name={params.row.name}
+                  urlData={urls.api.permission.replace('/0', `/${params.id}`)}/>
+              </a>
+            }
+            label="Change Share Configuration."
+          />)
+      }
+      return actions
+    },
+  }
   return <AdminList
-    columns={COLUMNS(pageName, urls.admin.contextLayerList)}
+    columns={columns}
     pageName={pageName}
     listUrl={urls.api.list}
   />

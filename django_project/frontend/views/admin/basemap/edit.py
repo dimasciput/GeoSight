@@ -1,15 +1,15 @@
 """Admin Basemap Edit View."""
 
-from braces.views import SuperuserRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.basemap import BasemapForm
 from geosight.data.models.basemap_layer import BasemapLayer
+from geosight.permission.access import edit_permission_resource
 
 
-class BasemapEditView(SuperuserRequiredMixin, BaseView):
+class BasemapEditView(BaseView):
     """Basemap Edit View."""
 
     template_name = 'frontend/admin/basemap/form.html'
@@ -39,6 +39,7 @@ class BasemapEditView(SuperuserRequiredMixin, BaseView):
         basemap = get_object_or_404(
             BasemapLayer, id=self.kwargs.get('pk', '')
         )
+        edit_permission_resource(basemap, self.request.user)
 
         context.update(
             {
@@ -54,6 +55,7 @@ class BasemapEditView(SuperuserRequiredMixin, BaseView):
         basemap = get_object_or_404(
             BasemapLayer, id=self.kwargs.get('pk', '')
         )
+        edit_permission_resource(basemap, self.request.user)
         form = BasemapForm(
             request.POST,
             instance=basemap

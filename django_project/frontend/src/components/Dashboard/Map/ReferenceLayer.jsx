@@ -159,13 +159,15 @@ export default function ReferenceLayer({ currentIndicatorLayer }) {
         currentIndicatorLayer.indicators.map(indicatorLayer => {
           const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
           if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
-            currentLevel = indicator.reporting_level
-            indicatorsData[indicator.id].data.forEach(function (data) {
-              if (!indicatorsByGeom[data.geometry_code]) {
-                indicatorsByGeom[data.geometry_code] = []
-              }
-              indicatorsByGeom[data.geometry_code].push(data);
-            })
+            if (indicatorsData[indicator.id].data) {
+              currentLevel = indicator.reporting_level
+              indicatorsData[indicator.id].data.forEach(function (data) {
+                if (!indicatorsByGeom[data.geometry_code]) {
+                  indicatorsByGeom[data.geometry_code] = []
+                }
+                indicatorsByGeom[data.geometry_code].push(data);
+              })
+            }
           }
         })
       }

@@ -2,7 +2,6 @@
 import json
 from abc import ABC
 
-from braces.views import SuperuserRequiredMixin
 from django.http import HttpResponseBadRequest
 from django.shortcuts import reverse, get_object_or_404, redirect
 from django.utils.module_loading import import_string
@@ -14,9 +13,13 @@ from geosight.harvester.models import (
     HARVESTERS, Harvester, HarvesterAttribute, HarvesterMappingValue
 )
 from geosight.harvester.serializer.harvester import HarvesterSerializer
+from geosight.permission.access import (
+    RoleCreatorRequiredMixin,
+    edit_permission_resource
+)
 
 
-class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
+class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
     """HarvesterForm Base View."""
 
     indicator = None
@@ -96,6 +99,7 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
         harvester = None
         try:
             harvester = self.get_harvester()
+            edit_permission_resource(harvester, self.request.user)
             for _map in harvester.harvestermappingvalue_set.order_by(
                     'remote_value'
             ):
@@ -197,6 +201,7 @@ class HarvesterFormView(SuperuserRequiredMixin, BaseView, ABC):
             harvester_class = data['harvester']
             try:
                 harvester = self.get_harvester()
+                edit_permission_resource(harvester, self.request.user)
             except Harvester.DoesNotExist:
                 harvester = Harvester.objects.create(
                     harvester_class=harvester_class,

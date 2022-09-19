@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.permissions import AdminAuthenticationPermission
 from geosight.data.models.basemap_layer import BasemapLayer
 from geosight.data.serializer.basemap_layer import BasemapLayerSerializer
+from geosight.permission.access import delete_permission_resource
 
 
 class BasemapListAPI(APIView):
@@ -17,7 +17,8 @@ class BasemapListAPI(APIView):
         """Return BasemapLayer list."""
         return Response(
             BasemapLayerSerializer(
-                BasemapLayer.objects.order_by('name'), many=True
+                BasemapLayer.permissions.list(request.user).order_by('name'),
+                many=True, context={'user': request.user}
             ).data
         )
 
@@ -25,10 +26,11 @@ class BasemapListAPI(APIView):
 class BasemapDetailAPI(APIView):
     """API for detail of basemap."""
 
-    permission_classes = (IsAuthenticated, AdminAuthenticationPermission,)
+    permission_classes = (IsAuthenticated,)
 
     def delete(self, request, pk):
         """Delete an basemap."""
         basemap = get_object_or_404(BasemapLayer, pk=pk)
+        delete_permission_resource(basemap, request.user)
         basemap.delete()
         return Response('Deleted')

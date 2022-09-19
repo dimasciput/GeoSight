@@ -3,7 +3,8 @@ import { fetchingData } from "../../../../Requests";
 import {
   DASHBOARD_ACTION_NAME,
   DASHBOARD_ACTION_TYPE_FILTERS_ALLOW_MODIFY,
-  DASHBOARD_ACTION_TYPE_UPDATE
+  DASHBOARD_ACTION_TYPE_UPDATE,
+  DASHBOARD_ACTION_TYPE_UPDATE_SHARE
 } from './index'
 
 const REQUEST_DASHBOARD = 'REQUEST/' + DASHBOARD_ACTION_NAME;
@@ -60,6 +61,18 @@ export function update(payload) {
 }
 
 /**
+ * Update dashboard permission.
+ * @param {object} payload Dashboard permission.
+ */
+export function updatePermission(payload) {
+  return {
+    name: DASHBOARD_ACTION_NAME,
+    type: DASHBOARD_ACTION_TYPE_UPDATE_SHARE,
+    payload: payload
+  };
+}
+
+/**
  * Update filters allow modify.
  */
 export function updateFiltersAllowModify() {
@@ -70,5 +83,5 @@ export function updateFiltersAllowModify() {
 }
 
 export default {
-  fetch, update, updateFiltersAllowModify
+  fetch, update, updateFiltersAllowModify, updatePermission
 }

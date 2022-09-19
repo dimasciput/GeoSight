@@ -11,15 +11,19 @@
 {% block scripts %}
     <script>
       urls.api = {
-        'list': '{% url 'indicator-basic-list-api' %}',
+        'list': '{% url 'indicator-admin-list-api' %}',
         'create': '{% url 'admin-indicator-create-view' %}',
         'edit': '{% url 'admin-indicator-edit-view' 0 %}',
         'detail': '{% url 'indicator-detail-api' 0 %}',
+        'users': '{% url 'user-list-api'%}',
+        'groups': '{% url 'group-list-api'%}',
 
         {# indicator specified url#}
         'form': '{% url 'admin-indicator-value-form-manager' 0 %}',
         'map': '{% url 'admin-indicator-value-mapview-manager' 0 %}',
-        'values': '{% url 'admin-indicator-value-list-manager' 0 %}'
+        'values': '{% url 'admin-indicator-value-list-manager' 0 %}',
+        'permission': '{% url 'indicator-permission-api' 0 %}',
+        'permissionAdmin': '{% url 'admin-data-access-view' %}',
       }
     </script>
 {% endblock %}

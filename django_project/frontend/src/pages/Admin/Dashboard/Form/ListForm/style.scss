@@ -63,6 +63,7 @@
         font-size: 1rem !important;
         line-height: 1.5 !important;
         font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+        color: $anti-secondary-color;
 
         svg {
           margin-right: 0.5rem;
@@ -176,6 +177,24 @@
   .TableForm-Header-Right {
     button {
       margin-left: 0.5rem;
+    }
+  }
+}
+
+.AdminSelectDataForm {
+  .ResourceRow {
+    opacity: 0.5;
+
+    .MuiDataGrid-cellCheckbox {
+      display: none;
+    }
+
+    &.Readable {
+      opacity: 1;
+
+      .MuiDataGrid-cellCheckbox {
+        display: block;
+      }
     }
   }
 }

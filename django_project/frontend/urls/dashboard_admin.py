@@ -2,19 +2,19 @@
 from django.conf.urls import url
 
 from frontend.views.admin.dashboard.list import DashboardListView
-from frontend.views.dashboard.create import DashboardCreateView
-from frontend.views.dashboard.edit import DashboardEditView
+from frontend.views.admin.dashboard.create import DashboardCreateView
+from frontend.views.admin.dashboard.edit import DashboardEditView
 
 urlpatterns = [
     url(
         r'^create',
         DashboardCreateView.as_view(),
-        name='dashboard-create-view'
+        name='admin-dashboard-create-view'
     ),
     url(
         r'^(?P<slug>[^/]+)/edit',
         DashboardEditView.as_view(),
-        name='dashboard-edit-view'
+        name='admin-dashboard-edit-view'
     ),
     url(
         r'^',

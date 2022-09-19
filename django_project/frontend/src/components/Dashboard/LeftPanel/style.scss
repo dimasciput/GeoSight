@@ -308,6 +308,22 @@
         height: 100%;
         width: 100%;
       }
+
+      &.Error {
+        color: red;
+      }
+    }
+
+    .RadioButtonSection {
+      position: relative;
+
+      .MuiCircularProgress-root {
+        position: absolute;
+        width: 24px !important;
+        height: 24px !important;
+        top: 3px;
+        left: 0;
+      }
     }
   }
 

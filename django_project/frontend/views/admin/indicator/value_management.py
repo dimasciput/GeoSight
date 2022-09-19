@@ -1,14 +1,21 @@
 """Value management forms of indicator."""
 import datetime
 
-from braces.views import SuperuserRequiredMixin
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, reverse, get_object_or_404
 
 from frontend.views._base import BaseView
 from geosight.data.models import Indicator, IndicatorExtraValue
+from geosight.georepo.models.reference_layer import (
+    ReferenceLayer, ReferenceLayerIndicator
+)
+from geosight.permission.access.mixin import (
+    RoleContributorRequiredMixin, read_permission_resource,
+    edit_permission_resource
+)
 
 
-class IndicatorValueManagementMapView(SuperuserRequiredMixin, BaseView):
+class IndicatorValueManagementMapView(RoleContributorRequiredMixin, BaseView):
     """Indicator Value Management Map View."""
 
     template_name = 'frontend/admin/indicator/value-management-map.html'
@@ -45,6 +52,7 @@ class IndicatorValueManagementMapView(SuperuserRequiredMixin, BaseView):
         self.indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        read_permission_resource(self.indicator, self.request.user)
         context = super().get_context_data(**kwargs)
         legends = {
             'NODATA': {
@@ -90,7 +98,8 @@ class IndicatorValueManagementMapView(SuperuserRequiredMixin, BaseView):
         return context
 
 
-class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
+class IndicatorValueManagementTableView(RoleContributorRequiredMixin,
+                                        BaseView):
     """Indicator Value Management Form View."""
 
     template_name = 'frontend/admin/indicator/value-management-form.html'
@@ -128,6 +137,7 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
         self.indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        read_permission_resource(self.indicator, self.request.user)
         context.update(
             {
                 'indicator': self.indicator,
@@ -144,6 +154,17 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
         date = request.POST.get('date', None)
         reference_layer = request.POST.get('reference_layer', None)
         admin_level = request.POST.get('admin_level', None)
+        if not reference_layer:
+            return HttpResponseBadRequest('Reference layer is needed.')
+
+        reference_layer, created = ReferenceLayer.objects.get_or_create(
+            identifier=reference_layer
+        )
+        dataset, created = ReferenceLayerIndicator.objects.get_or_create(
+            reference_layer=reference_layer,
+            indicator=indicator
+        )
+        edit_permission_resource(dataset, self.request.user)
         if date:
             indicator_values = {}
             # save data by geometry
@@ -152,7 +173,7 @@ class IndicatorValueManagementTableView(SuperuserRequiredMixin, BaseView):
                     code = key.replace('geometry:', '')
                     indicator_value = indicator.save_value(
                         date, code, float(value),
-                        reference_layer=reference_layer,
+                        reference_layer=reference_layer.identifier,
                         admin_level=admin_level
                     )
                     indicator_values[code] = indicator_value

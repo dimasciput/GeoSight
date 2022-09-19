@@ -12,6 +12,8 @@ from geosight.data.serializer.dashboard_relation import (
     DashboardContextLayerSerializer, DashboardIndicatorLayerSerializer
 )
 from geosight.data.serializer.indicator import IndicatorSerializer
+from geosight.permission.models.resource.dashboard import DashboardPermission
+from geosight.permission.serializer import PermissionSerializer
 
 
 class WidgetSerializer(serializers.ModelSerializer):
@@ -43,6 +45,8 @@ class DashboardSerializer(serializers.ModelSerializer):
     contextLayers = serializers.SerializerMethodField()
     filters = serializers.SerializerMethodField()
     filtersAllowModify = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
+    user_permission = serializers.SerializerMethodField()
 
     def get_description(self, obj: Dashboard):
         """Return description."""
@@ -66,12 +70,16 @@ class DashboardSerializer(serializers.ModelSerializer):
         """Return indicators."""
         output = []
         for model in obj.dashboardindicator_set.all():
-            data = IndicatorSerializer(model.object).data
+            data = IndicatorSerializer(
+                model.object, context={'user': self.context.get('user', None)}
+            ).data
             data['url'] = reverse(
                 'dashboard-indicator-values-api',
                 args=[obj.slug, model.object.id]
             )
-            dashboard_data = DashboardIndicatorSerializer(model).data
+            dashboard_data = DashboardIndicatorSerializer(
+                model, context={'user': self.context.get('user', None)}
+            ).data
             if dashboard_data['rules']:
                 del data['rules']
             else:
@@ -84,7 +92,8 @@ class DashboardSerializer(serializers.ModelSerializer):
     def get_indicatorLayers(self, obj: Dashboard):
         """Return indicatorLayers."""
         return DashboardIndicatorLayerSerializer(
-            obj.dashboardindicatorlayer_set.all(), many=True
+            obj.dashboardindicatorlayer_set.all(), many=True,
+            context={'user': self.context.get('user', None)}
         ).data
 
     def get_basemapsLayers(self, obj: Dashboard):
@@ -93,7 +102,9 @@ class DashboardSerializer(serializers.ModelSerializer):
         for model in obj.dashboardbasemap_set.all():
             data = BasemapLayerSerializer(model.object).data
             data.update(
-                DashboardBasemapSerializer(model).data
+                DashboardBasemapSerializer(
+                    model, context={'user': self.context.get('user', None)}
+                ).data
             )
             output.append(data)
 
@@ -103,8 +114,12 @@ class DashboardSerializer(serializers.ModelSerializer):
         """Return contextLayers."""
         output = []
         for model in obj.dashboardcontextlayer_set.all():
-            data = ContextLayerSerializer(model.object).data
-            dashboard_data = DashboardContextLayerSerializer(model).data
+            data = ContextLayerSerializer(
+                model.object, context={'user': self.context.get('user', None)}
+            ).data
+            dashboard_data = DashboardContextLayerSerializer(
+                model, context={'user': self.context.get('user', None)}
+            ).data
             if dashboard_data['data_fields']:
                 del data['data_fields']
             else:
@@ -154,6 +169,24 @@ class DashboardSerializer(serializers.ModelSerializer):
         """Return dashboard group name."""
         return obj.group.name if obj.group else ''
 
+    def get_permission(self, obj: Dashboard):
+        """Return permissions of dashboard."""
+        try:
+            return PermissionSerializer(obj=obj.permission).data
+        except DashboardPermission.DoesNotExist:
+            return PermissionSerializer(obj=DashboardPermission()).data
+
+    def get_user_permission(self, obj: Dashboard):
+        """Return permissions of dashboard."""
+        try:
+            return obj.permission.all_permission(
+                self.context.get('user', None)
+            )
+        except DashboardPermission.DoesNotExist:
+            return DashboardPermission().all_permission(
+                self.context.get('user', None)
+            )
+
     class Meta:  # noqa: D106
         model = Dashboard
         fields = (
@@ -161,8 +194,7 @@ class DashboardSerializer(serializers.ModelSerializer):
             'category', 'group',
             'widgets', 'extent', 'filters', 'filtersAllowModify',
             'referenceLayer', 'indicators', 'indicatorLayers',
-            'basemapsLayers', 'contextLayers',
-
+            'basemapsLayers', 'contextLayers', 'permission', 'user_permission'
         )
 
 
@@ -173,6 +205,7 @@ class DashboardBasicSerializer(serializers.ModelSerializer):
     group = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     modified_at = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
 
     def get_id(self, obj: Dashboard):
         """Return dashboard id."""
@@ -190,9 +223,15 @@ class DashboardBasicSerializer(serializers.ModelSerializer):
         """Return dashboard last modified."""
         return obj.modified_at.strftime('%Y-%m-%d %H:%M:%S')
 
+    def get_permission(self, obj: Dashboard):
+        """Return permission."""
+        return obj.permission.all_permission(
+            self.context.get('user', None)
+        )
+
     class Meta:  # noqa: D106
         model = Dashboard
         fields = (
             'id', 'icon', 'name', 'modified_at',
-            'description', 'group', 'category'
+            'description', 'group', 'category', 'permission'
         )

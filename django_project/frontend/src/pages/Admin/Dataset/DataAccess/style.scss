@@ -1,0 +1,89 @@
+/* ==========================================================================
+   DataAccess style
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.DataAccessAdmin {
+  padding: 1rem !important;
+
+  .DataAccessAdminTable {
+    border: 1px solid $primary-color;
+  }
+
+  .Loading {
+    text-align: center;
+    padding: 200px 20px;
+  }
+
+  .DataAccessAdminFilters {
+    padding: 0 0 2rem 0;
+    display: flex;
+
+    & > div {
+      margin-right: 0.5rem;
+    }
+
+    .MuiInputBase-root {
+      width: 220px;
+    }
+
+    .MuiSelect-icon {
+      transform: rotate(0deg) !important;
+    }
+  }
+
+  .ModalDataSelectorSelected {
+    display: none;
+  }
+}
+
+.FilterControl {
+  cursor: pointer;
+
+  input {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  div, input, svg, fieldset {
+    cursor: pointer;
+  }
+}
+
+.TabPrimary {
+  div {
+    padding-top: 12px;
+  }
+
+  .Separator {
+    flex-grow: 1;
+    border: none;
+    cursor: default;
+  }
+
+  button {
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+  }
+}
+
+.PermissionDatasetAddData {
+  .MuiFormControl-root {
+    margin-bottom: 1rem;
+
+    label {
+      font-weight: $base-font-regular;
+    }
+  }
+
+  .MuiTextField-root {
+    svg {
+      display: none;
+    }
+
+    input {
+      padding: 1rem;
+      min-height: 56px;
+    }
+  }
+}

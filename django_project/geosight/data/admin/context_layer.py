@@ -16,10 +16,10 @@ class ContextLayerFieldInline(admin.TabularInline):
 class ContextLayerAdmin(admin.ModelAdmin):
     """ContextLayer admin."""
 
-    list_display = ('name', 'layer_type', 'group', 'url')
+    list_display = ('name', 'layer_type', 'group', 'creator', 'url')
     inlines = (ContextLayerFieldInline,)
     list_filter = ('group',)
-    list_editable = ('group',)
+    list_editable = ('group', 'creator')
 
 
 class ContextLayerGroupAdmin(admin.ModelAdmin):

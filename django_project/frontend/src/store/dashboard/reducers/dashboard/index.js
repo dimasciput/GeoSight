@@ -20,6 +20,8 @@ import contextLayersReducer, {
 export const DASHBOARD_ACTION_NAME = 'DASHBOARD';
 export const DASHBOARD_ACTION_TYPE_UPDATE = 'DASHBOARD/UPDATE';
 export const DASHBOARD_ACTION_TYPE_FILTERS_ALLOW_MODIFY = 'DASHBOARD/FILTERS_ALLOW_MODIFY';
+export const DASHBOARD_ACTION_TYPE_UPDATE_SHARE = 'DASHBOARD/UPDATE_SHARE';
+
 const dashboardInitialState = {
   fetching: false,
   fetched: false,
@@ -45,6 +47,15 @@ export default function dashboardReducer(
             data: {
               ...state.data,
               filtersAllowModify: !state.data.filtersAllowModify
+            }
+          }
+        }
+        case DASHBOARD_ACTION_TYPE_UPDATE_SHARE: {
+          return {
+            ...state,
+            data: {
+              ...state.data,
+              permission: action.payload
             }
           }
         }

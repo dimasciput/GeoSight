@@ -74,10 +74,12 @@ export default function AdminForm({ isSubmitted, submit, children }) {
           type={$input.attr('type')} name={$input.attr('name')}
           iconStart={<PersonIcon/>}
           onKeyDown={onKeyDown}
+          defaultValue={$input.attr('value')}
         />
       } else if (name === 'password') {
         input = <IconTextField
-          type={$input.attr('type')} name={$input.attr('name')}
+          type='password'
+          name={$input.attr('name')}
           iconStart={<LockIcon/>}
           onKeyDown={onKeyDown}
         />

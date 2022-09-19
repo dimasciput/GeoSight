@@ -28,41 +28,46 @@ export function COLUMNS_ACTION(
 ) {
   detailUrl = detailUrl ? detailUrl : urls.api.detail;
   const actions = []
-  actions.push(
-    <GridActionsCellItem
-      icon={
-        <MoreAction moreIcon={<MoreVertIcon/>}>
-          {
-            moreActions ? React.Children.map(moreActions, child => {
-              return child
-            }) : ''
-          }
-          {
-            detailUrl ?
-              <div className='error' onClick={
-                () => {
-                  const api = detailUrl.replace('/0', `/${params.id}`);
-                  if (confirm(`Are you sure you want to delete : ${params.row.name ? params.row.name : params.row.id}?`)) {
-                    $.ajax({
-                      url: api,
-                      method: 'DELETE',
-                      success: function () {
-                        window.location = redirectUrl;
-                      },
-                      beforeSend: beforeAjaxSend
-                    });
-                    return false;
+
+  // Delete action
+  const permission = params.row.permission
+  if (!permission || permission.delete) {
+    actions.push(
+      <GridActionsCellItem
+        icon={
+          <MoreAction moreIcon={<MoreVertIcon/>}>
+            {
+              moreActions ? React.Children.map(moreActions, child => {
+                return child
+              }) : ''
+            }
+            {
+              detailUrl ?
+                <div className='error' onClick={
+                  () => {
+                    const api = detailUrl.replace('/0', `/${params.id}`);
+                    if (confirm(`Are you sure you want to delete : ${params.row.name ? params.row.name : params.row.id}?`)) {
+                      $.ajax({
+                        url: api,
+                        method: 'DELETE',
+                        success: function () {
+                          window.location = redirectUrl;
+                        },
+                        beforeSend: beforeAjaxSend
+                      });
+                      return false;
+                    }
                   }
-                }
-              }>
-                <DeleteIcon/> Delete
-              </div> : ''
-          }
-        </MoreAction>
-      }
-      label="More"
-    />
-  )
+                }>
+                  <DeleteIcon/> Delete
+                </div> : ''
+            }
+          </MoreAction>
+        }
+        label="More"
+      />
+    )
+  }
   return actions
 }
 
@@ -84,7 +89,8 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
     {
       field: 'name', headerName: singularPageName + ' Name', flex: 1,
       renderCell: (params) => {
-        if (editUrl) {
+        const permission = params.row.permission
+        if (editUrl && (!permission || permission.edit)) {
           return <a className='MuiButtonLike CellLink'
                     href={editUrl.replace('/0', `/${params.id}`)}>
             {params.value}
@@ -99,6 +105,7 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
     {
       field: 'actions',
       type: 'actions',
+      cellClassName: 'MuiDataGrid-ActionsColumn',
       width: 80,
       getActions: (params) => {
         return COLUMNS_ACTION(params, redirectUrl, editUrl, detailUrl)

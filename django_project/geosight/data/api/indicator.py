@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from core.permissions import AdminAuthenticationPermission
 from geosight.data.models.indicator import Indicator
 from geosight.data.serializer.indicator import (
-    BasicIndicatorSerializer, IndicatorSerializer
+    IndicatorAdminListSerializer, IndicatorSerializer,
+    IndicatorBasicListSerializer
 )
 
 
@@ -20,9 +21,23 @@ class IndicatorListAPI(APIView):
         """Return Indicatorslist."""
         return Response(
             IndicatorSerializer(
-                Indicator.objects.filter(group__isnull=False).order_by(
-                    'group__name', 'name'),
-                many=True
+                Indicator.permissions.list(request.user).filter(
+                    group__isnull=False).order_by('group__name', 'name'),
+                many=True, context={'user': request.user}
+            ).data
+        )
+
+
+class IndicatorAdminListAPI(APIView):
+    """Return list of indicator in admin data."""
+
+    def get(self, request):
+        """Return Indicatorslist."""
+        return Response(
+            IndicatorAdminListSerializer(
+                Indicator.permissions.list(request.user).filter(
+                    group__isnull=False).order_by('group__name', 'name'),
+                many=True, context={'user': request.user}
             ).data
         )
 
@@ -33,8 +48,10 @@ class IndicatorBasicListAPI(APIView):
     def get(self, request):
         """Return Indicatorslist."""
         return Response(
-            BasicIndicatorSerializer(
-                Indicator.objects.all(), many=True
+            IndicatorBasicListSerializer(
+                Indicator.permissions.list(request.user).filter(
+                    group__isnull=False).order_by('group__name', 'name'),
+                many=True, context={'user': request.user}
             ).data
         )
 

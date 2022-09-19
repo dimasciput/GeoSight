@@ -33,13 +33,13 @@
 
 .MuiButton-primary {
   background-color: $primary-color !important;
-  border-color: $primary-color !important;
+  border: 1px solid $primary-color !important;
   color: $anti-primary-color !important;
 }
 
 .MuiButton-secondary {
   background-color: $secondary-color !important;
-  border-color: $secondary-color !important;
+  border: 1px solid $secondary-color !important;
   color: $anti-secondary-color !important;
 
   &.Basic {
@@ -48,6 +48,28 @@
 
     svg {
       margin-right: 0;
+    }
+  }
+
+  &.Reverse {
+    background-color: $anti-secondary-color !important;
+    border: 1px solid $secondary-color !important;
+    color: $secondary-color !important;
+
+    &:hover {
+      background-color: $secondary-color !important;
+      color: $anti-secondary-color !important;
+    }
+
+    &.Mui-disabled {
+      background-color: $anti-secondary-color !important;
+      border: 1px solid $secondary-color !important;
+      color: $secondary-color !important;
+      -webkit-text-fill-color: $secondary-color !important;
+
+      svg {
+        display: block !important;
+      }
     }
   }
 }
@@ -209,4 +231,25 @@
   display: inline-flex !important;
   border-radius: $border-radius;
   line-height: 1.5;
+}
+
+.MuiDataGridTable {
+  height: 500px;
+}
+
+.MuiDataGrid-main {
+  .MuiSelect-select {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    background: inherit;
+    min-width: 50px;
+  }
+}
+
+.MuiDataGrid-ActionsColumn {
+  -webkit-box-pack: end !important;
+  -ms-flex-pack: end !important;
+  -webkit-justify-content: flex-end !important;
+  justify-content: end !important;
 }

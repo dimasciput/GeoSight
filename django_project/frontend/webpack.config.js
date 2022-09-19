@@ -22,6 +22,11 @@ let conf = {
     AdminBasemapForm: ['./src/pages/Admin/Basemap/Form'],
     AdminContextLayerList: ['./src/pages/Admin/ContextLayer/List'],
     AdminContextLayerForm: ['./src/pages/Admin/ContextLayer/Form'],
+    AdminUserList: ['./src/pages/Admin/User/List'],
+    AdminUserForm: ['./src/pages/Admin/User/Form'],
+    AdminGroupList: ['./src/pages/Admin/Group/List'],
+    AdminGroupForm: ['./src/pages/Admin/Group/Form'],
+    AdminDatasetDataAccess: ['./src/pages/Admin/Dataset/DataAccess'],
 
     // INDICATOR MANAGEMENT
     IndicatorValueList: ['./src/pages/Admin/Indicator/IndicatorValueList'],

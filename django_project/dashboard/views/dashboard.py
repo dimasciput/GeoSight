@@ -33,7 +33,8 @@ class DashboardListView(BaseView):
                     'name': dashboard.name,
                     'description': dashboard.description,
                     'icon': dashboard.icon.url if dashboard.icon else '',
-                    'can_edit': dashboard.can_edit(self.request.user),
+                    'can_edit': dashboard.permission.has_edit_perm(
+                        self.request.user),
                     'url': reverse(
                         'dashboard-detail-view',
                         args=[dashboard.slug]

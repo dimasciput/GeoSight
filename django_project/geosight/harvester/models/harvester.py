@@ -6,8 +6,10 @@ from django.contrib.gis.db import models
 from django.utils.module_loading import import_string
 from django.utils.translation import ugettext_lazy as _
 
+from core.models.general import AbstractEditData
 from geosight.data.models.indicator import Indicator
 from geosight.georepo.models import ReferenceLayer
+from geosight.permission.models.manager import PermissionManager
 
 User = get_user_model()
 APIWithGeographyAndTodayDate = (
@@ -47,7 +49,7 @@ ALL_HARVESTERS = HARVESTERS + (
 )
 
 
-class Harvester(models.Model):
+class Harvester(AbstractEditData):
     """Harvester of indicator data."""
 
     unique_id = models.UUIDField(
@@ -60,13 +62,6 @@ class Harvester(models.Model):
             "Use class with full package."),
         choices=ALL_HARVESTERS
     )
-    creator = models.ForeignKey(
-        User,
-        null=True, blank=True,
-        help_text=_('User who run the harvester.'),
-        on_delete=models.CASCADE
-    )
-
     active = models.BooleanField(
         default=True,
         help_text=_(
@@ -88,6 +83,8 @@ class Harvester(models.Model):
         null=True, blank=True,
         help_text=_('The frequency in days that the harvester will run.')
     )
+    objects = models.Manager()
+    permissions = PermissionManager()
 
     def __str__(self):
         """Return str."""

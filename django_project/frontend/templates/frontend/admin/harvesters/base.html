@@ -15,6 +15,6 @@
       const harvesterClass = "{{ harvester_class|safe }}";
       const attributesData = JSON.parse(`{{ attributes|safe }}`);
       const mappingData = JSON.parse(`{{ mapping|safe }}`);
-      const indicatorListAPI = '{% url 'indicator-basic-list-api' %}'
+      const indicatorListAPI = '{% url 'indicator-admin-list-api' %}'
     </script>
 {% endblock %}

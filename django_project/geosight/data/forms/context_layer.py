@@ -57,7 +57,7 @@ class ContextLayerForm(forms.ModelForm):
 
     class Meta:  # noqa: D106
         model = ContextLayer
-        fields = '__all__'
+        exclude = ('created_at', 'creator', 'modified_at')
 
     @staticmethod
     def model_to_initial(model: ContextLayer):

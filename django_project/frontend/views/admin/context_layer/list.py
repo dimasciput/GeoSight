@@ -1,12 +1,12 @@
 """Admin ContextLayer List View."""
 
-from braces.views import SuperuserRequiredMixin
 from django.shortcuts import reverse
 
 from frontend.views._base import BaseView
+from geosight.permission.access import RoleContributorRequiredMixin
 
 
-class ContextLayerListView(SuperuserRequiredMixin, BaseView):
+class ContextLayerListView(RoleContributorRequiredMixin, BaseView):
     """ContextLayer Detail View."""
 
     template_name = 'frontend/admin/context_layer/list.html'

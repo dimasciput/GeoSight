@@ -1,2 +1,2 @@
-from .test_api import *  # noqa
-from .test_model import *  # noqa
+from .api import *  # noqa
+from .model import *  # noqa

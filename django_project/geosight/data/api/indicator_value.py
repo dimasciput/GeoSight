@@ -17,6 +17,9 @@ from geosight.data.serializer.indicator import (
     IndicatorValueDetailSerializer
 )
 from geosight.georepo.request import GeorepoUrl
+from geosight.permission.access import (
+    delete_permission_resource, read_permission_resource
+)
 
 
 class IndicatorValuesByGeometry(APIView):
@@ -63,7 +66,7 @@ class IndicatorValuesByGeometry(APIView):
 class IndicatorValueDetail(APIView):
     """Return Scenario value for the specific geometry for all date."""
 
-    permission_classes = (IsAuthenticated, AdminAuthenticationPermission)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk, value_id):
         """Return extra values of the indicator.
@@ -75,6 +78,7 @@ class IndicatorValueDetail(APIView):
         indicator = get_object_or_404(Indicator, pk=pk)
         try:
             indicator_value = indicator.indicatorvalue_set.get(pk=value_id)
+            read_permission_resource(indicator_value, request.user)
             return Response(
                 IndicatorValueDetailSerializer(indicator_value).data
             )
@@ -86,6 +90,7 @@ class IndicatorValueDetail(APIView):
         indicator = get_object_or_404(Indicator, pk=pk)
         try:
             indicator_value = indicator.indicatorvalue_set.get(pk=value_id)
+            delete_permission_resource(indicator_value, request.user)
             indicator_value.delete()
             return Response('Deleted')
         except IndicatorValue.DoesNotExist:
@@ -95,11 +100,12 @@ class IndicatorValueDetail(APIView):
 class IndicatorValueListAPI(APIView):
     """API for Values of indicator."""
 
-    permission_classes = (IsAuthenticated, AdminAuthenticationPermission)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk, **kwargs):
         """Return Values."""
         indicator = get_object_or_404(Indicator, pk=pk)
+        read_permission_resource(indicator, request.user)
         georepo = GeorepoUrl()
         r = requests.get(georepo.reference_layer_list)
         references_map = {}
@@ -117,6 +123,7 @@ class IndicatorValueListAPI(APIView):
     def delete(self, request, pk):
         """Delete an value."""
         indicator = get_object_or_404(Indicator, pk=pk)
+        delete_permission_resource(indicator, request.user)
         ids = request.POST.get('ids', None)
         if not ids:
             return HttpResponseNotFound('ids is needed')

@@ -2,7 +2,8 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from core.models import AbstractTerm, IconTerm
+from core.models import AbstractEditData, AbstractTerm, IconTerm
+from geosight.permission.models.manager import PermissionManager
 
 
 class BasemapLayerType(object):
@@ -18,7 +19,7 @@ class BasemapGroup(AbstractTerm):
     pass
 
 
-class BasemapLayer(AbstractTerm, IconTerm):
+class BasemapLayer(AbstractEditData, AbstractTerm, IconTerm):
     """Model of BasemapLayer."""
 
     url = models.CharField(
@@ -37,6 +38,8 @@ class BasemapLayer(AbstractTerm, IconTerm):
         on_delete=models.SET_NULL,
         blank=True, null=True
     )
+    objects = models.Manager()
+    permissions = PermissionManager()
 
     class Meta:  # noqa: D106
         ordering = ('name',)

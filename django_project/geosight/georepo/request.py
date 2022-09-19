@@ -1,4 +1,5 @@
 """Reference Layer Control."""
+import requests
 
 from core.models.preferences import SitePreferences
 
@@ -35,3 +36,15 @@ class GeorepoUrl:
             'reference_layer_list': self.reference_layer_list,
             'reference_layer_detail': self.reference_layer_detail
         }
+
+
+class GeorepoRequest:
+    """Request to georepo."""
+
+    def __init__(self):
+        """Init Class."""
+        self.urls = GeorepoUrl()
+
+    def get_reference_layer_list(self):
+        """Return reference layer."""
+        return requests.get(self.urls.reference_layer_list)

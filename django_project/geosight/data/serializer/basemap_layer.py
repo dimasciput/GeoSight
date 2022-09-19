@@ -12,6 +12,7 @@ class BasemapLayerSerializer(serializers.ModelSerializer):
 
     category = serializers.SerializerMethodField()
     parameters = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
 
     def get_category(self, obj: BasemapLayer):
         """Return group."""
@@ -36,6 +37,12 @@ class BasemapLayerSerializer(serializers.ModelSerializer):
                 if params[0].lower() != 'bbox':
                     parameters[params[0]] = '='.join(params[1:])
         return parameters
+
+    def get_permission(self, obj: BasemapLayer):
+        """Return permission."""
+        return obj.permission.all_permission(
+            self.context.get('user', None)
+        )
 
     class Meta:  # noqa: D106
         model = BasemapLayer

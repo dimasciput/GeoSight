@@ -427,14 +427,16 @@ export default function FilterSection() {
       } else {
         indicatorsList.push(indicator)
         const codes = geometries[indicator.reporting_level] ? Object.keys(geometries[indicator.reporting_level]) : []
-        const indicatorCodes = indicator.data.map(data => data.geometry_code)
-        const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
-        missingCodes.map(code => {
-          indicator.data.push({
-            geometry_code: code,
-            indicator_id: indicator.id
+        if (indicator.data) {
+          const indicatorCodes = indicator.data.map(data => data.geometry_code)
+          const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
+          missingCodes.map(code => {
+            indicator.data.push({
+              geometry_code: code,
+              indicator_id: indicator.id
+            })
           })
-        })
+        }
       }
     }
 

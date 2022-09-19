@@ -157,15 +157,17 @@ export default function ReferenceLayerCentroid({ map, pane }) {
           selectedIndicatorLayer.indicators.map(indicatorLayer => {
             const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
             if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
-              indicatorsData[indicator.id].data.forEach(function (data) {
-                if (!indicatorsByGeom[data.geometry_code]) {
-                  indicatorsByGeom[data.geometry_code] = []
-                }
-                indicatorsByGeom[data.geometry_code].push(Object.assign({}, data, {
-                  color: indicatorLayer.color,
-                  name: indicatorLayer.name
-                }));
-              })
+              if (indicatorsData[indicator.id].data) {
+                indicatorsData[indicator.id].data.forEach(function (data) {
+                  if (!indicatorsByGeom[data.geometry_code]) {
+                    indicatorsByGeom[data.geometry_code] = []
+                  }
+                  indicatorsByGeom[data.geometry_code].push(Object.assign({}, data, {
+                    color: indicatorLayer.color,
+                    name: indicatorLayer.name
+                  }));
+                })
+              }
             }
           })
 

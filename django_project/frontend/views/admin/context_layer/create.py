@@ -2,15 +2,15 @@
 
 import json
 
-from braces.views import SuperuserRequiredMixin
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.context_layer import ContextLayerForm
 from geosight.data.models.context_layer import ContextLayer
+from geosight.permission.access import RoleCreatorRequiredMixin
 
 
-class ContextLayerCreateView(SuperuserRequiredMixin, BaseView):
+class ContextLayerCreateView(RoleCreatorRequiredMixin, BaseView):
     """ContextLayer Create View."""
 
     template_name = 'frontend/admin/context_layer/form.html'
@@ -57,12 +57,15 @@ class ContextLayerCreateView(SuperuserRequiredMixin, BaseView):
     def post(self, request, **kwargs):
         """Create indicator."""
         data = request.POST.copy()
-        data['data_fields'] = json.loads(data.get('data_fields', '[]'))
+        data_fields = data.get('data_fields', '[]')
+        data['data_fields'] = json.loads(data_fields if data_fields else '[]')
         form = ContextLayerForm(data)
 
         if form.is_valid():
-            context_layer = form.save()
-            context_layer.save_relations(data)
+            instance = form.instance
+            instance.creator = request.user
+            instance.save()
+            instance.save_relations(data)
             return redirect(reverse('admin-context-layer-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form

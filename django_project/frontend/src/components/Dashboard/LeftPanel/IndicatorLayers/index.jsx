@@ -24,8 +24,12 @@ import CustomPopover from "../../../CustomPopover";
  * @param {dict} layer Layer dictionary.
  * @param {Array} rules Array of rules.
  * @param {function} onChange Function when on changed
+ * @param {Array} errors Error list indicator.
+ * @param {bool} loaded If data is loaded.
  */
-export function IndicatorLayer({ checked, layer, rules, onChange }) {
+export function IndicatorLayer(
+  { checked, layer, rules, onChange, errors, loaded }
+) {
   const [showLegend, setShowLegend] = useState(checked);
   const showLegendHandler = (show) => {
     setShowLegend(show);
@@ -36,56 +40,89 @@ export function IndicatorLayer({ checked, layer, rules, onChange }) {
            key={layer.id}>
       <tbody>
       <tr className='dashboard__left_side__row__title' onClick={() => {
-        if (!checked) {
-          onChange(!checked, layer.id)
+        if (!errors.length) {
+          if (!checked) {
+            onChange(!checked, layer.id)
+          }
         }
       }}>
         <td valign="top">
-          <Radio
-            checked={checked}
-            onChange={() => {
+          <div className='RadioButtonSection'>
+            <Radio
+              checked={checked}
+              disabled={errors.length}
+              onChange={() => {
 
-            }}/>
+              }}/>
+          </div>
         </td>
         <td valign="top">
           <div className='text title'>
             <div>{layer.name}</div>
           </div>
         </td>
-        <td className='InfoIcon' valign="top">
-          <div className='InfoIcon'>
-            <CustomPopover
-              anchorOrigin={{
-                vertical: 'center',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'center',
-                horizontal: 'left',
-              }}
-              Button={
-                <InfoIcon/>
-              }
-              showOnHover={true}
-            >
-              <div className='LayerInfoPopover'>
-                <div className='title'>
-                  <b className='light'>{layer.name}
-                  </b>
-                </div>
-                <div>
-                  <b className='light'>Last Update: </b>{layer.last_update}
-                </div>
-                <div>
-                  <b className='light'>Description: </b>
-                  {
-                    layer.description ? layer.description : '-'
+        {/* If not error */}
+        {
+          !errors.length ?
+            <td className='InfoIcon' valign="top">
+              <div className='InfoIcon'>
+                <CustomPopover
+                  anchorOrigin={{
+                    vertical: 'center',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'center',
+                    horizontal: 'left',
+                  }}
+                  Button={
+                    <InfoIcon/>
                   }
-                </div>
+                  showOnHover={true}
+                >
+                  <div className='LayerInfoPopover'>
+                    <div className='title'>
+                      <b className='light'>{layer.name}
+                      </b>
+                    </div>
+                    <div>
+                      <b className='light'>Last Update: </b>{layer.last_update}
+                    </div>
+                    <div>
+                      <b className='light'>Description: </b>
+                      {
+                        layer.description ? layer.description : '-'
+                      }
+                    </div>
+                  </div>
+                </CustomPopover>
               </div>
-            </CustomPopover>
-          </div>
-        </td>
+            </td> :
+            <td className='InfoIcon Error' valign="top">
+              <div className='InfoIcon'>
+                <CustomPopover
+                  anchorOrigin={{
+                    vertical: 'center',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'center',
+                    horizontal: 'left',
+                  }}
+                  Button={
+                    <InfoIcon/>
+                  }
+                  showOnHover={true}
+                >
+                  <div className='LayerInfoPopover'>
+                    {
+                      errors.join('<br>')
+                    }
+                  </div>
+                </CustomPopover>
+              </div>
+            </td>
+        }
         <td valign="top">
           {
             checked ? (
@@ -213,7 +250,6 @@ export function IndicatorLayers() {
     })[0]
   }
 
-
   /**
    * Context Layer Row.
    * @param {str} groupNumber Group number.
@@ -228,19 +264,33 @@ export function IndicatorLayers() {
         {
           group.map(layer => {
               let rules = layer.rules
+              let errors = []
+              let loading = false
               if (layer.indicators.length === 1) {
                 const indicator = indicators.find(
                   data => layer.indicators[0]?.id === data.id)
                 if (indicator) {
                   rules = indicator.rules
                 }
+                layer.indicators.map(indicator => {
+                  if (!indicatorsData[indicator.id]?.fetched) {
+                    loading = true
+                  }
+                  const errorData = indicatorsData[indicator.id]?.error
+                  if (errorData) {
+                    errors.push(errorData.data.detail)
+                  }
+                })
               }
               return <IndicatorLayer
                 key={layer.id}
                 layer={layer}
                 rules={rules}
                 onChange={change}
-                checked={currentIndicatorLayer === layer.id}/>
+                checked={currentIndicatorLayer === layer.id}
+                errors={errors}
+                loaded={!loading}
+              />
             }
           )
         }

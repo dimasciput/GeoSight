@@ -26,6 +26,7 @@ import IndicatorLayersForm from './IndicatorLayers'
 import ContextLayerForm from './ContextLayer'
 import FiltersForm from './Filters'
 import WidgetForm from './Widgets'
+import ShareForm from './Share'
 
 // Dashboard Preview
 import { postData } from "../../../../Requests";
@@ -143,7 +144,8 @@ export function DashboardSaveForm(
     contextLayers,
     widgets,
     extent,
-    filtersAllowModify
+    filtersAllowModify,
+    permission
   } = useSelector(state => state.dashboard.data);
   const { data } = useSelector(state => state.dashboard);
   const filtersData = useSelector(state => state.filtersData);
@@ -219,7 +221,8 @@ export function DashboardSaveForm(
         'extent': extent,
         'widgets': widgets,
         'filters': filtersData,
-        'filtersAllowModify': filtersAllowModify
+        'filtersAllowModify': filtersAllowModify,
+        'permission': permission,
       }
 
       // onOpen();
@@ -309,6 +312,9 @@ export function DashboardFormContent({ changed }) {
           <ContextLayerForm/>
           <FiltersForm/>
           <WidgetForm/>
+          {
+            data?.user_permission.share ? <ShareForm/> : ""
+          }
         </Fragment> :
         <div className='DashboardFormLoading'>Loading</div>
       }
@@ -320,6 +326,7 @@ export function DashboardFormContent({ changed }) {
  * Dashboard Form Section
  */
 export function DashboardForm({ onPreview }) {
+  const { user_permission } = useSelector(state => state.dashboard.data);
   const [currentPage, setCurrentPage] = useState('Summary');
   const [currentHistoryIdx, setCurrentHistoryIdx] = useState(-1);
   const [changed, setChanged] = useState(false);
@@ -402,6 +409,15 @@ export function DashboardForm({ onPreview }) {
               >
                 Widgets
               </div>
+              {
+                user_permission?.share ?
+                  <div
+                    className={currentPage === 'Share' ? 'active' : 'MuiButtonLike'}
+                    onClick={() => changePage('Share')}
+                  >
+                    Share
+                  </div> : ""
+              }
             </div>
 
             {/* FORM CONTENT */}

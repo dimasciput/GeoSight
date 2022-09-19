@@ -24,7 +24,7 @@ export default function User() {
   /**
    * Signin Modal Functions.
    **/
-  const { username, full_name, is_staff } = user;
+  const { username, full_name, is_staff, is_contributor } = user;
   const logoutUrl = urls.logout; // eslint-disable-line no-undef
   const loginUrl = urls.login; // eslint-disable-line no-undef
   const backupsUrl = urls.backups; // eslint-disable-line no-undef
@@ -49,7 +49,7 @@ export default function User() {
           TransitionComponent={Fade}
         >
           {
-            is_staff ? (
+            is_contributor ? (
               <MenuItem className='MenuItem-Header'>
                 <a href={dashboardUrl}>Admin</a>
               </MenuItem>

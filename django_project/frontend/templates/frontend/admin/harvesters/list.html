@@ -16,6 +16,11 @@
         'create': '{{ create_harvester_api  }}',
         'edit': '{% url 'harvester-detail-view' 0 %}',
         'ingestor': '{{ meta_ingestor_api }}',
+        'users': '{% url 'user-list-api'%}',
+        'groups': '{% url 'group-list-api'%}',
+
+        {# harvester specified url#}
+        'permission': '{% url 'harvester-permission-api' 0 %}',
       }
     </script>
 {% endblock %}

@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Label Style
+   ========================================================================== */
+
+@import '../../../app/variables';
+
+.PermissionFormModal {
+  .modal--box {
+    min-width: 90%;
+    width: 90%;
+  }
+
+  .BasicForm {
+    padding: 0;
+  }
+}
+
+.PermissionForm {
+  padding: 0;
+
+  .form-label {
+    font-weight: $base-font-regular;
+
+    button {
+      padding-right: 0.5rem !important;
+      padding-left: 0.5rem !important;
+      min-width: 0;
+
+      svg {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .MuiFormGroup-root {
+    display: flex;
+    flex-direction: row;
+
+    .MuiFormControlLabel-root {
+      margin-left: 0;
+      margin-right: 1rem;
+      display: block;
+      width: fit-content;
+
+      .MuiTypography-root {
+        font-weight: $base-font-weight;
+        font-family: inherit;
+      }
+    }
+  }
+
+
+  .Mui-disabled {
+    -webkit-text-fill-color: $base-black-color;
+    color: $base-black-color;
+    cursor: not-allowed;
+
+    svg {
+      display: none;
+    }
+
+    fieldset {
+      border: none;
+    }
+  }
+
+  .MuiDataGrid-root {
+    .MuiButtonBase-root {
+      width: 48px;
+
+      &:hover {
+        background-color: inherit !important;
+      }
+
+      svg {
+        margin-right: 0;
+      }
+    }
+
+    .Creator {
+      .MuiCheckbox-root {
+        display: none;
+      }
+    }
+
+    .MuiDataGrid-selectedRowCount {
+      color: white;
+    }
+  }
+
+  & > .GeneralAccess {
+    padding: 1rem;
+  }
+
+  & > .UserAccess, & > .GroupAccess, & > .GeneralAccess {
+    border: 1px solid $primary-color;
+  }
+
+  .PermissionFormTableHeader {
+    padding: 0.5rem;
+    text-align: right;
+    margin-bottom: 0.5rem;
+
+    button {
+      margin-left: 0.5rem;
+    }
+  }
+}

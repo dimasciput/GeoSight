@@ -14,7 +14,7 @@
 {% block content_title %}
     Select Dashboards
     {% if user.is_authenticated %}
-        <a href="{% url "dashboard-create-view" %}">
+        <a href="{% url "admin-dashboard-create-view" %}">
             <button class="white-button pull-right">
                 <i class="fa fa-plus-circle" aria-hidden="true"></i>
                 New Dashboard
@@ -40,7 +40,7 @@
                         <span class="dashboard-description">{{ dashboard.description }}</span>
                     </a>
                     {% if dashboard.can_edit %}
-                        <a href="{% url 'dashboard-edit-view' dashboard.slug %}" class="edit-button">
+                        <a href="{% url 'admin-dashboard-edit-view' dashboard.slug %}" class="edit-button">
                             <i class="fa fa-cog"
                                aria-hidden="true">
                             </i>

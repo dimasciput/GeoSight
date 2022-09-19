@@ -13,6 +13,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     rules = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
 
     def get_url(self, obj: Indicator):
         """Return url."""
@@ -31,18 +32,25 @@ class IndicatorSerializer(serializers.ModelSerializer):
             obj.indicatorrule_set.all(), many=True
         ).data
 
+    def get_permission(self, obj: Indicator):
+        """Return permission."""
+        return obj.permission.all_permission(
+            self.context.get('user', None)
+        )
+
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
             'id', 'name', 'category', 'source', 'description', 'url',
-            'reporting_level', 'rules', 'last_update')
+            'reporting_level', 'rules', 'last_update', 'permission')
 
 
-class BasicIndicatorSerializer(serializers.ModelSerializer):
+class IndicatorAdminListSerializer(serializers.ModelSerializer):
     """Serializer for Indicator."""
 
     url = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
 
     def get_url(self, obj: Indicator):
         """Return url."""
@@ -55,11 +63,30 @@ class BasicIndicatorSerializer(serializers.ModelSerializer):
         """Return group."""
         return obj.group.name if obj.group else ''
 
+    def get_permission(self, obj: Indicator):
+        """Return permission."""
+        return obj.permission.all_permission(
+            self.context.get('user', None)
+        )
+
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
             'id', 'name', 'category', 'source',
-            'description', 'url', 'reporting_level')
+            'description', 'url', 'reporting_level', 'permission')
+
+
+class IndicatorBasicListSerializer(serializers.ModelSerializer):
+    """Serializer for basic Indicator."""
+
+    def get_category(self, obj: Indicator):
+        """Return group."""
+        return obj.group.name if obj.group else ''
+
+    class Meta:  # noqa: D106
+        model = Indicator
+        fields = (
+            'id', 'name', 'description', 'category')
 
 
 class IndicatorRuleSerializer(serializers.ModelSerializer):

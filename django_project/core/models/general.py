@@ -1,6 +1,10 @@
 """General that contains abstract model classes."""
-from django.contrib.gis.db import models
+from django.contrib.auth import get_user_model
+from django.db import models
 from django.template.defaultfilters import slugify
+from django.utils import timezone
+
+User = get_user_model()
 
 
 class AbstractTerm(models.Model):
@@ -35,7 +39,11 @@ class AbstractSource(models.Model):
 class AbstractEditData(models.Model):
     """Abstract model with Time Editor."""
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    creator = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        null=True, blank=True
+    )
+    created_at = models.DateTimeField(default=timezone.now)
     modified_at = models.DateTimeField(auto_now=True)
 
     class Meta:  # noqa: D106

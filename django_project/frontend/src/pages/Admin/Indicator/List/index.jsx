@@ -3,6 +3,7 @@ import Tooltip from "@mui/material/Tooltip";
 import DynamicFormIcon from '@mui/icons-material/DynamicForm';
 import MapIcon from '@mui/icons-material/Map';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
+import StorageIcon from '@mui/icons-material/Storage';
 import { GridActionsCellItem } from "@mui/x-data-grid";
 
 import { AddButton } from "../../../../components/Elements/Button";
@@ -12,6 +13,7 @@ import { pageNames } from '../../index';
 
 import { COLUMNS, COLUMNS_ACTION } from "../../Components/List";
 import AdminList from "../../AdminList";
+import PermissionModal from "../../Permission";
 
 import './style.scss';
 
@@ -25,8 +27,10 @@ export default function IndicatorList() {
   columns[4] = {
     field: 'actions',
     type: 'actions',
-    width: 250,
+    cellClassName: 'MuiDataGrid-ActionsColumn',
+    width: 320,
     getActions: (params) => {
+      const permission = params.row.permission
       // Create actions
       const actions = [].concat(
         COLUMNS_ACTION(
@@ -35,40 +39,77 @@ export default function IndicatorList() {
       );
 
       // Unshift before more & edit action
-      actions.unshift(
-        <GridActionsCellItem
-          className='TextButton'
-          icon={
-            <a href={urls.api.values.replace('/0', `/${params.id}`)}>
-              <div className='MuiButton-Div MuiButtonBase-root MuiButton-secondary ThemeButton'>
-                <DataUsageIcon/> Value List
-              </div>
-            </a>
-          }
-          label="Value List"
-        />,
-        <GridActionsCellItem
-          icon={
-            <Tooltip title={`Management Form`}>
-              <a
-                href={urls.api.form.replace('/0', `/${params.id}`)}>
-                <DynamicFormIcon/>
+      if (permission.share) {
+        actions.unshift(
+          <GridActionsCellItem
+            icon={
+              <a>
+                <PermissionModal
+                  name={params.row.name}
+                  urlData={urls.api.permission.replace('/0', `/${params.id}`)}/>
               </a>
-            </Tooltip>
-          }
-          label="Management Form"
-        />,
-        <GridActionsCellItem
-          icon={
-            <Tooltip title={`Management Map`}>
-              <a
-                href={urls.api.map.replace('/0', `/${params.id}`)}>
-                <MapIcon/>
+            }
+            label="Change Share Configuration."
+          />)
+      }
+      if (permission.delete) {
+        actions.unshift(
+          <GridActionsCellItem
+            icon={
+              <Tooltip title={`Go to data access.`}>
+                <a
+                  href={urls.api.permissionAdmin + '?indicators=' + params.id}>
+                  <StorageIcon/>
+                </a>
+              </Tooltip>
+            }
+            label="Go to data access."
+          />)
+      }
+
+      if (permission.edit) {
+        actions.unshift(
+          <GridActionsCellItem
+            icon={
+              <Tooltip title={`Management Map`}>
+                <a
+                  href={urls.api.map.replace('/0', `/${params.id}`)}>
+                  <MapIcon/>
+                </a>
+              </Tooltip>
+            }
+            label="Edit"
+          />)
+      }
+      if (permission.edit) {
+        actions.unshift(
+          <GridActionsCellItem
+            icon={
+              <Tooltip title={`Management Form`}>
+                <a
+                  href={urls.api.form.replace('/0', `/${params.id}`)}>
+                  <DynamicFormIcon/>
+                </a>
+              </Tooltip>
+            }
+            label="Management Form"
+          />)
+      }
+      if (permission.delete) {
+        actions.unshift(
+          <GridActionsCellItem
+            className='TextButton'
+            icon={
+              <a href={urls.api.values.replace('/0', `/${params.id}`)}>
+                <div
+                  className='MuiButton-Div MuiButtonBase-root MuiButton-secondary ThemeButton'>
+                  <DataUsageIcon/> Value List
+                </div>
               </a>
-            </Tooltip>
-          }
-          label="Edit"
-        />)
+            }
+            label="Value List"
+          />)
+      }
       return actions
     },
   }

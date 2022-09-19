@@ -181,6 +181,19 @@ main {
       }
     }
 
+    .Share {
+      display: block;
+      height: 0;
+      overflow: hidden;
+    }
+
+    &.Share {
+      .Share {
+        height: auto;
+        overflow: unset;
+      }
+    }
+
     .DashboardFormLoading {
       display: block;
     }
@@ -218,18 +231,6 @@ main {
 
   .BasicForm {
     padding: 1rem;
-  }
-}
-
-.Popover-Submit {
-  padding: 0.5rem;
-
-  .FormError {
-    color: $error;
-  }
-
-  .FormOk {
-    color: $ok;
   }
 }
 

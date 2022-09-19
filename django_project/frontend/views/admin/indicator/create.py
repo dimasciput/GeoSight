@@ -2,15 +2,15 @@
 
 import json
 
-from braces.views import SuperuserRequiredMixin
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.indicator import IndicatorForm
 from geosight.data.models.indicator import Indicator, IndicatorRule
+from geosight.permission.access import RoleCreatorRequiredMixin
 
 
-class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
+class IndicatorCreateView(RoleCreatorRequiredMixin, BaseView):
     """Indicator Create View."""
 
     template_name = 'frontend/admin/indicator/form.html'
@@ -61,7 +61,9 @@ class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
         """Create indicator."""
         form = IndicatorForm(request.POST)
         if form.is_valid():
-            indicator = form.save()
+            instance = form.instance
+            instance.creator = request.user
+            instance.save()
             for req_key, value in request.POST.dict().items():
                 if 'rule_name_' in req_key:
                     idx = req_key.replace('rule_name_', '')
@@ -77,7 +79,7 @@ class IndicatorCreateView(SuperuserRequiredMixin, BaseView):
                     if rule and name:
                         indicator_rule, created = \
                             IndicatorRule.objects.get_or_create(
-                                indicator=indicator,
+                                indicator=instance,
                                 name=name
                             )
                         indicator_rule.rule = rule

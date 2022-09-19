@@ -12,6 +12,7 @@ from geosight.data.models.basemap_layer import BasemapLayer
 from geosight.data.models.context_layer import ContextLayer
 from geosight.data.models.indicator import Indicator
 from geosight.georepo.models import ReferenceLayer
+from geosight.permission.models.manager import PermissionManager
 
 User = get_user_model()
 
@@ -45,11 +46,6 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
             'Extent of the dashboard. If empty, it is the whole map'
         )
     )
-    creator = models.ForeignKey(
-        User,
-        help_text=_('User who create the dashboard.'),
-        on_delete=models.CASCADE
-    )
     filters = models.TextField(
         blank=True, null=True
     )
@@ -63,10 +59,8 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         on_delete=models.SET_NULL,
         blank=True, null=True
     )
-
-    def can_edit(self, user: User):
-        """Is dashboard can be edited by user."""
-        return user.is_staff or self.creator == user
+    objects = models.Manager()
+    permissions = PermissionManager()
 
     def save_relations(self, data):
         """Save all relationship data."""
@@ -75,6 +69,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
             DashboardContextLayer, DashboardContextLayerField,
             DashboardIndicatorLayer, DashboardIndicatorLayerIndicator
         )
+        self.permission.update(data['permission'])
         self.save_widgets(data['widgets'])
 
         # INDICATORS

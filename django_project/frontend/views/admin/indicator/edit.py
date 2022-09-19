@@ -2,16 +2,16 @@
 
 import json
 
-from braces.views import SuperuserRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.indicator import IndicatorForm
 from geosight.data.models.indicator import Indicator, IndicatorRule
+from geosight.permission.access import edit_permission_resource
 
 
-class IndicatorEditView(SuperuserRequiredMixin, BaseView):
+class IndicatorEditView(BaseView):
     """Indicator Edit View."""
 
     template_name = 'frontend/admin/indicator/form.html'
@@ -41,6 +41,7 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
         indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        edit_permission_resource(indicator, self.request.user)
 
         rules = indicator.rules_dict()
         context.update(
@@ -58,6 +59,7 @@ class IndicatorEditView(SuperuserRequiredMixin, BaseView):
         indicator = get_object_or_404(
             Indicator, id=self.kwargs.get('pk', '')
         )
+        edit_permission_resource(indicator, self.request.user)
         form = IndicatorForm(
             request.POST,
             instance=indicator

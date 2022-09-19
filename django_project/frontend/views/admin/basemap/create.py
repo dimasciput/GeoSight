@@ -1,14 +1,14 @@
 """Admin Basemap Create View."""
 
-from braces.views import SuperuserRequiredMixin
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.basemap import BasemapForm
 from geosight.data.models.basemap_layer import BasemapLayer
+from geosight.permission.access import RoleCreatorRequiredMixin
 
 
-class BasemapCreateView(SuperuserRequiredMixin, BaseView):
+class BasemapCreateView(RoleCreatorRequiredMixin, BaseView):
     """Basemap Create View."""
 
     template_name = 'frontend/admin/basemap/form.html'
@@ -59,7 +59,9 @@ class BasemapCreateView(SuperuserRequiredMixin, BaseView):
         """Create indicator."""
         form = BasemapForm(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.instance
+            instance.creator = request.user
+            instance.save()
             return redirect(reverse('admin-basemap-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form

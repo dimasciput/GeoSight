@@ -131,7 +131,9 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django.contrib.messages',
 )
-
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'core.exceptions.exception_handler'
+}
 LOGIN_URL = '/login/'
 SITE_ID = 1
 SECRET_KEY = 'ymji&#qvdm%qchny!6@=%6&)qo!4ir=2aqp8g#$pcl1!v2dx8a'

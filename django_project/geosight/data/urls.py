@@ -23,8 +23,8 @@ from geosight.data.api.download_file import (
     DownloadBackupsFile
 )
 from geosight.data.api.indicator import (
-    IndicatorListAPI, IndicatorBasicListAPI,
-    IndicatorDetailAPI, IndicatorValuesAPI,
+    IndicatorListAPI, IndicatorAdminListAPI,
+    IndicatorDetailAPI, IndicatorValuesAPI
 )
 from geosight.data.api.indicator_value import (
     IndicatorValuesByGeometry,
@@ -78,7 +78,11 @@ dashboard_api = [
 indicator_api = [
     url(
         r'^list/basic',
-        IndicatorBasicListAPI.as_view(), name='indicator-basic-list-api'
+        IndicatorAdminListAPI.as_view(), name='indicator-basic-list-api'
+    ),
+    url(
+        r'^list/admin',
+        IndicatorAdminListAPI.as_view(), name='indicator-admin-list-api'
     ),
     url(
         r'^list',
@@ -137,6 +141,7 @@ api = [
     url(r'^basemap/', include(basemap_api)),
     url(r'^indicator/', include(indicator_api)),
     url(r'^context-layer/', include(context_layer_api)),
+    url(r'^permission/', include('geosight.permission.urls')),
 ]
 
 download = [

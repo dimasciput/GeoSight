@@ -142,6 +142,9 @@ export function hexToRGB(hex, alpha) {
 
 /*** Return url params */
 export function urlParams(url) {
+  if (!url) {
+    url = window.location.href
+  }
   const urls = url.split('?')
 
   if (urls[1]) {

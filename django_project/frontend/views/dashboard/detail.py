@@ -1,12 +1,12 @@
 """Dashboard Detail View."""
-from braces.views import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 
 from frontend.views.dashboard._base import BaseDashboardView
 from geosight.data.models.dashboard import Dashboard
+from geosight.permission.access import read_permission_resource
 
 
-class DashboardDetailView(LoginRequiredMixin, BaseDashboardView):
+class DashboardDetailView(BaseDashboardView):
     """Dashboard Detail View."""
 
     @property
@@ -28,6 +28,6 @@ class DashboardDetailView(LoginRequiredMixin, BaseDashboardView):
         dashboard = get_object_or_404(
             Dashboard, slug=slug
         )
-
+        read_permission_resource(dashboard, self.request.user)
         context['dashboard'] = {'id': dashboard.slug}
         return context

@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 /** Main button
  * @param {string} buttonProps Variant of Button.
@@ -49,6 +50,18 @@ export function SaveButton({ text, ...props }) {
   return (
     <ThemeButton {...props}>
       <SaveIcon/>{text}
+    </ThemeButton>
+  )
+}
+
+/** Delete button
+ * @param {string} text Text of button.
+ * @param {string} buttonProps Variant of Button.
+ */
+export function DeleteButton({ text, ...props }) {
+  return (
+    <ThemeButton {...props}>
+      <RemoveCircleIcon/>{text}
     </ThemeButton>
   )
 }

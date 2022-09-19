@@ -8,6 +8,7 @@ import { pageNames } from '../../index';
 import { COLUMNS, COLUMNS_ACTION } from "../../Components/List";
 import { ThemeButton } from "../../../../components/Elements/Button";
 import AdminList from "../../AdminList";
+import PermissionModal from "../../Permission";
 
 import './style.scss';
 
@@ -21,22 +22,39 @@ export default function DashboardList() {
   columns[4] = {
     field: 'actions',
     type: 'actions',
-    width: 180,
+    cellClassName: 'MuiDataGrid-ActionsColumn',
+    width: 210,
     getActions: (params) => {
+      const permission = params.row.permission
       const actions = [].concat(COLUMNS_ACTION(params, urls.admin.dashboardList));
-      actions.unshift(
-        <GridActionsCellItem
-          className='TextButton'
-          icon={
-            <a href={urls.api.map.replace('/0', `/${params.id}`)}>
-              <ThemeButton variant='secondary'>
-                <MapIcon/> Preview
-              </ThemeButton>
+      if (permission.share) {
+        actions.unshift(
+          <GridActionsCellItem
+            icon={
+              <a>
+                <PermissionModal
+                  name={params.row.name}
+                  urlData={urls.api.permission.replace('/0', `/${params.id}`)}/>
+              </a>
+            }
+            label="Change Share Configuration."
+          />)
+      }
+      if (permission.read) {
+        actions.unshift(
+          <GridActionsCellItem
+            className='TextButton'
+            icon={
+              <a href={urls.api.map.replace('/0', `/${params.id}`)}>
+                <ThemeButton variant='secondary'>
+                  <MapIcon/> Preview
+                </ThemeButton>
 
-            </a>
-          }
-          label="Management Form"
-        />)
+              </a>
+            }
+            label="Preview"
+          />)
+      }
       return actions
     },
   }

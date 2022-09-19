@@ -11,6 +11,8 @@ import {
   AddButton,
   ThemeButton
 } from "../../../../components/Elements/Button";
+import { GridActionsCellItem } from "@mui/x-data-grid";
+import PermissionModal from "../../Permission";
 
 import './style.scss';
 
@@ -49,10 +51,32 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
     {
       field: 'actions',
       type: 'actions',
+      cellClassName: 'MuiDataGrid-ActionsColumn',
       width: 80,
       getActions: (params) => {
         params.id = params.row.unique_id
-        return COLUMNS_ACTION(params, redirectUrl, editUrl, detailUrl)
+        const permission = params.row.permission
+
+        // Create actions
+        const actions = [].concat(
+          COLUMNS_ACTION(params, redirectUrl, editUrl, detailUrl)
+        );
+
+        // Unshift before more & edit action
+        if (permission.share) {
+          actions.unshift(
+            <GridActionsCellItem
+              icon={
+                <a>
+                  <PermissionModal
+                    name={params.row.name}
+                    urlData={urls.api.permission.replace('/0', `/${params.id}`)}/>
+                </a>
+              }
+              label="Change Share Configuration."
+            />)
+        }
+        return actions
       },
     }
   ]

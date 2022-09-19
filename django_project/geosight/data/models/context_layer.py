@@ -2,7 +2,8 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from core.models import AbstractTerm
+from core.models import AbstractEditData, AbstractTerm
+from geosight.permission.models.manager import PermissionManager
 
 
 class LayerType(object):
@@ -24,7 +25,7 @@ class ContextLayerGroup(AbstractTerm):
         super(ContextLayerGroup, self).save(*args, **kwargs)
 
 
-class ContextLayer(AbstractTerm):
+class ContextLayer(AbstractEditData, AbstractTerm):
     """A model for the context layer."""
 
     group = models.ForeignKey(
@@ -80,6 +81,8 @@ class ContextLayer(AbstractTerm):
     label_styles = models.TextField(
         null=True, blank=True
     )
+    objects = models.Manager()
+    permissions = PermissionManager()
 
     def save_relations(self, data):
         """Save all relationship data."""

@@ -22,6 +22,7 @@ class HarvesterSerializer(serializers.ModelSerializer):
     indicator = serializers.SerializerMethodField()
     indicator_id = serializers.SerializerMethodField()
     last_run = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
 
     def get_name(self, obj: Harvester):
         """Return name of html."""
@@ -61,6 +62,12 @@ class HarvesterSerializer(serializers.ModelSerializer):
             return obj.last_run.strftime("%Y-%m-%d %H:%M:%S")
         else:
             return ''
+
+    def get_permission(self, obj: Harvester):
+        """Return permission."""
+        return obj.permission.all_permission(
+            self.context.get('user', None)
+        )
 
     class Meta:  # noqa: D106
         model = Harvester
