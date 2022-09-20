@@ -16,6 +16,7 @@ User = get_user_model()
 
 class DatasetPermissionTest(TestCase):
     """Test for Permission Test."""
+
     password = 'password'
 
     def create_resource(self, name, user):

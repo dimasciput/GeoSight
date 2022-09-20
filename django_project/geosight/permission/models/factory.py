@@ -276,11 +276,11 @@ def permission_model_factory(
             list = user_perm >= PERMISSIONS.LIST.level
             read = user_perm >= PERMISSIONS.READ.level
             write = user_role >= self.minimum_edit_role_level and \
-                    user_perm >= PERMISSIONS.WRITE.level
+                    user_perm >= PERMISSIONS.WRITE.level  # noqa: E127
             share = user_role >= self.minimum_share_role_level and \
-                    user_perm >= PERMISSIONS.SHARE.level
+                    user_perm >= PERMISSIONS.SHARE.level  # noqa: E127
             delete = user_role >= self.minimum_delete_role_level and \
-                     user_perm >= PERMISSIONS.OWNER.level
+                     user_perm >= PERMISSIONS.OWNER.level  # noqa: E127
             return {
                 'list': list,
                 'read': read,

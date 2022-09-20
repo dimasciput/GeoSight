@@ -15,6 +15,7 @@ User = get_user_model()
 
 class IndicatorListApiTest(BasePermissionTest, TestCase):
     """Test for context list api."""
+
     payload = {
         'name': 'name',
         'group': 'group',

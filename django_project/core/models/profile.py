@@ -70,7 +70,7 @@ class Profile(models.Model):
     def is_admin(self):
         """Return if user is admin or not."""
         return self.role == ROLES.SUPER_ADMIN.name or self.user.is_superuser \
-               or self.user.is_staff
+               or self.user.is_staff  # noqa: E127
 
     @property
     def is_creator(self):

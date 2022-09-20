@@ -15,6 +15,7 @@ User = get_user_model()
 
 class ContextLayerPermissionApiTest(BasePermissionTest, TestCase):
     """Test for context layer list api."""
+
     payload = {
         'name': 'name',
         'url': 'url',

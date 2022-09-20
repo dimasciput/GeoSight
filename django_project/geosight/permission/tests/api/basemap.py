@@ -15,6 +15,7 @@ User = get_user_model()
 
 class BasemapListApiTest(BasePermissionTest, TestCase):
     """Test for basemap list api."""
+
     payload = {
         'name': 'name',
         'url': 'url',

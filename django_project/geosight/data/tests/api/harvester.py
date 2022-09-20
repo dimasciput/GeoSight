@@ -10,10 +10,10 @@ from frontend.views.admin.harvesters import (
 from geosight.georepo.models import ReferenceLayer
 from geosight.harvester.models import Harvester, UsingExposedAPI
 from geosight.permission.models.factory import PERMISSIONS
+from geosight.permission.tests._base import BasePermissionTest
 
 User = get_user_model()
 HarvesterUsed = HarvestedUsingExposedAPIByExternalClientView
-from geosight.permission.tests._base import BasePermissionTest
 
 User = get_user_model()
 
@@ -114,7 +114,8 @@ class HarvesterListApiTest(BasePermissionTest, TestCase):
     def test_delete_api(self):
         """Test list API."""
         resource = self.create_resource(self.creator)
-        url = reverse('harvester-detail-api', kwargs={'uuid': resource.unique_id})
+        url = reverse(
+            'harvester-detail-api', kwargs={'uuid': resource.unique_id})
         self.assertRequestDeleteView(url, 403)
         self.assertRequestDeleteView(url, 403, self.viewer)
         self.assertRequestDeleteView(url, 403, self.contributor)

@@ -14,14 +14,15 @@ from geosight.permission.access import (
 
 
 class ResourcePermissionDenied(APIException):
+    """Permission denied for resource."""
+
     status_code = status.HTTP_403_FORBIDDEN
     default_detail = _("You don't have permission to access this resource")
     default_code = 'permission_denied'
 
 
 def exception_handler(exc, context):
-    """
-    Returns the response that should be used for any given exception.
+    """Return the response that should be used for any given exception.
 
     By default we handle the REST framework `APIException`, and also
     Django's built-in `Http404` and `PermissionDenied` exceptions.

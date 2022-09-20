@@ -8,6 +8,8 @@ from rest_framework import status
 
 
 class ResourcePermissionDenied(PermissionDenied):
+    """Permission denied for resource."""
+
     status_code = status.HTTP_403_FORBIDDEN
     default_detail = _("You don't have permission to access this resource")
     detail = _("You don't have permission to access this resource")
