@@ -38,9 +38,15 @@ export default function ReferenceLayerSection() {
     }
   }
 
+  // Current level
+  let level = adminLevel;
+  if (!level && levels) {
+    level = levels[0]
+  }
+
   return <div className='ReferenceLayerLevelSelector'>
     {
-      levels && adminLevel !== null && adminLevel !== undefined ? (
+      levels && level ? (
         <div>
           <div className='ReferenceLayerLevelOptions'>
             {
@@ -58,7 +64,7 @@ export default function ReferenceLayerSection() {
             }
           </div>
           <div className='ReferenceLayerLevelSelected'>
-            {adminLevel.level_name}
+            {level.level_name}
           </div>
         </div>
       ) : ""

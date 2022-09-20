@@ -140,7 +140,7 @@ export default function MapConfig() {
       <div className='ExtentManualInput'>
         WEST (Longitude)
         <input
-          defaultValue={west}
+          value={west}
           onChange={(event) => {
             const value = parseFloat(event.target.value)
             if (!isNaN(value)) {
@@ -151,7 +151,7 @@ export default function MapConfig() {
         <br/>
         NORTH (Latitude)
         <input
-          defaultValue={north}
+          value={north}
           onChange={(event) => {
             const value = parseFloat(event.target.value)
             if (!isNaN(value)) {
@@ -162,7 +162,7 @@ export default function MapConfig() {
         <br/>
         EAST (Longitude)
         <input
-          defaultValue={east}
+          value={east}
           onChange={(event) => {
             const value = parseFloat(event.target.value)
             if (!isNaN(value)) {
@@ -173,7 +173,7 @@ export default function MapConfig() {
         <br/>
         SOUTH (Latitude)
         <input
-          defaultValue={south}
+          value={south}
           onChange={(event) => {
             const value = parseFloat(event.target.value)
             if (!isNaN(value)) {

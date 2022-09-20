@@ -149,14 +149,13 @@ export default function ReferenceLayer() {
 
   // Current level
   let currentLevel = selectedAdminLevel ? selectedAdminLevel.level : -1
-
   const updateLayer = () => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
     if (vectorTiles) {
       // Save indicator data per geom
       // This is needed for popup and rendering
       const indicatorsByGeom = {}
-      if (currentIndicatorLayer) {
+      if (Object.keys(currentIndicatorLayer).length) {
         currentIndicatorLayer.indicators.map(indicatorLayer => {
           const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
           if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
