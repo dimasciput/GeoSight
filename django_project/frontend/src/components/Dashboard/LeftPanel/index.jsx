@@ -11,6 +11,7 @@ import Basemaps from './Basemaps'
 import ProjectOverviewSection from './ProjectOverview'
 import ContextLayersAccordion from './ContextLayers'
 import IndicatorLayersAccordion from './IndicatorLayers'
+import ReferenceLayerSection from './ReferenceLayer'
 import FiltersAccordion from './Filters'
 
 import './style.scss';
@@ -88,6 +89,7 @@ export default function LeftPanel({ setLeftExpanded }) {
         <div className='dashboard__left_side__basemaps'>
           <Basemaps data={basemapsLayers}/>
         </div>
+        <ReferenceLayerSection/>
         <MapInfo/>
       </div>
     </section>

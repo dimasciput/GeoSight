@@ -85,7 +85,7 @@
 
     .dashboard__left_side__bottom {
       position: absolute;
-      bottom: 5px;
+      bottom: 1rem;
       left: 100%;
     }
   }
@@ -94,9 +94,11 @@
     position: fixed;
     bottom: 5px;
     left: 0;
-    margin-left: 10px;
+    margin-left: 1rem;
     display: flex;
+    align-items: flex-end;
     width: 100vw;
+    height: 0;
   }
 
   .left-right-toggle-button {

@@ -16,6 +16,7 @@ import IndicatorsData from './reducers/indicatorsData/actions'
 import Map from './reducers/map/actions'
 import ReferenceLayer from './reducers/referenceLayer/actions'
 import ReferenceLayerData from './reducers/referenceLayerData/actions'
+import SelectedAdminLevel from './reducers/selectedAdminLevel/actions'
 import SelectedIndicatorLayer from './reducers/selectedIndicatorLayer/actions'
 import SelectedBookmark from './reducers/selectedBookmark/actions'
 import Widgets from './reducers/widgets/actions'
@@ -35,6 +36,7 @@ const Actions = {
   Map,
   ReferenceLayer,
   ReferenceLayerData,
+  SelectedAdminLevel,
   SelectedIndicatorLayer,
   SelectedBookmark,
   Widgets

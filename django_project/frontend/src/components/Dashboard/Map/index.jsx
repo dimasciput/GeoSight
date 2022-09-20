@@ -6,8 +6,11 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import L from 'leaflet';
 import $ from 'jquery';
-import Navbar from 'leaflet-navbar';
 import StarIcon from '@mui/icons-material/Star';
+
+// Library that does not used explicitly
+import Navbar from 'leaflet-navbar';
+import LeafletMeasure from 'leaflet-measure-v2';
 
 import ReferenceLayerCentroid from './ReferenceLayerCentroid'
 import { Plugin, PluginChild } from './Plugin'
@@ -16,6 +19,33 @@ import Bookmark from '../Bookmark'
 import { Actions } from '../../../store/dashboard/index'
 
 import './style.scss';
+import * as dom from "leaflet-measure-v2/src/dom";
+
+
+// Temporary fix because measure tools does nto work with leaflet 1.8.0
+L.Control.Measure.include({
+  // set icon on the capture marker
+  _setCaptureMarkerIcon: function () {
+    // disable autopan
+    this._captureMarker.options.autoPanOnFocus = false;
+
+    // default function
+    this._captureMarker.setIcon(
+      L.divIcon({
+        iconSize: this._map.getSize().multiplyBy(2)
+      })
+    );
+  },
+  _updateMeasureStartedNoPoints: function() {
+    dom.hide(this.$results);
+    dom.show(this.$startHelp);
+    dom.show(this.$measureTasks);
+    dom.hide(this.$startPrompt);
+    dom.show(this.$measuringPrompt);
+    dom.show(this.$interaction);
+  },
+});
+
 
 /**
  * Map component.
@@ -35,7 +65,7 @@ export default function Map() {
   const [basemapLayerGroup, setBasemapLayerGroup] = useState(null);
   const [referenceLayerGroup, setReferenceLayerGroup] = useState(null);
   const [contextLayerGroup, setContextLayerGroup] = useState(null);
-  const [navControl, setNavControl] = useState(null);
+  const [externalControlLoaded, setExternalControlLoaded] = useState(false);
 
   // Pane identifier
   const basemapPane = 'basemapPane';
@@ -118,15 +148,17 @@ export default function Map() {
       // TODO:
       //  Nav control initiate before fit bounds done
       setTimeout(function () {
-        if (!navControl) {
-          setNavControl(
-            L.control.navbar({
-              position: 'topleft'
-            }).addTo(map)
-          )
+        if (!externalControlLoaded) {
+          L.control.navbar({
+            position: 'topleft'
+          }).addTo(map)
           L.control.zoom({
             position: 'topleft'
           }).addTo(map)
+          L.control.measure({
+            position: 'topleft'
+          }).addTo(map)
+          setExternalControlLoaded(true)
         }
       }, 300);
     }
@@ -199,10 +231,9 @@ export default function Map() {
   return <section className='dashboard__map'>
     <div id="map"></div>
     {
-      !editMode && navControl ?
+      !editMode && externalControlLoaded ?
         <div className='leaflet-left leaflet-touch leaflet-custom-plugins'>
           <Plugin>
-
             <CustomPopover
               anchorOrigin={{
                 vertical: 'bottom',
@@ -222,7 +253,8 @@ export default function Map() {
           </Plugin>
         </div> : ""
     }
-    {map ? <ReferenceLayerCentroid map={map} pane={referenceLayerCenterPane}/> : ""}
+    {map ?
+      <ReferenceLayerCentroid map={map} pane={referenceLayerCenterPane}/> : ""}
   </section>
 }
 

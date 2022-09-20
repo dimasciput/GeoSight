@@ -21,12 +21,6 @@ export default function MapInfo() {
             {selectedIndicatorLayer.group ? selectedIndicatorLayer.group + '/' : ""}
             {selectedIndicatorLayer.name}
           </div>
-          <div>
-            {
-              selectedIndicatorLayer.reporting_level ?
-                <Fragment>Admin {selectedIndicatorLayer.reporting_level}</Fragment> : ""
-            }
-          </div>
         </div> : ""
     }
   </Fragment>

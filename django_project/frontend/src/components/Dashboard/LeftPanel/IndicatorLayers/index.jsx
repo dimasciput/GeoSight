@@ -1,5 +1,5 @@
 /* ==========================================================================
-   REFERENCE LAYER
+   INDICATOR LAYER
    ========================================================================== */
 
 import React, { Fragment, useEffect, useState } from 'react';
@@ -13,7 +13,6 @@ import InfoIcon from '@mui/icons-material/Info';
 
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
-import ReferenceLayer from '../../Map/ReferenceLayer'
 import OnOffSwitcher from "../../../Switcher/OnOff";
 import CustomPopover from "../../../CustomPopover";
 
@@ -50,7 +49,7 @@ export function IndicatorLayer(
           <div className='RadioButtonSection'>
             <Radio
               checked={checked}
-              disabled={errors.length}
+              disabled={errors.length === 0 ? false : true}
               onChange={() => {
 
               }}/>
@@ -310,7 +309,6 @@ export function IndicatorLayers() {
           )
         )
       }
-      <ReferenceLayer currentIndicatorLayer={selectedIndicatorLayer}/>
     </Fragment>
   )
 }

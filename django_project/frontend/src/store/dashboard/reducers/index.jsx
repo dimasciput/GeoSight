@@ -8,6 +8,7 @@ import filtersDataReducer from "./filtersData";
 import geometriesReducer from "./geometries";
 import filteredGeometriesReducer from "./filteredGeometries";
 import selectedIndicatorLayerReducer from "./selectedIndicatorLayer";
+import selectedAdminLevelReducer from "./selectedAdminLevel";
 import selectedBookmarkReducer from "./selectedBookmark";
 
 
@@ -21,6 +22,7 @@ export default combineReducers({
   filtersData: filtersDataReducer,
   geometries: geometriesReducer,
   filteredGeometries: filteredGeometriesReducer,
+  selectedAdminLevel: selectedAdminLevelReducer,
   selectedIndicatorLayer: selectedIndicatorLayerReducer,
   selectedBookmark: selectedBookmarkReducer,
 });

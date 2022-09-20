@@ -5,12 +5,11 @@
 @import '../../../../app/variables';
 
 .MapInfo {
-  margin-top: auto;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 5px;
   box-shadow: $box-shadow;
+  background-color: rgb(255, 255, 255);
+  border-top-right-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
   padding: 0.3rem 0.5rem;
-  margin-left: 0.5rem;
-  height: 58px;
   box-sizing: border-box;
+  color: $secondary-color;
 }

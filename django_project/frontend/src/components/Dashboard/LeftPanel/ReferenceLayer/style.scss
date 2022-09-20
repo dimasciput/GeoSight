@@ -1,0 +1,52 @@
+/* ==========================================================================
+   Left-side panel
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.ReferenceLayerLevelSelector {
+  box-shadow: $box-shadow;
+  margin-left: 0.5rem;
+  box-sizing: border-box;
+
+  .ReferenceLayerLevelOption {
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+      background-color: #eee;
+    }
+  }
+
+  .ReferenceLayerLevelOptions {
+    height: 0;
+    opacity: 0;
+    background-color: rgb(255, 255, 255);
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+  }
+
+  &:hover {
+    .ReferenceLayerLevelOptions {
+      height: fit-content;
+      opacity: 1;
+    }
+
+    .ReferenceLayerLevelSelected {
+      border-top-left-radius: 0;
+    }
+  }
+
+  .ReferenceLayerLevelOption,
+  .ReferenceLayerLevelSelected {
+    padding: 0.3rem 0.5rem;
+
+  }
+
+  .ReferenceLayerLevelSelected {
+    background-color: $secondary-color;
+    color: $anti-secondary-color;
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+  }
+}

@@ -103,9 +103,8 @@ export function IndicatorDetailsModal({ group, feature, onClose }) {
 
 /**
  * ReferenceLayer selector.
- * @param {dict} currentIndicatorLayer Indicator that will be used.
  */
-export default function ReferenceLayer({ currentIndicatorLayer }) {
+export default function ReferenceLayer() {
   const dispatch = useDispatch();
   const {
     referenceLayer,
@@ -115,6 +114,8 @@ export default function ReferenceLayer({ currentIndicatorLayer }) {
   const indicatorsData = useSelector(state => state.indicatorsData);
   const filtersData = useSelector(state => state.filtersData);
   const filteredGeometries = useSelector(state => state.filteredGeometries);
+  const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
+  const selectedAdminLevel = useSelector(state => state.selectedAdminLevel);
   const { indicatorShow } = useSelector(state => state.map);
 
   const [clickedFeature, setClickedFeature] = useState(null);
@@ -135,7 +136,7 @@ export default function ReferenceLayer({ currentIndicatorLayer }) {
     ).find(rule => rule.rule.toLowerCase() === 'no data')
   }
 
-  // When level changed
+  // When reference layer changed, fetch reference data
   useEffect(() => {
     if (!referenceLayerData[referenceLayer.identifier]) {
       dispatch(
@@ -146,21 +147,20 @@ export default function ReferenceLayer({ currentIndicatorLayer }) {
     }
   }, [referenceLayer]);
 
+  // Current level
+  let currentLevel = selectedAdminLevel ? selectedAdminLevel.level : -1
+
   const updateLayer = () => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
-    const levels = referenceLayerData[referenceLayer.identifier]?.data?.levels
     if (vectorTiles) {
-
       // Save indicator data per geom
       // This is needed for popup and rendering
       const indicatorsByGeom = {}
-      let currentLevel = 0
       if (currentIndicatorLayer) {
         currentIndicatorLayer.indicators.map(indicatorLayer => {
           const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
           if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
             if (indicatorsData[indicator.id].data) {
-              currentLevel = indicator.reporting_level
               indicatorsData[indicator.id].data.forEach(function (data) {
                 if (!indicatorsByGeom[data.geometry_code]) {
                   indicatorsByGeom[data.geometry_code] = []
@@ -171,12 +171,6 @@ export default function ReferenceLayer({ currentIndicatorLayer }) {
           }
         })
       }
-
-      // Check current level
-      if (!levels[currentLevel]) {
-        currentLevel = levels[0].level
-      }
-
       const options = {
         maxDetailZoom: 8,
         filter: function (feature) {
@@ -271,7 +265,7 @@ export default function ReferenceLayer({ currentIndicatorLayer }) {
     updateLayer()
   }, [
     referenceLayer, referenceLayerData, indicatorsData,
-    currentIndicatorLayer, indicatorShow
+    currentIndicatorLayer, indicatorShow, selectedAdminLevel
   ]);
 
 
