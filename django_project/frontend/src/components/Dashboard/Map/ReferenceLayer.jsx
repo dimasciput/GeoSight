@@ -285,9 +285,31 @@ export default function ReferenceLayer() {
     }
   }
 
+  /** Promise update layer **/
+  function promiseUpdateLayer() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        updateLayer()
+        resolve('resolved')
+      }, 100);
+    });
+  }
+
+
+  /** Call update layer **/
+  async function callUpdateLayer() {
+    const result = await promiseUpdateLayer();
+  }
+
   useEffect(() => {
-    if (allDataIsReady(indicatorsData)) {
-      updateLayer()
+    let indicatorLayerData = []
+    if (currentIndicatorLayer.indicators) {
+      currentIndicatorLayer.indicators.map(indicatorLayer => {
+        indicatorLayerData.push(indicatorsData[indicatorLayer.id])
+      })
+      if (allDataIsReady(indicatorLayerData)) {
+        callUpdateLayer()
+      }
     }
   }, [
     indicatorsData, currentIndicatorLayer
@@ -295,7 +317,7 @@ export default function ReferenceLayer() {
 
   useEffect(() => {
     if (referenceLayerData[referenceLayer.identifier]) {
-      updateLayer()
+      callUpdateLayer()
     }
   }, [referenceLayer, referenceLayerData, selectedAdminLevel, indicatorShow]);
 
@@ -304,7 +326,7 @@ export default function ReferenceLayer() {
   useEffect(() => {
     const whereStr = JSON.stringify(where)
     if (prevWhere !== whereStr) {
-      updateLayer()
+      callUpdateLayer()
       setPrevWhere(whereStr)
     }
   }, [
