@@ -8,6 +8,7 @@ export const MAP_ADD_CONTEXTLAYERS = `MAP/ADD_CONTEXTLAYERS`;
 export const MAP_CONTEXTLAYERS_SHOW = `MAP/CONTEXTLAYERS_SHOW`;
 export const MAP_CENTER = `MAP/CENTER`;
 export const MAP_EXTENT = `MAP/EXTENT`;
+export const MAP_ZOOM = `MAP/ZOOM`;
 export const MAP_REMOVE_CONTEXTLAYERS = `MAP/REMOVE_CONTEXTLAYERS`;
 export const MAP_REMOVE_CONTEXTLAYERS_ALL = `MAP/REMOVE_CONTEXTLAYERS_ALL`;
 
@@ -19,6 +20,7 @@ const mapInitialState = {
   extent: null,
   indicatorShow: true,
   contextLayersShow: true,
+  zoom: 0,
 };
 
 export default function mapReducer(state = mapInitialState, action) {
@@ -85,6 +87,12 @@ export default function mapReducer(state = mapInitialState, action) {
         return {
           ...state,
           contextLayersShow: action.payload
+        }
+      }
+      case MAP_ZOOM: {
+        return {
+          ...state,
+          zoom: action.payload
         }
       }
     }

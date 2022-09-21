@@ -132,7 +132,8 @@ export default function Map() {
         dispatch(Actions.Map.updateExtent(newExtent))
       });
 
-      newMap.on('zoomend', function () {
+      newMap.on('zoomend', function (evt) {
+        dispatch(Actions.Map.changeZoom(evt.target.getZoom()))
         checkTooltipZoom(newMap)
       })
     }

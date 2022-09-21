@@ -2,11 +2,11 @@
    REFERENCE LAYER
    ========================================================================== */
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
-import $ from 'jquery';
 import L from 'leaflet';
+import vectorTileLayer from 'leaflet-vector-tile-layer';
 import vectorgrid from 'leaflet.vectorgrid';
 
 import { Actions } from '../../../store/dashboard'
@@ -124,7 +124,9 @@ export function IndicatorDetailsModal({ group, feature, onClose }) {
  * ReferenceLayer selector.
  */
 export default function ReferenceLayer() {
-  const dispatch = useDispatch();
+  const switchVectorTileZoom = 9
+  const prevState = useRef()
+  const dispatch = useDispatch()
   const {
     referenceLayer,
     indicators
@@ -135,11 +137,12 @@ export default function ReferenceLayer() {
   const filteredGeometries = useSelector(state => state.filteredGeometries);
   const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
   const selectedAdminLevel = useSelector(state => state.selectedAdminLevel);
-  const { map, indicatorShow } = useSelector(state => state.map);
+  const { zoom, indicatorShow } = useSelector(state => state.map);
   let popup = L.popup();
 
   const [clickedFeature, setClickedFeature] = useState(null);
-
+  const [gridLayer, setGridLayer] = useState(null);
+  const [VTLayer, setVTLayer] = useState(null);
   const where = returnWhere(filtersData ? filtersData : [])
   const [prevWhere, setPrevWhere] = useState(JSON.stringify(where));
 
@@ -276,9 +279,13 @@ export default function ReferenceLayer() {
         options.vectorTileLayerStyles['Level-' + level.level] = vectorTileLayerStyles
       })
       const url = GeorepoUrls.WithDomain(vectorTiles)
-      const layer = L.vectorGrid.protobuf(url, options)
+      const newVtLayer = vectorTileLayer(url, options)
+      const newGridLayer = L.vectorGrid.protobuf(url, options)
+      setVTLayer(newVtLayer)
+      setGridLayer(newGridLayer)
+
       /** Get popup content **/
-      const getPopup =  (featureProperties) =>{
+      const getPopup = (featureProperties) => {
         // CREATE POPUP
         let properties = {}
         if (currentIndicatorLayer?.indicators?.length === 1) {
@@ -301,18 +308,28 @@ export default function ReferenceLayer() {
         delete properties.parent_code
         return featurePopupContent(properties.name ? properties.name : 'Reference Layer', properties)
       }
-      layer.bindPopup(popup)
-      layer.onClick = (e, map) => {
+      newVtLayer.onClick = (e, map) => {
         L.popup()
           .setContent(getPopup(e.layer.properties))
           .setLatLng(e.latlng)
           .openOn(map)
       }
-
-      dispatch(
-        Actions.Map.changeReferenceLayer(layer)
-      )
+      newGridLayer.onClick = (e, map) => {
+        L.popup()
+          .setContent(getPopup(e.layer.properties))
+          .setLatLng(e.latlng)
+          .openOn(map)
+      }
+      changeReferenceLayer(newVtLayer, newGridLayer)
     }
+  }
+
+  // Change reference layer
+  const changeReferenceLayer = (VTLayer, gridLayer) => {
+    const layer = zoom < switchVectorTileZoom ? gridLayer : VTLayer
+    dispatch(
+      Actions.Map.changeReferenceLayer(layer)
+    )
   }
 
   /** Promise update layer **/
@@ -350,6 +367,13 @@ export default function ReferenceLayer() {
       callUpdateLayer()
     }
   }, [referenceLayer, referenceLayerData, selectedAdminLevel, indicatorShow]);
+
+  useEffect(() => {
+    if ((prevState.zoom < switchVectorTileZoom && zoom >= switchVectorTileZoom) || (zoom < switchVectorTileZoom && prevState.zoom >= switchVectorTileZoom)) {
+      changeReferenceLayer(VTLayer, gridLayer)
+    }
+    prevState.zoom = zoom
+  }, [zoom]);
 
 
   // Rerender if filters

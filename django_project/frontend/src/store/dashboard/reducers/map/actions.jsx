@@ -8,7 +8,7 @@ import {
   MAP_INDICATOR_SHOW,
   MAP_REFERENCE_LAYER_CHANGED,
   MAP_REMOVE_CONTEXTLAYERS,
-  MAP_REMOVE_CONTEXTLAYERS_ALL
+  MAP_ZOOM
 } from '../map'
 
 
@@ -106,6 +106,17 @@ function showHideContextLayer(payload) {
   };
 }
 
+/**
+ * Show/Hide ContextLayer
+ */
+function changeZoom(payload) {
+  return {
+    name: MAP_ACTION_NAME,
+    type: MAP_ZOOM,
+    payload: payload
+  };
+}
+
 export default {
   updateCenter,
   changeBasemap,
@@ -114,5 +125,6 @@ export default {
   changeReferenceLayer,
   updateExtent,
   showHideIndicator,
-  showHideContextLayer
+  showHideContextLayer,
+  changeZoom,
 }
