@@ -6,7 +6,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import $ from 'jquery';
-import vectorTileLayer from 'leaflet-vector-tile-layer';
+import L from 'leaflet';
+import vectorgrid from 'leaflet.vectorgrid';
 
 import { Actions } from '../../../store/dashboard'
 import { featurePopupContent } from '../../../utils/main'
@@ -15,6 +16,23 @@ import { fetchingData } from "../../../Requests";
 import { allDataIsReady } from "../../../utils/indicators";
 import { returnWhere } from "../../../utils/queryExtraction";
 import { GeorepoUrls } from '../../../utils/georepo'
+
+// Temporary fix because fake stop does not work on leaflet 1.8.0
+L.Canvas.Tile.include({
+	_onClick: function (e) {
+		var point = this._map.mouseEventToLayerPoint(e).subtract(this.getOffset()), layer, clickedLayer;
+
+		for (var id in this._layers) {
+			layer = this._layers[id];
+			if (layer.options.interactive && layer._containsPoint(point) && !this._map._draggableMoved(layer)) {
+				clickedLayer = layer;
+			}
+		}
+		if (clickedLayer)  {
+			this._fireEvent([clickedLayer], e);
+		}
+	},
+});
 
 /**
  * Show details of indicator in Modal
@@ -117,7 +135,8 @@ export default function ReferenceLayer() {
   const filteredGeometries = useSelector(state => state.filteredGeometries);
   const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
   const selectedAdminLevel = useSelector(state => state.selectedAdminLevel);
-  const { indicatorShow } = useSelector(state => state.map);
+  const { map, indicatorShow } = useSelector(state => state.map);
+  let popup = L.popup();
 
   const [clickedFeature, setClickedFeature] = useState(null);
 
@@ -156,7 +175,8 @@ export default function ReferenceLayer() {
   let currentLevel = selectedAdminLevel ? selectedAdminLevel.level : referenceLayerData[referenceLayer.identifier]?.levels[0]?.level
   const updateLayer = () => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
-    if (vectorTiles) {
+    let levels = referenceLayerData[referenceLayer.identifier]?.data?.levels
+    if (vectorTiles && levels) {
       // Save indicator data per geom
       // This is needed for popup and rendering
       const valuesByGeometry = {}
@@ -188,23 +208,41 @@ export default function ReferenceLayer() {
         })
       }
       const options = {
+        rendererFactory: L.canvas.tile,
         maxDetailZoom: 8,
-        filter: function (feature) {
-          if (currentLevel !== feature.properties.level) {
-            return false
-          }
-          return !where || !geometryCodes.length === 0 || geometryCodes.includes(feature.properties.code)
-        },
-        style: function (feature, layer, test) {
+        vectorTileLayerStyles:{},
+        interactive: true
+      };
+
+      /** Styling **/
+      const vectorTileLayerStyles = (properties, zoom) => {
+        // Filter it first
+        let allowed;
+        if (currentLevel !== properties.level) {
+          allowed = false
+        } else {
+          allowed = !where || !geometryCodes.length === 0 || geometryCodes.includes(properties.code)
+        }
+        if (!allowed) {
+          // If not allowed, opacity 0
+          return {
+            fillOpacity: 0,
+            stroke: false,
+            fill: false,
+            opacity: 0,
+            weight: 0,
+          };
+        } else {
+          // If allowed, check the style
           dispatch(
             Actions.Geometries.add(
-              feature.properties.code, feature.properties
+              properties.code, properties
             )
           );
           let style = null;
           if (indicatorShow) {
             if (currentIndicatorLayer?.indicators?.length === 1) {
-              const values = valuesByGeometry[feature.properties.code]
+              const values = valuesByGeometry[properties.code]
               if (values) {
                 const indicatorData = values[0];
                 if (indicatorData) {
@@ -218,33 +256,37 @@ export default function ReferenceLayer() {
             }
           }
           let fillColor = style ? style.color : null;
-          let color = style ? style.outline_color : '#000000';
+          let strokeColor = style ? style.outline_color : '#000000';
           let weight = 0.5;
           let fillOpacity = 0;
           if (fillColor) {
             fillOpacity = 0.7;
           }
           return {
-            color: color,
-            weight: weight,
-            fillColor: fillColor,
+            color: strokeColor,
             opacity: 1,
-            fillOpacity: fillOpacity
+            weight: weight,
+            fill: true,
+            fillColor: fillColor,
+            fillOpacity: fillOpacity,
           }
-        },
-      };
-
+        }
+      }
+      levels.map(level => {
+        options.vectorTileLayerStyles['Level-' + level.level] = vectorTileLayerStyles
+      })
       const url = GeorepoUrls.WithDomain(vectorTiles)
-      const layer = vectorTileLayer(url, options);
-      layer.bindPopup(function (feature) {
+      const layer = L.vectorGrid.protobuf(url, options)
+      /** Get popup content **/
+      const getPopup =  (featureProperties) =>{
         // CREATE POPUP
         let properties = {}
         if (currentIndicatorLayer?.indicators?.length === 1) {
-          if (valuesByGeometry[feature.properties.code]) {
-            properties = Object.assign({}, valuesByGeometry[feature.properties.code][0])
+          if (valuesByGeometry[featureProperties.code]) {
+            properties = Object.assign({}, valuesByGeometry[featureProperties.code][0])
           }
         }
-        properties = Object.assign({}, properties, feature.properties)
+        properties = Object.assign({}, properties, featureProperties)
         delete properties.geometry_code
         delete properties.indicator_id
         delete properties.level
@@ -253,35 +295,23 @@ export default function ReferenceLayer() {
         delete properties.code
         delete properties.centroid
         delete properties.style
-        properties[feature.properties.type] = feature.properties.label
-        properties['geometry_code'] = feature.properties.code
+        properties[featureProperties.type] = featureProperties.label
+        properties['geometry_code'] = featureProperties.code
         properties['name'] = currentIndicatorLayer.name
         delete properties.parent_code
         return featurePopupContent(properties.name ? properties.name : 'Reference Layer', properties)
-      });
+      }
+      layer.bindPopup(popup)
+      layer.onClick = (e, map) => {
+        L.popup()
+          .setContent(getPopup(e.layer.properties))
+          .setLatLng(e.latlng)
+          .openOn(map)
+      }
 
       dispatch(
         Actions.Map.changeReferenceLayer(layer)
       )
-      // TODO:
-      //  Hacky way to show details button
-      layer.on('click', function (event) {
-        const $detail = $('.popup-details');
-        if ($detail.length !== 0) {
-          $detail.removeAttr("disabled");
-          $detail.click(function () {
-            setClickedFeature({
-              'name': $detail.data('name'),
-              'url': $detail.data('url'),
-              'geometry_name': event.layer.feature.properties.label
-            });
-          })
-        }
-
-        dispatch(
-          Actions.Map.updateCenter(event.latlng)
-        )
-      }, this);
     }
   }
 

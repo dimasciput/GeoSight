@@ -63,17 +63,6 @@ function removeContextLayer(id) {
 }
 
 /**
- * Remove all context layer.
- */
-function removeAllContextLayer() {
-  return {
-    name: MAP_ACTION_NAME,
-    type: MAP_REMOVE_CONTEXTLAYERS_ALL,
-    id: id
-  };
-}
-
-/**
  * Update center of map.
  */
 function updateCenter(center) {
@@ -123,9 +112,7 @@ export default {
   addContextLayer,
   removeContextLayer,
   changeReferenceLayer,
-  removeAllContextLayer,
   updateExtent,
-
   showHideIndicator,
   showHideContextLayer
 }

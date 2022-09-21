@@ -36,7 +36,7 @@ L.Control.Measure.include({
       })
     );
   },
-  _updateMeasureStartedNoPoints: function() {
+  _updateMeasureStartedNoPoints: function () {
     dom.hide(this.$results);
     dom.show(this.$startHelp);
     dom.show(this.$measureTasks);
@@ -113,7 +113,8 @@ export default function Map() {
         zoom: 2,
         layers: [basemapLayerGroup, contextLayerGroup, referenceLayerGroup],
         zoomControl: false,
-        maxZoom: maxZoom
+        maxZoom: maxZoom,
+        renderer: L.canvas()
       });
       newMap.createPane(basemapPane);
       newMap.createPane(referenceLayerPane);
@@ -224,6 +225,10 @@ export default function Map() {
         referenceLayerGroup.removeLayer(layer);
       });
       referenceLayer.options.pane = referenceLayerPane;
+      // Create popup
+      referenceLayer.on('click', function (e) {
+        referenceLayer.onClick(e, map)
+      })
       referenceLayerGroup.addLayer(referenceLayer);
     }
   }, [referenceLayerGroup, referenceLayer]);

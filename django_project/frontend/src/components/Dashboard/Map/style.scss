@@ -73,6 +73,10 @@
 #map {
   height: 100%;
   width: 100%;
+
+  &:focus-visible {
+    outline: none;
+  }
 }
 
 .leaflet-basemap-pane {

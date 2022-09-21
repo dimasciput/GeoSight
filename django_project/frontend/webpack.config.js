@@ -105,7 +105,7 @@ if (isDev) {
     },
   }
   conf['plugins'].push(
-    isDev && new ReactRefreshWebpackPlugin()
+    isDev && new ReactRefreshWebpackPlugin({overlay: false})
   )
 }
 module.exports = conf;
