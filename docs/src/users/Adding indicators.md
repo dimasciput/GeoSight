@@ -46,6 +46,8 @@ While you can add values manually, the fastest and most practical solution is to
 
 A new popup will appear. Here you can select your **spreadsheet** under "Choose File", the **area code column** (which will be used to univocally assign the rows in your spreadsheet to the correct corresponding administrative units on GeoSight) and the **value column**. Optionally you can choose extra columns as additional values to be shown in the indicator page. 
 
+**The present version of GeoSight only supports .csv or .xls data. Other extensions such as .dbf will have to be converted beforehand.**
+
 At the end, click "Apply". Your indicator will now be filled with data and ready to be added to a project.
 
 ![ClickRefill](img/Tutorial5.3.png)
