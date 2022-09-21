@@ -97,8 +97,8 @@ export default function GroupForm() {
               <UserSelector
                 open={open}
                 setOpen={setOpen}
-                selectedUser={usersGroup}
-                selectedUserChanged={setUsersGroup}
+                selectedData={usersGroup}
+                selectedDataChanged={setUsersGroup}
               />
             </div> :
             <div style={{ textAlign: "center" }}>

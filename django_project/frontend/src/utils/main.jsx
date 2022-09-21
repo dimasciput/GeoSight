@@ -213,3 +213,15 @@ export function featurePopupContentPropertiesTable(title, properties, className)
 export function featurePopupContent(title, properties, className) {
   return featurePopupContentHeader(title, properties) + featurePopupContentPropertiesTable(title, properties, className)
 }
+
+/**
+ * Change string to singular
+ */
+export function toSingular(str) {
+  console.log(str)
+  let singularStr = str
+  if (str[str.length - 1] === 's') {
+    singularStr = singularStr.substring(0, singularStr.length - 1);
+  }
+  return singularStr
+}

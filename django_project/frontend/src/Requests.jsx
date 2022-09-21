@@ -43,8 +43,15 @@ export async function fetchJSON(url, options, useCache = true) {
   if (!responseCaches[url]) {
     try {
       const response = await fetch(url, options);
-      const json = await response.json();
-
+      let json = null;
+      try {
+        json = await response.json();
+      } catch (error) {
+        json = {
+          message: response.status + ' ' + response.statusText,
+          detail: response.status + ' ' + response.statusText
+        }
+      }
       if (response.status >= 400) {
         const err = new Error(json.message);
         err.data = json;

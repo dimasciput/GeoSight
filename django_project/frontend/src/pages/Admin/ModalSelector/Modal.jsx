@@ -70,13 +70,15 @@ export default function ModalSelector(
 
   /** Fetch data when modal is opened **/
   useEffect(() => {
-    setSelectionModel(selectedData.map(row => {
-      if (row.id) {
-        return row.id
-      } else {
-        return row
-      }
-    }))
+    if (selectedData) {
+      setSelectionModel(selectedData.map(row => {
+        if (row.id) {
+          return row.id
+        } else {
+          return row
+        }
+      }))
+    }
   }, [selectedData])
 
   let selectedModel = []

@@ -10,6 +10,7 @@ import { AdminTable } from '../Table';
 import { IconTextField } from '../../../../components/Elements/Input'
 import { fetchingData } from "../../../../Requests";
 import MoreAction from "../../../../components/Elements/MoreAction";
+import { toSingular } from "../../../../utils/main";
 
 import './style.scss';
 
@@ -81,7 +82,7 @@ export function COLUMNS_ACTION(
  * @returns {list}
  */
 export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null) {
-  const singularPageName = pageName.substring(0, pageName.length - 1);
+  const singularPageName = toSingular(pageName)
   editUrl = editUrl ? editUrl : urls.api.edit;
   detailUrl = detailUrl ? detailUrl : urls.api.detail;
   return [

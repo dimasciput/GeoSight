@@ -45,7 +45,7 @@ export default function SideNavigation({ pageName }) {
       <a href={contextLayerList}
          className={'SideNavigation-Row ' + (pageName === pageNames.ContextLayer ? 'active' : '')}>
         <LayersIcon className='SideNavigation-Row-Icon'/>
-        <span className='SideNavigation-Row-Name'>Context Layer</span>
+        <span className='SideNavigation-Row-Name'>Context Layers</span>
       </a>
       <a href={basemapList}
          className={'SideNavigation-Row ' + (pageName === pageNames.Basemaps ? 'active' : '')}>
