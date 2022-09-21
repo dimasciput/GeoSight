@@ -61,3 +61,13 @@ export function filteredGeoms(indicators, query) {
     }
   })
 }
+
+export function allDataIsReady(indicatorsData) {
+  let loaded = true
+  for (const [key, value] of Object.entries(indicatorsData)) {
+    if (!value.fetched) {
+      loaded = false
+    }
+  }
+  return loaded
+}

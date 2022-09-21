@@ -29,7 +29,7 @@ import {
 
 import { Actions } from '../../../../store/dashboard'
 import { capitalize } from "../../../../utils/main";
-import { filteredGeoms } from "../../../../utils/indicators";
+import { allDataIsReady, filteredGeoms } from "../../../../utils/indicators";
 import FilterEditorModal from './Modal'
 import FilterValueInput from './ValueInput'
 
@@ -406,7 +406,6 @@ export default function FilterSection() {
   } = useSelector(state => state.dashboard.data);
 
   const ableToModify = filtersAllowModify || editMode;
-
   const referenceLayerData = useSelector(state => state.referenceLayerData)
   const indicatorsData = useSelector(state => state.indicatorsData)
   const geometries = useSelector(state => state.geometries);
@@ -418,25 +417,23 @@ export default function FilterSection() {
 
   /** Filter data **/
   const filter = (currentFilter) => {
+    if (!allDataIsReady(indicatorsData)) {
+      return
+    }
     let indicatorsList = [];
-    let allHasData = true;
     for (const [key, indicatorDataRow] of Object.entries(indicatorsData)) {
       const indicator = JSON.parse(JSON.stringify(indicatorDataRow))
-      if (indicator.fetching) {
-        allHasData = false
-      } else {
-        indicatorsList.push(indicator)
-        const codes = geometries[indicator.reporting_level] ? Object.keys(geometries[indicator.reporting_level]) : []
-        if (indicator.data) {
-          const indicatorCodes = indicator.data.map(data => data.geometry_code)
-          const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
-          missingCodes.map(code => {
-            indicator.data.push({
-              geometry_code: code,
-              indicator_id: indicator.id
-            })
+      indicatorsList.push(indicator)
+      const codes = geometries[indicator.reporting_level] ? Object.keys(geometries[indicator.reporting_level]) : []
+      if (indicator.data) {
+        const indicatorCodes = indicator.data.map(data => data.geometry_code)
+        const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
+        missingCodes.map(code => {
+          indicator.data.push({
+            geometry_code: code,
+            indicator_id: indicator.id
           })
-        }
+        })
       }
     }
 

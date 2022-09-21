@@ -194,25 +194,20 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
             ).first()
         return None
 
-    def serialize(self, geometry_code, value, attributes=None, rule_set=None):
+    def serialize(self, geometry_code, value, attributes=None, date=None):
         """Return data."""
-        rule = self.rule_by_value(value, rule_set)
-        background_color = rule.color if rule else ''
-        outline_color = rule.outline_color if rule else '#000000'
-
         values = {
-            'indicator_id': self.id,
             'geometry_code': geometry_code,
             'value': value,
-            'text': rule.name if rule else '',
-            'color': background_color,
-            'outline_color': outline_color
+            'date': date
         }
-        values.update(attributes if attributes else {})
+        if attributes:
+            values.update(attributes)
         return values
 
-    def values(self, date_data: date, rule_set=None,
-               reference_layer=None, admin_level: int = None):
+    def values(
+            self, date_data: date, rule_set=None,
+            reference_layer=None, admin_level: int = None):
         """Return list data based on date.
 
         If it is upper than the reporting geometry level,
@@ -226,23 +221,17 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
             'geom_identifier', '-date').distinct(
             'geom_identifier')
         for indicator_value in query_report:
-            attributes = {
-                'date': indicator_value.date
-            }
-            attributes.update({
-                extra.key: extra.value for extra in
-                indicator_value.indicatorextravalue_set.all()
-            })
-            if indicator_value.indicatorvalueextradetailrow_set.count():
-                attributes[
-                    'detail_url'] = reverse(
-                    'indicator-value-detail',
-                    args=[indicator_value.indicator.pk, indicator_value.pk])
+            attributes = {}
+            if indicator_value.indicatorextravalue_set.count():
+                attributes.update({
+                    extra.key: extra.value for extra in
+                    indicator_value.indicatorextravalue_set.all()
+                })
             value = self.serialize(
-                indicator_value.geom_identifier,
-                indicator_value.value,
-                attributes,
-                rule_set
+                geometry_code=indicator_value.geom_identifier,
+                value=indicator_value.value,
+                attributes=attributes,
+                date=indicator_value.date,
             )
             values.append(value)
         return values

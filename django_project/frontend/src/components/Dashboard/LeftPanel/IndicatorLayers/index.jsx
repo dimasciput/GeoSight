@@ -241,14 +241,6 @@ export function IndicatorLayers() {
     }
   }, [indicatorLayers]);
 
-  // Get selected indicator data
-  let selectedIndicatorLayer = null;
-  if (indicatorLayers) {
-    selectedIndicatorLayer = indicatorLayers.filter(indicatorLayer => {
-      return indicatorLayer.id === currentIndicatorLayer
-    })[0]
-  }
-
   /**
    * Context Layer Row.
    * @param {str} groupNumber Group number.

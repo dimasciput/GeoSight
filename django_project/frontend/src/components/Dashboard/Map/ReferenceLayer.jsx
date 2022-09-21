@@ -12,6 +12,7 @@ import { Actions } from '../../../store/dashboard'
 import { featurePopupContent } from '../../../utils/main'
 import Modal, { ModalContent, ModalHeader } from "../../Modal";
 import { fetchingData } from "../../../Requests";
+import { allDataIsReady } from "../../../utils/indicators";
 import { returnWhere } from "../../../utils/queryExtraction";
 import { GeorepoUrls } from '../../../utils/georepo'
 
@@ -129,11 +130,15 @@ export default function ReferenceLayer() {
 
   // If there is currentIndicatorLayer that selected
   // Use level from that
-  let nodataRule = null
+  let noDataRule = null
+  let otherDataRule = null
   if (currentIndicatorLayer?.rules) {
-    nodataRule = currentIndicatorLayer.rules.filter(
+    noDataRule = currentIndicatorLayer.rules.filter(
       rule => rule.active
     ).find(rule => rule.rule.toLowerCase() === 'no data')
+    otherDataRule = currentIndicatorLayer.rules.filter(
+      rule => rule.active
+    ).find(rule => rule.rule.toLowerCase() === 'other data')
   }
 
   // When reference layer changed, fetch reference data
@@ -154,17 +159,18 @@ export default function ReferenceLayer() {
     if (vectorTiles) {
       // Save indicator data per geom
       // This is needed for popup and rendering
-      const indicatorsByGeom = {}
+      const valuesByGeometry = {}
       if (Object.keys(currentIndicatorLayer).length) {
         currentIndicatorLayer.indicators.map(indicatorLayer => {
           const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
           if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
             if (indicatorsData[indicator.id].data) {
               indicatorsData[indicator.id].data.forEach(function (data) {
-                if (!indicatorsByGeom[data.geometry_code]) {
-                  indicatorsByGeom[data.geometry_code] = []
+                if (!valuesByGeometry[data.geometry_code]) {
+                  valuesByGeometry[data.geometry_code] = []
                 }
-                indicatorsByGeom[data.geometry_code].push(data);
+                data.indicator = indicator
+                valuesByGeometry[data.geometry_code].push(data);
               })
             }
           }
@@ -187,9 +193,32 @@ export default function ReferenceLayer() {
           let style = null;
           if (indicatorShow) {
             if (currentIndicatorLayer?.indicators?.length === 1) {
-              if (indicatorsByGeom[feature.properties.code]) {
-                const indicatorData = indicatorsByGeom[feature.properties.code][0];
-                style = indicatorData ? indicatorData : nodataRule;
+              const values = valuesByGeometry[feature.properties.code]
+              if (values) {
+                const indicatorData = values[0];
+
+                if (indicatorData) {
+                  // -------------------------------------------------------
+                  // CHECK STYLE
+                  // TODO : Move it to utils if need reused
+                  const value = indicatorData.value
+                  const rules = indicatorData.indicator.rules
+                  const filteredRules = rules.filter(rule => {
+                    const ruleStr = rule.rule.replaceAll('x', value).replaceAll('and', '&&').replaceAll('or', '||')
+                    try {
+                      return eval(ruleStr)
+                    } catch (err) {
+                      return false
+                    }
+                  })
+                  style = filteredRules[0]
+                  style = style ? style : otherDataRule;
+                  // -------------------------------------------------
+                } else {
+                  style = noDataRule;
+                }
+              } else {
+                style = noDataRule;
               }
             }
           }
@@ -216,8 +245,8 @@ export default function ReferenceLayer() {
         // CREATE POPUP
         let properties = {}
         if (currentIndicatorLayer?.indicators?.length === 1) {
-          if (indicatorsByGeom[feature.properties.code]) {
-            properties = Object.assign({}, indicatorsByGeom[feature.properties.code][0])
+          if (valuesByGeometry[feature.properties.code]) {
+            properties = Object.assign({}, valuesByGeometry[feature.properties.code][0])
           }
         }
         properties = Object.assign({}, properties, feature.properties)
@@ -228,6 +257,7 @@ export default function ReferenceLayer() {
         delete properties.type
         delete properties.code
         delete properties.centroid
+        delete properties.indicator
         properties[feature.properties.type] = feature.properties.label
         properties['geometry_code'] = feature.properties.code
         properties['name'] = currentIndicatorLayer.name
@@ -261,7 +291,9 @@ export default function ReferenceLayer() {
   }
 
   useEffect(() => {
-    updateLayer()
+    if (allDataIsReady(indicatorsData)) {
+      updateLayer()
+    }
   }, [
     referenceLayer, referenceLayerData, indicatorsData,
     currentIndicatorLayer, indicatorShow, selectedAdminLevel

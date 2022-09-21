@@ -11,7 +11,7 @@ export const fetchingData = async function (
   url, params, options,
   receiveAction, useCache = true
 ) {
-  if (Object.keys(params).length) {
+  if (params && Object.keys(params).length) {
     const paramsUrl = [];
     for (const [key, value] of Object.entries(params)) {
       paramsUrl.push(`${key}=${value}`)

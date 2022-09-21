@@ -9,6 +9,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import SummaryWidget from "./SummaryWidget"
 import SummaryGroupWidget from "./SummaryGroupWidget"
 import { cleanLayerData } from "../../utils/indicators"
+import { returnWhere } from "../../utils/queryExtraction";
 
 import './style.scss';
 
@@ -31,6 +32,7 @@ export function Widget({ idx, data }) {
   const { indicators } = useSelector(state => state.dashboard.data);
   const indicatorsData = useSelector(state => state.indicatorsData);
   const filteredGeometries = useSelector(state => state.filteredGeometries);
+  const filtersData = useSelector(state => state.filtersData);
   const [showInfo, setShowInfo] = useState(false);
   const {
     name, description, type,
@@ -42,13 +44,14 @@ export function Widget({ idx, data }) {
     return layer.id === layer_id;
   })[0]
 
+  const where = returnWhere(filtersData ? filtersData : [])
   let indicatorData = null
   if (layer) {
     indicatorData = indicatorsData[layer_id] ? indicatorsData[layer_id] : {}
     indicatorData = Object.assign({}, indicatorData)
     if (indicatorData.fetched && indicatorData.data) {
       indicatorData.data = indicatorData.data.filter(indicator => {
-        return !filteredGeometries || filteredGeometries.includes(indicator.geometry_code)
+        return !filteredGeometries || !where || filteredGeometries.includes(indicator.geometry_code)
       })
     }
   }
