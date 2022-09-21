@@ -56,7 +56,7 @@ At the end, click "Apply". Your indicator will now be filled with data and ready
 
 Now that your indicator is ready, **you can add it into any project you want**.
 
-To add an indicator to a project, navigate to the "Projects" pane, select the "Indicator" tab and tick the box next to your indicator. You can select more than one indicator. Finally, click on "Apply Selections".
+To add an indicator to a project, navigate to the "Projects" pane, select the project where you want the indicator to be visualized, click on the "Indicator" tab and tick the box next to your indicator. You can select more than one indicator. Finally, click on "Apply Selections".
 
 ![AddIndicator](img/Tutorial7.png)
 
