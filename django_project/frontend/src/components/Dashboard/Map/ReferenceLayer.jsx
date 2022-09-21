@@ -153,7 +153,7 @@ export default function ReferenceLayer() {
   }, [referenceLayer]);
 
   // Current level
-  let currentLevel = selectedAdminLevel ? selectedAdminLevel.level : -1
+  let currentLevel = selectedAdminLevel ? selectedAdminLevel.level : referenceLayerData[referenceLayer.identifier]?.levels[0]?.level
   const updateLayer = () => {
     const vectorTiles = referenceLayerData[referenceLayer.identifier]?.data?.vector_tiles
     if (vectorTiles) {
@@ -169,7 +169,18 @@ export default function ReferenceLayer() {
                 if (!valuesByGeometry[data.geometry_code]) {
                   valuesByGeometry[data.geometry_code] = []
                 }
-                data.indicator = indicator
+                const rules = indicator.rules
+                const filteredRules = rules.filter(rule => {
+                  const ruleStr = rule.rule.replaceAll('x', data.value).replaceAll('and', '&&').replaceAll('or', '||')
+                  try {
+                    return eval(ruleStr)
+                  } catch (err) {
+                    return false
+                  }
+                })
+                let style = filteredRules[0]
+                style = style ? style : otherDataRule;
+                data.style = style
                 valuesByGeometry[data.geometry_code].push(data);
               })
             }
@@ -196,24 +207,8 @@ export default function ReferenceLayer() {
               const values = valuesByGeometry[feature.properties.code]
               if (values) {
                 const indicatorData = values[0];
-
                 if (indicatorData) {
-                  // -------------------------------------------------------
-                  // CHECK STYLE
-                  // TODO : Move it to utils if need reused
-                  const value = indicatorData.value
-                  const rules = indicatorData.indicator.rules
-                  const filteredRules = rules.filter(rule => {
-                    const ruleStr = rule.rule.replaceAll('x', value).replaceAll('and', '&&').replaceAll('or', '||')
-                    try {
-                      return eval(ruleStr)
-                    } catch (err) {
-                      return false
-                    }
-                  })
-                  style = filteredRules[0]
-                  style = style ? style : otherDataRule;
-                  // -------------------------------------------------
+                  style = indicatorData.style
                 } else {
                   style = noDataRule;
                 }
@@ -257,7 +252,7 @@ export default function ReferenceLayer() {
         delete properties.type
         delete properties.code
         delete properties.centroid
-        delete properties.indicator
+        delete properties.style
         properties[feature.properties.type] = feature.properties.label
         properties['geometry_code'] = feature.properties.code
         properties['name'] = currentIndicatorLayer.name
@@ -295,9 +290,14 @@ export default function ReferenceLayer() {
       updateLayer()
     }
   }, [
-    referenceLayer, referenceLayerData, indicatorsData,
-    currentIndicatorLayer, indicatorShow, selectedAdminLevel
+    indicatorsData, currentIndicatorLayer
   ]);
+
+  useEffect(() => {
+    if (referenceLayerData[referenceLayer.identifier]) {
+      updateLayer()
+    }
+  }, [referenceLayer, referenceLayerData, selectedAdminLevel, indicatorShow]);
 
 
   // Rerender if filters

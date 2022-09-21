@@ -313,7 +313,6 @@ export function IndicatorLayers() {
 export default function IndicatorLayersAccordion({ expanded, handleChange }) {
   const dispatch = useDispatch();
   const { indicatorShow } = useSelector(state => state.map);
-
   return (
     <Accordion
       expanded={expanded}
