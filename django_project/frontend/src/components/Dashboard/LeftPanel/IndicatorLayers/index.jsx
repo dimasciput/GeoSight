@@ -10,6 +10,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from "@mui/material/Accordion";
 import InfoIcon from '@mui/icons-material/Info';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
@@ -21,18 +22,56 @@ import CustomPopover from "../../../CustomPopover";
  * Indicator selector.
  * @param {bool} checked Is indicator checked.
  * @param {dict} layer Layer dictionary.
- * @param {Array} rules Array of rules.
  * @param {function} onChange Function when on changed
- * @param {Array} errors Error list indicator.
- * @param {bool} loaded If data is loaded.
  */
 export function IndicatorLayer(
-  { checked, layer, rules, onChange, errors, loaded }
+  { checked, layer, onChange }
 ) {
+  const dispatch = useDispatch();
+  const { indicators } = useSelector(state => state.dashboard.data);
+  const indicatorsData = useSelector(state => state.indicatorsData);
   const [showLegend, setShowLegend] = useState(checked);
   const showLegendHandler = (show) => {
     setShowLegend(show);
   };
+
+  /**
+   * Fetch indicator data
+   */
+  useEffect(() => {
+    layer.indicators.map(indicatorData => {
+      const indicator = indicators.find(row => row.id === indicatorData.id)
+      const { id } = indicator
+      if (!indicatorsData[id]?.data) {
+        dispatch(
+          Actions.IndicatorsData.fetch(
+            dispatch, id, indicator.url, indicator.reporting_level
+          )
+        );
+      }
+    })
+  }, []);
+
+  // --------------------------------------------
+  // Check loading and errors
+  let rules = layer.rules
+  let errors = []
+  let loading = false
+  const indicator = indicators.find(
+    data => layer.indicators[0]?.id === data.id)
+  if (indicator) {
+    rules = indicator.rules
+  }
+  layer.indicators.map(indicator => {
+    if (!indicatorsData[indicator.id]?.fetched) {
+      loading = true
+    }
+    const errorData = indicatorsData[indicator.id]?.error
+    if (errorData) {
+      errors.push(errorData.data.detail)
+    }
+  })
+  // --------------------------------------------
 
   return (
     <table className='dashboard__left_side__row'
@@ -53,6 +92,9 @@ export function IndicatorLayer(
               onChange={() => {
 
               }}/>
+            {
+              loading ? <CircularProgress/> : ""
+            }
           </div>
         </td>
         <td valign="top">
@@ -183,11 +225,7 @@ export function IndicatorLayer(
  */
 export function IndicatorLayers() {
   const dispatch = useDispatch();
-  const indicatorsData = useSelector(state => state.indicatorsData);
-  const {
-    indicatorLayers,
-    indicators
-  } = useSelector(state => state.dashboard.data);
+  const { indicatorLayers } = useSelector(state => state.dashboard.data);
   const [currentIndicatorLayer, setCurrentIndicatorLayer] = useState(0);
 
   const change = (checked, id) => {
@@ -209,27 +247,13 @@ export function IndicatorLayers() {
       const indicatorData = JSON.parse(JSON.stringify(indicator))
       dispatch(Actions.SelectedIndicatorLayer.change(indicatorData))
     }
-  }, [currentIndicatorLayer, indicatorsData]);
+  }, [currentIndicatorLayer]);
 
   /**
    * Fetch indicator data
    */
   useEffect(() => {
     if (indicatorLayers) {
-      indicatorLayers.map(layer => {
-        layer.indicators.map(indicatorData => {
-          const indicator = indicators.find(row => row.id === indicatorData.id)
-          const { id } = indicator
-          if (!indicatorsData[id]?.data) {
-            dispatch(
-              Actions.IndicatorsData.fetch(
-                dispatch, id, indicator.url, indicator.reporting_level
-              )
-            );
-          }
-        })
-      })
-
       // Change current indicator if indicators changed
       const indicatorsEnabled = indicatorLayers.find(indicator => {
         return indicator.visible_by_default
@@ -254,33 +278,11 @@ export function IndicatorLayers() {
       <div className='LayerGroupList'>
         {
           group.map(layer => {
-              let rules = layer.rules
-              let errors = []
-              let loading = false
-              if (layer.indicators.length === 1) {
-                const indicator = indicators.find(
-                  data => layer.indicators[0]?.id === data.id)
-                if (indicator) {
-                  rules = indicator.rules
-                }
-                layer.indicators.map(indicator => {
-                  if (!indicatorsData[indicator.id]?.fetched) {
-                    loading = true
-                  }
-                  const errorData = indicatorsData[indicator.id]?.error
-                  if (errorData) {
-                    errors.push(errorData.data.detail)
-                  }
-                })
-              }
               return <IndicatorLayer
                 key={layer.id}
                 layer={layer}
-                rules={rules}
                 onChange={change}
                 checked={currentIndicatorLayer === layer.id}
-                errors={errors}
-                loaded={!loading}
               />
             }
           )
@@ -312,7 +314,7 @@ export function IndicatorLayers() {
  */
 export default function IndicatorLayersAccordion({ expanded, handleChange }) {
   const dispatch = useDispatch();
-  const { indicatorShow } = useSelector(state => state.map);
+  const indicatorShow = useSelector(state => state.map.indicatorShow);
   return (
     <Accordion
       expanded={expanded}
