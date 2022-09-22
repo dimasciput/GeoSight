@@ -45,7 +45,7 @@
 
 .leaflet-custom-plugins {
   position: absolute;
-  margin-left: 230px;
+  margin-left: 233px;
 
   a {
     padding: 3px;
@@ -95,24 +95,6 @@
   z-index: 102;
 }
 
-.leaflet-control-zoom {
-  a {
-    color: #eeeeee !important;
-    border-radius: 20px !important;
-    background-color: $primary-color !important;
-    width: 18px !important;
-    height: 18px !important;
-    margin: 0 10px !important;
-    margin-top: 6px !important;
-    font-size: 0.8rem !important;
-
-    span {
-      display: block;
-      margin-top: -6px;
-    }
-  }
-}
-
 // LEAFLET NAVBAR
 .leaflet-control-navbar-fwd,
 .leaflet-control-navbar-back,
@@ -121,20 +103,9 @@
   background-size: 24px !important;
 }
 
-@mixin home-icon($color) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'%3E%3C/path%3E%3C/svg%3E");
-}
-
-@mixin forward-icon($color) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z'%3E%3C/path%3E%3C/svg%3E");
-}
-
-@mixin backward-icon($color) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z'%3E%3C/path%3E%3C/svg%3E");
-}
-
-@mixin measurement-icon($color) {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='48px' viewBox='0 0 24 24' width='48px' fill='#{$color}'%3E%3Cpath d='m17.66 17.66-1.06 1.06-.71-.71 1.06-1.06-1.94-1.94-1.06 1.06-.71-.71 1.06-1.06-1.94-1.94-1.06 1.06-.71-.71 1.06-1.06L9.7 9.7l-1.06 1.06-.71-.71 1.06-1.06-1.94-1.94-1.06 1.06-.71-.71 1.06-1.06L4 4v14c0 1.1.9 2 2 2h14l-2.34-2.34zM7 17v-5.76L12.76 17H7z'%3E%3C/path%3E%3C/svg%3E") !important;
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-size: 22px !important;
 }
 
 .leaflet-control-navbar {
@@ -144,12 +115,48 @@
 
 // TODO:
 //  We need to fix the color using variable
+$nav-enabled-color: '%231CABE2';
+$nav-disabled-color: '%23CCCCCC';
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  span {
+    display: none;
+  }
+}
+
+.leaflet-control-zoom-in {
+  @include plus-icon($nav-enabled-color);
+
+  &.leaflet-disabled {
+    @include plus-icon($nav-disabled-color);
+
+    &:hover {
+      background-color: unset !important;
+      opacity: 1 !important;
+    }
+  }
+}
+
+.leaflet-control-zoom-out {
+  @include minus-icon($nav-enabled-color);
+
+  &.leaflet-disabled {
+    @include minus-icon($nav-disabled-color);
+
+    &:hover {
+      background-color: unset !important;
+      opacity: 1 !important;
+    }
+  }
+}
+
 .leaflet-control-navbar-home {
-  @include home-icon(str-replace('#1CABE2', '#', '%23'))
+  @include home-icon($nav-enabled-color)
 }
 
 .leaflet-control-navbar-home-disabled {
-  @include home-icon(str-replace('#CCCCCC', '#', '%23'));
+  @include home-icon($nav-disabled-color);
 
   &:hover {
     background-color: unset !important;
@@ -158,14 +165,14 @@
 }
 
 .leaflet-control-navbar-fwd {
-  @include forward-icon(str-replace('#1CABE2', '#', '%23'));
+  @include forward-icon($nav-enabled-color);
   position: absolute;
   top: 0;
   left: 80px;
 }
 
 .leaflet-control-navbar-fwd-disabled {
-  @include forward-icon(str-replace('#CCCCCC', '#', '%23'));
+  @include forward-icon($nav-disabled-color);
 
   &:hover {
     background-color: unset !important;
@@ -174,14 +181,14 @@
 }
 
 .leaflet-control-navbar-back {
-  @include backward-icon(str-replace('#1CABE2', '#', '%23'));
+  @include backward-icon($nav-enabled-color);
   position: absolute;
   top: 0;
   left: 40px;
 }
 
 .leaflet-control-navbar-back-disabled {
-  @include backward-icon(str-replace('#CCCCCC', '#', '%23'));
+  @include backward-icon($nav-disabled-color);
 
   &:hover {
     background-color: unset !important;
@@ -194,7 +201,7 @@
   background: unset;
 
   .leaflet-control-measure-toggle {
-    @include measurement-icon(str-replace('#1CABE2', '#', '%23'));
+    @include measurement-icon($nav-enabled-color);
     color: rgba(0, 0, 0, 0) !important;
     display: block !important;
   }
