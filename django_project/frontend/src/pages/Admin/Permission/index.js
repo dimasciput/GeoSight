@@ -27,6 +27,8 @@ import { dictDeepCopy } from "../../../utils/main";
 
 import './style.scss';
 import $ from "jquery";
+import { IconTextField } from "../../../components/Elements/Input";
+import SearchIcon from "@mui/icons-material/Search";
 
 /**
  * Permission Configuration Form Table data selection
@@ -58,6 +60,12 @@ export function PermissionFormTableDataSelection(
   const [data, setData] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const [selectionModel, setSelectionModel] = useState([]);
+  const [search, setSearch] = useState(null);
+
+  /** Search on change */
+  const searchOnChange = (evt) => {
+    setSearch(evt.target.value.toLowerCase())
+  }
 
   const selectedIds = selectedData.map(data => {
     return data.id
@@ -69,7 +77,6 @@ export function PermissionFormTableDataSelection(
     })
   }
 
-
   /** Fetch data when modal is opened **/
   useEffect(() => {
     if (open && !loaded) {
@@ -80,6 +87,21 @@ export function PermissionFormTableDataSelection(
         })
     }
   }, [open])
+
+  /** Filter by search input */
+  const fields = columns.map(column => column.field).filter(column => column !== 'id')
+  let rows = unselectedData;
+  if (search) {
+    rows = rows.filter(row => {
+      let found = false
+      fields.map(field => {
+        if (row[field].toLowerCase().includes(search)) {
+          found = true;
+        }
+      })
+      return found
+    })
+  }
 
   return <Modal
     className='PermissionFormModal'
@@ -93,7 +115,7 @@ export function PermissionFormTableDataSelection(
     }}>
       List of {permissionLabel}
     </ModalHeader>
-    <ModalContent>
+    <div className='AdminContent'>
       <div className='BasicForm'>
         <div className="BasicFormSection">
           <div>
@@ -119,14 +141,22 @@ export function PermissionFormTableDataSelection(
           </div>
         </div>
       </div>
+      <div className='AdminBaseInput Indicator-Search'>
+        <IconTextField
+          placeholder={"Search " + permissionLabel}
+          iconStart={<SearchIcon/>}
+          onChange={searchOnChange}
+          value={search ? search : ""}
+        />
+      </div>
       {
         !data ?
           <div style={{ textAlign: "center" }}>
             <CircularProgress/>
           </div> :
-          <div style={{ height: '300px' }}>
+          <div style={{ height: '400px' }}>
             <DataGrid
-              rows={unselectedData}
+              rows={rows}
               columns={columns}
               pageSize={20}
               rowsPerPageOptions={[20]}
@@ -145,16 +175,17 @@ export function PermissionFormTableDataSelection(
             />
           </div>
       }
-    </ModalContent>
-    <ModalFooter>
       <div className='Save-Button'>
         <SaveButton
           variant="secondary"
           text={"Add " + permissionLabel + 's'}
           onClick={() => {
             const newData = data.filter(row => {
-              row.permission = permissionChoice
-              return selectionModel.includes(row.id)
+              const selected = selectionModel.includes(row.id)
+              if (selected) {
+                row.permission = permissionChoice
+              }
+              return selected
             })
             permissionData[permissionDataListKey] = permissionData[permissionDataListKey].concat(newData)
             setPermissionData({ ...permissionData })
@@ -162,7 +193,7 @@ export function PermissionFormTableDataSelection(
           }}
         />
       </div>
-    </ModalFooter>
+    </div>
   </Modal>
 }
 
