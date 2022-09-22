@@ -1,5 +1,8 @@
 # Specific configuration for development environment
 
+volumes:
+  static-data:
+  media-data:
 
 # Exactly the same as production but for dev env, we expose the port and uses
 # different port for the web.
@@ -18,7 +21,7 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD:-docker}
       - DATABASE_HOST=${DATABASE_HOST:-db}
       - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
-      - DJANGO_SETTINGS_MODULE=core.settings.dev
+      - DJANGO_SETTINGS_MODULE=core.settings.prod
       - INITIAL_FIXTURES=${INITIAL_FIXTURES:-True}
 
       # Email where alters should be sent. This will be used by let's encrypt and as the django admin email.
@@ -26,3 +29,6 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
     entrypoint: []
+    volumes:
+      - static-data:/home/web/static
+      - media-data:/home/web/media

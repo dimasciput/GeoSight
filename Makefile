@@ -213,8 +213,9 @@ sleep:
 devweb-test:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Running in DEVELOPMENT mode"
+	@echo "Run tests"
 	@echo "------------------------------------------------------------------"
+	@docker-compose exec -T dev python manage.py collectstatic
 	@docker-compose exec -T dev python manage.py test --keepdb --noinput
 
 # --------------- TESTS ---------------
