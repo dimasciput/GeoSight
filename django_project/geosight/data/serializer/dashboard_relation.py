@@ -102,6 +102,7 @@ class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):
     indicator = serializers.SerializerMethodField()
     rule = serializers.SerializerMethodField()
     active = serializers.SerializerMethodField()
+    shortcode = serializers.SerializerMethodField()
 
     def get_id(self, obj: DashboardIndicatorLayerIndicator):
         """Return dashboard group name."""
@@ -110,6 +111,10 @@ class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):
     def get_indicator(self, obj: DashboardIndicatorLayerIndicator):
         """Return dashboard group name."""
         return obj.indicator.__str__()
+
+    def get_shortcode(self, obj: DashboardIndicatorLayerIndicator):
+        """Return indicator shortcode."""
+        return obj.indicator.shortcode
 
     def get_rule(self, obj: DashboardIndicatorLayerIndicator):
         """Return rule."""
@@ -122,7 +127,8 @@ class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):
     class Meta:  # noqa: D106
         model = DashboardIndicatorLayerIndicator
         fields = (
-            'id', 'indicator', 'rule', 'order', 'name', 'color', 'active'
+            'id', 'indicator', 'rule', 'order',
+            'name', 'color', 'active', 'shortcode'
         )
 
 

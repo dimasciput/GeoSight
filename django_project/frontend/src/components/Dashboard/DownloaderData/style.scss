@@ -1,0 +1,42 @@
+/* ==========================================================================
+   Downloader data
+   ========================================================================== */
+
+@import '../../../app/variables';
+
+.DownloaderDataComponent {
+  padding: 0.5rem;
+
+  .FormatSelection {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+
+    label {
+      width: fit-content;
+    }
+  }
+
+  .DownloadButton {
+    button {
+      width: 100%;
+    }
+  }
+
+  .DownloaderDataTitle {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid $secondary-color;
+  }
+
+  .MuiCircularProgress-root {
+    margin-right: 0.5rem;
+    color: $secondary-color !important;
+    width: 24px !important;
+    height: 24px !important;
+
+    svg {
+      margin: 0 !important;
+    }
+  }
+}

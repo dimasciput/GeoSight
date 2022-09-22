@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import L from 'leaflet';
 import $ from 'jquery';
 import StarIcon from '@mui/icons-material/Star';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 // Library that does not used explicitly
 import Navbar from 'leaflet-navbar';
@@ -16,6 +17,7 @@ import ReferenceLayerCentroid from './ReferenceLayerCentroid'
 import { Plugin, PluginChild } from './Plugin'
 import CustomPopover from '../../CustomPopover'
 import Bookmark from '../Bookmark'
+import DownloaderData from '../DownloaderData'
 import { Actions } from '../../../store/dashboard/index'
 
 import './style.scss';
@@ -256,6 +258,9 @@ export default function Map() {
               }>
               <Bookmark/>
             </CustomPopover>
+          </Plugin>
+          <Plugin>
+            <DownloaderData/>
           </Plugin>
         </div> : ""
     }

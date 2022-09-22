@@ -1,3 +1,5 @@
+import { fetchJSON } from '../Requests'
+
 /** Georepo URL */
 
 
@@ -24,4 +26,22 @@ export const GeorepoUrls = {
       preferences.georepo_api.reference_layer_detail.replace('<identifier>', identifier)
     )
   }
+}
+
+export const fetchGeojson = async function (url, useCache = true) {
+  let data = []
+  const _fetchGeojson = async function (page = 1) {
+    try {
+      const response = await fetchJSON(url + '?page=' + page, {}, useCache);
+      if (response.results.features) {
+        data = data.concat(response.results.features)
+        if (response.results.features.length) {
+          await _fetchGeojson(page += 1)
+        }
+      }
+    } catch (error) {
+    }
+  }
+  await _fetchGeojson()
+  return data
 }

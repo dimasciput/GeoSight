@@ -1,5 +1,6 @@
 {% extends 'frontend/base.html' %}
 {% load render_bundle from webpack_loader %}
+{% load static %}
 {% block style %}
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
@@ -8,6 +9,10 @@
     <link rel="stylesheet"
           href="https://ljagis.github.io/leaflet-measure/leaflet-measure.css"
           crossorigin=""/>
+    <script type="text/javascript"
+            src="{% static 'libs/xlsx/0.17.5/jszip.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'libs/xlsx/0.17.5/xlsx.js' %}"></script>
 {% endblock %}
 {% block render_bundle %}
     {% render_bundle 'Dashboard' %}

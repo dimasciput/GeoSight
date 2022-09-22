@@ -45,7 +45,7 @@
 
 .leaflet-custom-plugins {
   position: absolute;
-  margin-left: 233px;
+  margin-left: 235px;
 
   a {
     padding: 3px;
@@ -54,6 +54,22 @@
     svg {
       height: 24px;
       width: 24px;
+    }
+  }
+
+  .leaflet-control-navbar {
+    width: fit-content;
+  }
+
+  .Disabled {
+    a {
+      color: $disabled-color !important;
+      cursor: default;
+
+      &:hover {
+        background-color: unset !important;
+        opacity: 1 !important;
+      }
     }
   }
 }

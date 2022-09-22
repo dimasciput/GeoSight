@@ -257,3 +257,7 @@
   -webkit-justify-content: flex-end !important;
   justify-content: end !important;
 }
+
+.MuiCircularProgress-root {
+  color: $primary-color !important;
+}

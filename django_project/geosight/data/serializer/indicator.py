@@ -41,7 +41,8 @@ class IndicatorSerializer(serializers.ModelSerializer):
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
-            'id', 'name', 'category', 'source', 'description', 'url',
+            'id', 'name', 'category', 'shortcode', 'source', 'description',
+            'url',
             'reporting_level', 'rules', 'last_update', 'permission')
 
 
@@ -72,7 +73,7 @@ class IndicatorAdminListSerializer(serializers.ModelSerializer):
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
-            'id', 'name', 'category', 'source',
+            'id', 'name', 'category', 'source', 'shortcode',
             'description', 'url', 'reporting_level', 'permission')
 
 
@@ -86,7 +87,7 @@ class IndicatorBasicListSerializer(serializers.ModelSerializer):
     class Meta:  # noqa: D106
         model = Indicator
         fields = (
-            'id', 'name', 'description', 'category')
+            'id', 'name', 'shortcode', 'description', 'category')
 
 
 class IndicatorRuleSerializer(serializers.ModelSerializer):
