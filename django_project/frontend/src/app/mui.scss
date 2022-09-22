@@ -42,6 +42,10 @@
   border: 1px solid $secondary-color !important;
   color: $anti-secondary-color !important;
 
+  a {
+    color: $anti-primary-color !important;
+  }
+
   &.Basic {
     padding: 0.5rem !important;
     min-width: 0;

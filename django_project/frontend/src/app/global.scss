@@ -168,3 +168,14 @@ textarea {
 .circle {
   border-radius: 50%;
 }
+
+.react-datepicker-popper {
+  .react-datepicker__navigation {
+    width: 1rem;
+  }
+
+  .react-datepicker__navigation--next {
+    margin-left: 0 !important;
+    margin-right: 0.5rem;
+  }
+}

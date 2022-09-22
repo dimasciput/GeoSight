@@ -225,3 +225,19 @@ export function toSingular(str) {
   }
   return singularStr
 }
+
+/**
+ * Json to xls
+ * @param {Array} data Array of object.
+ * @param {string} filename Filename of json
+ * @param {string} sheetName Sheet name
+ */
+export function jsonToXlsx(data, filename, sheetName = "Sheet 1") {
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  worksheet["!cols"] = Object.keys(data[0]).map(key => {
+    return { wch: data.reduce((w, r) => Math.max(w, r[key].length), 10) }
+  });
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+  XLSX.writeFile(workbook, filename);
+}

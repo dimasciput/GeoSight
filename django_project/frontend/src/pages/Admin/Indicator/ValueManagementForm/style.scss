@@ -10,6 +10,7 @@
 
   button {
     width: 170px;
+    height: 43px;
   }
 
   .react-datepicker-wrapper {
@@ -113,9 +114,13 @@
     }
   }
 
-  .ManagementFormFillFIle {
+  .TopButtons {
     margin: 0.5rem;
     text-align: right;
+
+    button {
+      margin-left: 0.5rem;
+    }
   }
 }
 

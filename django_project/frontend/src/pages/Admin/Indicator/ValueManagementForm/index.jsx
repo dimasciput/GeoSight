@@ -16,6 +16,7 @@ import {
 import { SelectWithList } from "../../../../components/Input/SelectWithList";
 import InputFile from './InputFile'
 import { GeorepoUrls } from '../../../../utils/georepo'
+import { jsonToXlsx } from '../../../../utils/main'
 
 import './style.scss';
 
@@ -48,15 +49,12 @@ export default function ValueManagement() {
 
   const fetchData = (level, page) => {
     $.ajax({
-      url: preferences.georepo_api.domain + level.url + '?page=' + page,
+      url: preferences.georepo_api.domain + level.url + '/list?page=' + page,
     }).done(function (data) {
       if (!level.layer) {
-        level.layer = {
-          type: "FeatureCollection",
-          features: []
-        }
+        level.layer = []
       }
-      level.layer.features = level.layer.features.concat(data.results.features)
+      level.layer = level.layer.concat(data.results)
       page += 1
       if (page > data.total_page) {
         level.finished = true
@@ -97,20 +95,25 @@ export default function ValueManagement() {
         } else {
           if (referenceLayerLevel.layer) {
             const featureData = {}
-            referenceLayerLevel.layer.features.map(feature => {
-              const identifier = feature?.properties?.identifier?.admin;
+            referenceLayerLevel.layer.map(feature => {
+              const identifier = feature?.identifier?.admin;
               featureData[identifier] = {
-                name: feature.properties.name,
+                name: feature.name,
                 lastValue: valueDataList[identifier]
               }
-              return feature.properties.name
+              return feature.name
             })
 
             let sortedData = Object.keys(featureData).map(function (key) {
               return [key, featureData[key]];
             });
-            sortedData.sort(function (first, second) {
-              return second[1].name - first[1].name;
+            sortedData.sort(function (a, b) {
+              if (b[1].name > a[1].name) {
+                return -1;
+              } else if (b[1].name < a[1].name) {
+                return 1;
+              }
+              return 0;
             });
             setData(sortedData)
           }
@@ -133,10 +136,33 @@ export default function ValueManagement() {
 
   // Check reference layer
   let referenceLayer = null
+  let levelData = null
   if (references) {
     referenceLayer = references.filter(row => {
       return row.identifier === reference
     })[0]
+    if (referenceLayer?.data) {
+      levelData = referenceLayer.data.find(row => {
+        return row.level === level
+      })
+    }
+  }
+
+  // Download template
+  const downloadTemplate = () => {
+    if (levelData?.finished && data) {
+      const templateData = []
+      data.map(row => {
+        templateData.push({
+          geometry_name: row[1].name,
+          geometry_code: row[0],
+          value: "",
+          extra_name_1: "",
+          extra_name_2: ""
+        })
+      })
+      jsonToXlsx(templateData, referenceLayer?.name + "." + levelData?.level_name + ".Template.xls")
+    }
   }
 
   return (
@@ -165,7 +191,15 @@ export default function ValueManagement() {
         }>
 
         <div className='ManagementForm'>
-          <div className='ManagementFormFillFIle'>
+          <div className='TopButtons'>
+
+            <ThemeButton
+              disabled={!levelData?.finished || !data}
+              variant="secondary"
+              onClick={() => downloadTemplate()}
+            >
+              Download XLS template
+            </ThemeButton>
             <ThemeButton variant="secondary" onClick={() => setOpen(true)}>
               Use File to Refill Form
             </ThemeButton>
