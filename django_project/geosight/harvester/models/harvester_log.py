@@ -12,6 +12,7 @@ from geosight.harvester.models.harvester import Harvester
 class LogStatus(object):
     """Quick access for coupling variable with Log status string."""
 
+    START = 'Start'
     RUNNING = 'Running'
     ERROR = 'Error'
     DONE = 'Done'
@@ -34,11 +35,12 @@ class HarvesterLog(models.Model):
     status = models.CharField(
         max_length=100,
         choices=(
+            (LogStatus.START, _(LogStatus.START)),
             (LogStatus.RUNNING, _(LogStatus.RUNNING)),
             (LogStatus.ERROR, _(LogStatus.ERROR)),
             (LogStatus.DONE, _(LogStatus.DONE)),
         ),
-        default=LogStatus.RUNNING
+        default=LogStatus.START
     )
     note = models.TextField(
         blank=True, null=True

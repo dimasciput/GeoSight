@@ -85,7 +85,7 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
   const singularPageName = toSingular(pageName)
   editUrl = editUrl ? editUrl : urls.api.edit;
   detailUrl = detailUrl ? detailUrl : urls.api.detail;
-  return [
+  const _columns = [
     { field: 'id', headerName: 'id', hide: true, width: 30, },
     {
       field: 'name', headerName: singularPageName + ' Name', flex: 1,
@@ -102,7 +102,7 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
       }
     },
     { field: 'description', headerName: 'Description', flex: 1 },
-    { field: 'category', headerName: 'Category', flex: 1 },
+    { field: 'category', headerName: 'Category', flex: 0.5 },
     {
       field: 'actions',
       type: 'actions',
@@ -113,6 +113,10 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
       },
     }
   ]
+  if (['indicator'].includes(singularPageName.toLowerCase())) {
+    _columns[2] = { field: 'shortcode', headerName: 'Shortcode', flex: 0.5 }
+  }
+  return _columns
 }
 
 /**
@@ -158,6 +162,7 @@ export default function List(
       return row.name.toLowerCase().includes(search)
         || row.category.toLowerCase().includes(search)
         || row.description.toLowerCase().includes(search)
+        || row.shortcode?.toLowerCase().includes(search)
     })
   }
 

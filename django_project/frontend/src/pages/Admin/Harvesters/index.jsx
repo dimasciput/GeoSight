@@ -302,13 +302,12 @@ export default function Harvesters(
                   <label className="form-label required" htmlFor="group">
                     Frequency
                   </label>
-                  {
-                    input({
-                      type: 'number',
-                      required: true,
-                      name: 'frequency'
-                    })
-                  }
+                  <input
+                    type='number'
+                    required={true}
+                    name={'frequency'}
+                    defaultValue={harvester.frequency ? harvester.frequency : 30}
+                  />
                   <div>
                     <span className='form-helptext'>The frequency in days that the harvester will be run.</span>
                   </div>

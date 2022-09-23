@@ -1,15 +1,15 @@
 """Sharepoint Harvester."""
 import json
-import os
 from datetime import datetime
 
 from django.conf import settings
 from django.db import transaction
-from pyexcel_xls import get_data as xls_get
-from pyexcel_xlsx import get_data as xlsx_get
 
-from geosight.data.models import IndicatorValue, IndicatorExtraValue
+from geosight.data.models import (
+    Indicator, IndicatorValue, IndicatorExtraValue
+)
 from geosight.harvester.harveters._base import BaseHarvester, HarvestingError
+from geosight.harvester.sharepoint import Sharepoint
 
 
 class RecordError(Exception):
@@ -26,7 +26,7 @@ class SharepointHarvester(BaseHarvester):
 
     description = (
         "Harvester using sharepoint file. <br>"
-        "It will fetch the data from file and the file synced frequently."
+        "It will fetch the data from sharepoint."
     )
 
     @staticmethod
@@ -34,45 +34,50 @@ class SharepointHarvester(BaseHarvester):
         """Return additional attributes."""
         attr = {
             'file': {
-                'title': "Path of file",
-                'description': "The path of file in the server."
+                'title': "Relative path of file",
+                'description': (
+                    f"Relative path of file in {settings.SHAREPOINT_URL}."
+                )
             },
             'sheet_name': {
                 'title': "Sheet name",
-                'description': "Sheet that will be used"
+                'description': (
+                    "Sheetname that will be used. "
+                    "If empty, it will use first sheet"
+                ),
+                'required': False
             },
-            'row_number_for_header': {
-                'title': "Row Number: Header",
-                'description': "Row number that will be used as header."
+            'column_name_indicator_code': {
+                'title': "Column Name: Indicator Code",
+                'description': (
+                    "The name of column in the first row in "
+                    "the file contains indicator code. "
+                ),
+                'value': "IndicatorCode"
             },
             'column_name_administration_code': {
                 'title': "Column Name: Administration Code",
                 'description': (
-                    "The name of column in"
-                    " the file contains administration code"
-                )
+                    "The name of column in the first row in "
+                    "the file contains administration code. "
+                ),
+                'value': "GeographyCode"
             },
-            'column_name_month': {
-                'title': "Column Name: Month",
+            'column_name_date_time': {
+                'title': "Column Name: Date Time",
                 'description': (
-                    "The name of column in the "
-                    "file contains month data"
-                )
-            },
-            'column_name_year': {
-                'title': "Column Name: Year",
-                'description': (
-                    "The name of column in the file contains year data"
-                )
+                    "The name of column  in the first row in "
+                    "file contains date and time of data"
+                ),
+                'value': "DateTime"
             },
             'column_name_value': {
                 'title': "Column Name: Value",
-                'description': "The name of column in the file contains data"
-            },
-            'extra_columns': {
-                'title': "Columns Name: Extra Data",
-                'description': "List of columns as extra data",
-                'required': False
+                'description': (
+                    "The name of column in the first row in "
+                    "the file contains data"
+                ),
+                'value': "Value"
             },
         }
         return attr
@@ -82,45 +87,20 @@ class SharepointHarvester(BaseHarvester):
         harvester = self.harvester
         reference_layer = harvester.reference_layer
         admin_level = harvester.admin_level
-        indicator = harvester.indicator
-        rule_names = [name.lower() for name in list(
-            indicator.indicatorrule_set.values_list('name', flat=True)
-        )]
-        rules = list(
-            indicator.indicatorrule_set.values_list('rule', flat=True)
-        )
-        default_attr = SharepointHarvester.additional_attributes()
 
         # format data
         self._update('Fetching data')
-        row_number_for_header = 'row_number_for_header'
-        try:
-            column_header = int(self.attributes[row_number_for_header])
-        except ValueError:
-            raise HarvestingError(
-                f"{default_attr[row_number_for_header]['title']} "
-                f"is not an integer"
-            )
 
         # get data from file
-        filepath = os.path.join(settings.ONEDRIVE_ROOT,
-                                self.attributes['file'])
-        if not os.path.exists(filepath):
-            raise HarvestingError(f'File {filepath} does not exist or deleted')
-
-        # check the file extension
-        if str(filepath).split('.')[-1] == 'xls':
-            sheet = xls_get(filepath)
-        elif str(filepath).split('.')[-1] == 'xlsx':
-            sheet = xlsx_get(filepath)
-        else:
-            raise HarvestingError('File is not in excel format.')
+        sheet = Sharepoint().load_excelfile(self.attributes['file'])
 
         # check the sheet
         if sheet:
             try:
-                records = sheet[self.attributes.get('sheet_name', '')][
-                          column_header - 1:]
+                sheet_name = self.attributes.get('sheet_name')
+                records = sheet[
+                    sheet_name if sheet_name else list(sheet.keys())[0]
+                ]
                 headers = records[0]
             except KeyError:
                 raise HarvestingError(
@@ -129,12 +109,21 @@ class SharepointHarvester(BaseHarvester):
                 )
 
             # get index of each columns
-            idx_administration_code = headers.index(
-                self.attributes['column_name_administration_code']
-            )
-            idx_month = headers.index(self.attributes['column_name_month'])
-            idx_year = headers.index(self.attributes['column_name_year'])
-            idx_value = headers.index(self.attributes['column_name_value'])
+            try:
+                idx_indicator_code = headers.index(
+                    self.attributes['column_name_indicator_code']
+                )
+                idx_administration_code = headers.index(
+                    self.attributes['column_name_administration_code']
+                )
+                idx_date_time = headers.index(
+                    self.attributes['column_name_date_time']
+                )
+                idx_value = headers.index(
+                    self.attributes['column_name_value']
+                )
+            except ValueError as e:
+                raise HarvestingError(f'{e}'.replace('list', 'header'))
 
             # check index of extra data
             extra_data = {}
@@ -148,7 +137,6 @@ class SharepointHarvester(BaseHarvester):
             # When 1 is error, we need to raise exeptions
             success = True
             details = []
-            date_found = None
             error_separator = ':error:'
             with transaction.atomic():
                 details.append(headers)
@@ -158,82 +146,104 @@ class SharepointHarvester(BaseHarvester):
                 for record_idx, record in enumerate(records[1:]):
                     self._update(
                         f'Processing line '
-                        f'{record_idx + column_header}/{total + column_header}'
+                        f'{record_idx}/{total}'
                     )
                     detail = [str(r) for r in record]
 
                     # -------------------------------------------------------
                     # Validation
                     # ------------------------------------------------------
-                    date_time, year, month = None, None, None
+                    date_time = None
                     administration_code = record[idx_administration_code]
 
                     # check the value
-                    value = record[idx_value]
                     try:
-                        # convert to percent
-                        value = float(value)
+                        value = record[idx_value]
+                    except IndexError:
+                        continue
 
-                        # this is specifically for %
-                        if indicator.unit == '%':
-                            value = value * 100
-                            detail[idx_value] = f'{value}%'
-                    except ValueError:
+                    # check indicator
+                    indicators = Indicator.objects.filter(
+                        shortcode=record[idx_indicator_code]
+                    )
+                    if indicators.count() > 1:
+                        detail[idx_indicator_code] += (
+                            "This shortcode is being used by "
+                            "more than 1 indicator."
+                        )
+                    elif indicators.count() == 0:
+                        detail[idx_indicator_code] += (
+                            "This indicator does not exist."
+                        )
+                    else:
+                        indicator = indicators[0]
+
+                    if indicator:
+                        rules_query = indicator.indicatorrule_set.exclude(
+                            name__iexact='no data'
+                        ).exclude(
+                            name__iexact='other data'
+                        )
+                        rule_names = [name.lower() for name in list(
+                            rules_query.values_list(
+                                'name', flat=True)
+                        )]
+                        rules = list(
+                            rules_query.values_list(
+                                'rule', flat=True)
+                        )
+
                         try:
-                            rule_index = rule_names.index(value.lower())
+                            # convert to percent
+                            value = float(value)
+
+                            # this is specifically for %
+                            if indicator.unit == '%':
+                                value = value * 100
+                                detail[idx_value] = f'{value}%'
                         except ValueError:
-                            detail[idx_value] += (
-                                f'{error_separator}'
-                                f'Value is not in {rule_names}'
-                            )
-                        else:
                             try:
-                                value = float(
-                                    rules[rule_index].replace(' ', '').replace(
-                                        'x==', '')
-                                )
+                                rule_index = rule_names.index(value.lower())
                             except ValueError:
-                                detail[idx_value] += (
-                                    f"{error_separator}Can't apply "
-                                    f"{value} to any rule"
-                                )
+                                if len(rule_names):
+                                    detail[idx_value] += (
+                                        f'{error_separator}'
+                                        f'Value is not in {rule_names}'
+                                    )
+                                else:
+                                    detail[idx_value] += (
+                                        f'{error_separator}'
+                                        f'Value is not recognized.'
+                                    )
+                            else:
+                                try:
+                                    value = float(
+                                        rules[rule_index].replace(
+                                            ' ', '').replace('x==', '')
+                                    )
+                                except ValueError:
+                                    detail[idx_value] += (
+                                        f"{error_separator}Can't apply "
+                                        f"{value} to any rule"
+                                    )
 
                     # Check year in integer
-                    if not record[idx_year]:
-                        detail[idx_year] += error_separator + 'Year is empty'
+                    if not record[idx_date_time]:
+                        detail[
+                            idx_date_time] += error_separator + 'Date is empty'
                     else:
                         try:
-                            year = int(record[idx_year])
+                            date_time = datetime.strptime(
+                                '2022/08/31', '%Y/%m/%d')
                         except ValueError:
-                            detail[idx_year] += (
-                                    error_separator + 'Year is not integer'
-                            )
-
-                    # Check month in integer
-                    if not record[idx_month]:
-                        detail[idx_month] += error_separator + 'Month is empty'
-                    else:
-                        try:
-                            month = int(record[idx_month])
-                        except ValueError:
-                            detail[idx_month] += (
-                                    error_separator + 'Month is not integer'
-                            )
-
-                    if year and month:
-                        try:
-                            date_time = datetime(year, month, 1)
-                            if not date_found:
-                                date_found = date_time
-                            if date_found != date_time:
-                                detail[idx_month] += (
-                                    f'{error_separator}Date is not '
-                                    f'{date_found.month}-{date_found.year}'
+                            try:
+                                date_time = datetime.strptime(
+                                    '2022/08/31', '%Y-%m-%d')
+                            except ValueError:
+                                detail[idx_date_time] += (
+                                    'Date format should be '
+                                    'YYYY/MM/DD or YYYY-MM-DD'
                                 )
-                        except ValueError as e:
-                            detail[idx_month] += error_separator + str(e)
-                            if 'month' not in e:
-                                detail[idx_year] += error_separator + str(e)
 
                     if administration_code and date_time and type(
                             value) == float:
@@ -249,21 +259,20 @@ class SharepointHarvester(BaseHarvester):
                                 }
                             )
                         if not created:
-                            detail[idx_month] += (
-                                f'{error_separator}Data exist for '
-                                f'{date_found.month}-{date_found.year}'
-                            )
-                        else:
-                            indicator_value.save()
-                            for key, value in extra_data.items():
-                                try:
-                                    IndicatorExtraValue.objects.get_or_create(
-                                        indicator_value=indicator_value,
-                                        name=key,
-                                        value=record[value]
-                                    )
-                                except IndexError:
-                                    pass
+                            indicator_value.value = value
+                            indicator_value.reference_layer = reference_layer
+                            indicator_value.admin_level = admin_level
+
+                        indicator_value.save()
+                        for key, value in extra_data.items():
+                            try:
+                                IndicatorExtraValue.objects.get_or_create(
+                                    indicator_value=indicator_value,
+                                    name=key,
+                                    value=record[value]
+                                )
+                            except IndexError:
+                                pass
 
                     # check if error separator is in detail
                     if error_separator in json.dumps(detail):

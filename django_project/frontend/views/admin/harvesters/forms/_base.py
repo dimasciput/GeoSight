@@ -215,6 +215,8 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
             harvester.harvestermappingvalue_set.all().delete()
 
             harvester.harvester_class = harvester_class
+            if data.get('frequency', None):
+                harvester.frequency = data.get('frequency')
             harvester.indicator = indicator
             harvester.reference_layer = reference_layer
             harvester.admin_level = data.get('admin_level', None)
@@ -273,4 +275,5 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
 
     def after_post(self, harvester: Harvester):
         """For calling after post success."""
-        pass
+        harvester.creator = self.request.user
+        harvester.save()

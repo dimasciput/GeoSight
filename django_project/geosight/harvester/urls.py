@@ -8,6 +8,7 @@ from geosight.harvester.api.harvester import (
 from geosight.harvester.api.harvester_push_api import (
     HarvesterPushIndicatorValues, HarvesterPushIndicatorValuesBatch
 )
+from geosight.harvester.api.sharepoint import SharepointFileDetail
 
 harvester_api = [
     url(
@@ -39,6 +40,14 @@ api = [
         name='harvester-log-api'),
 ]
 
+sharepoint = [
+    url(
+        r'^file/detail',
+        SharepointFileDetail.as_view(), name='sharepoint-file-detail'
+    ),
+]
+
 urlpatterns = [
     url(r'^api/', include(api)),
+    url(r'^sharepoint/', include(sharepoint)),
 ]

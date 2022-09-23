@@ -38,8 +38,14 @@ class BaseHarvester(ABC):
         """init."""
         self.harvester = harvester
         for attribute in harvester.harvesterattribute_set.all():
-            self.attributes[attribute.name] = \
-                attribute.value if attribute.value else attribute.file
+            if attribute.value:
+                self.attributes[attribute.name] = attribute.value
+            else:
+                try:
+                    attribute.file.path
+                    self.attributes[attribute.name] = attribute.file
+                except ValueError:
+                    self.attributes[attribute.name] = None
         for attribute in harvester.harvestermappingvalue_set.all():
             self.mapping[attribute.remote_value] = attribute.platform_value
 
@@ -85,9 +91,12 @@ class BaseHarvester(ABC):
         """To run the process."""
         if self.allow_to_harvest_new_data or force:
             try:
-                self.log = HarvesterLog.objects.create(
-                    harvester=self.harvester
+                self.log, created = HarvesterLog.objects.get_or_create(
+                    harvester=self.harvester,
+                    status=LogStatus.START
                 )
+                self.log.status = LogStatus.RUNNING
+                self.log.save()
                 # check the attributes
                 for attr_key, attr_value in \
                         self.__class__.additional_attributes().items():

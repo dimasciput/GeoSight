@@ -41,7 +41,7 @@ ExcelHarvester = (
 HARVESTERS = (
     APIWithGeographyAndTodayDate,
     APIListWithGeographyAndDate,
-    # SharepointHarvester,
+    SharepointHarvester,
     UsingExposedAPI,
 )
 ALL_HARVESTERS = HARVESTERS + (

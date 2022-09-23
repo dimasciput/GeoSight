@@ -91,6 +91,11 @@
     .HarvesterStatusDetailTable {
       overflow: auto;
       flex-grow: 1;
+      padding: 1rem;
+
+      table {
+        width: 100%;
+      }
     }
   }
 }

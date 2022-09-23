@@ -1,5 +1,7 @@
 # coding=utf-8
 """Settings for 3rd party."""
+import os
+
 from .base import *  # noqa
 
 # Extra installed apps
@@ -19,3 +21,8 @@ WEBPACK_LOADER = {
         'LOADER_CLASS': 'webpack_loader.loader.WebpackLoader',
     }
 }
+
+# SHAREPOINT CONFIG
+SHAREPOINT_URL = os.environ.get('SHAREPOINT_URL', None)
+SHAREPOINT_CLIENT_ID = os.environ.get('SHAREPOINT_CLIENT_ID', None)
+SHAREPOINT_CLIENT_SECRET = os.environ.get('SHAREPOINT_CLIENT_SECRET', None)
