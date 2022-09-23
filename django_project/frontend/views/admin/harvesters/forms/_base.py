@@ -275,5 +275,6 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
 
     def after_post(self, harvester: Harvester):
         """For calling after post success."""
-        harvester.creator = self.request.user
-        harvester.save()
+        if not harvester.creator:
+            harvester.creator = self.request.user
+            harvester.save()

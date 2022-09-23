@@ -55,6 +55,7 @@ class BaseViewTest(BasePermissionTest):
         # POST it
         new_payload = copy.deepcopy(self.payload)
         new_payload['name'] = 'name 1'
+        new_payload['shortcode'] = 'CODE 2'
         self.assertRequestPostView(url, 302, new_payload)
         self.assertRequestPostView(url, 403, new_payload, self.viewer)
         self.assertRequestPostView(url, 403, new_payload, self.contributor)

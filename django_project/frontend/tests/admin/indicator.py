@@ -25,7 +25,8 @@ class IndicatorAdminViewTest(BaseViewTest, TestCase):
     payload = {
         'name': 'name',
         'group': 'group',
-        'aggregation_method': AggregationMethod.SUM
+        'aggregation_method': AggregationMethod.SUM,
+        'shortcode': 'SHORT'
     }
 
     def create_resource(self, user):
