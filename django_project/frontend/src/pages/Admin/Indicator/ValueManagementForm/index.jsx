@@ -154,11 +154,11 @@ export default function ValueManagement() {
       const templateData = []
       data.map(row => {
         templateData.push({
-          geometry_name: row[1].name,
-          geometry_code: row[0],
-          value: "",
-          extra_name_1: "",
-          extra_name_2: ""
+          GeographyCode: row[0],
+          GeographyName: row[1].name,
+          Value: "",
+          ExtraName1: "",
+          ExtraName2: ""
         })
       })
       jsonToXlsx(templateData, referenceLayer?.name + "." + levelData?.level_name + ".Template.xls")

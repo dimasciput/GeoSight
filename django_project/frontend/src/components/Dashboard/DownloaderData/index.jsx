@@ -63,9 +63,9 @@ export default function DownloaderData() {
             })
             if (geom) {
               const row = {
-                geography_code: geom.properties.identifier.admin,
-                geography_name: geom.properties.name,
-                geography_level: geom.properties.level_name
+                GeographyCode: geom.properties.identifier.admin,
+                GeographyName: geom.properties.name,
+                GeographyLevel: geom.properties.level_name
               }
               const indicatorsDataProperties = []
               selectedIndicatorLayer.indicators.map(indicator => {
@@ -79,10 +79,10 @@ export default function DownloaderData() {
                       tableData[name] = []
                     }
                     const indicatorData = {
-                      indicator_code: indicator.shortcode ? indicator.shortcode : '',
-                      indicator_name: indicator.name,
-                      indicator_value: '' + value.value,
-                      indicator_date: value.date
+                      IndicatorCode: indicator.shortcode ? indicator.shortcode : '',
+                      IndicatorName: indicator.name,
+                      Value: '' + value.value,
+                      Date: value.date
                     }
                     tableData[name].push(
                       Object.assign({}, row, indicatorData)
@@ -97,10 +97,10 @@ export default function DownloaderData() {
                 newGeom.properties = Object.assign({}, newGeom.properties, indicatorsDataProperties[0])
               } else {
                 indicatorsDataProperties.map((indicator, idx) => {
-                  newGeom.properties['indicator_code_' + idx] = indicator.indicator_code
-                  newGeom.properties['indicator_name_' + idx] = indicator.indicator_name
-                  newGeom.properties['indicator_value_' + idx] = indicator.indicator_value
-                  newGeom.properties['indicator_date_' + idx] = indicator.indicator_date
+                  newGeom.properties['IndicatorCode' + idx] = indicator.IndicatorCode
+                  newGeom.properties['IndicatorName' + idx] = indicator.IndicatorName
+                  newGeom.properties['Value' + idx] = indicator.Value
+                  newGeom.properties['Date' + idx] = indicator.Date
                 })
               }
               geojsonData.features.push(newGeom)
