@@ -6,7 +6,8 @@ from frontend.views.admin.harvesters import (
     HarvestedUsingExposedAPIByExternalClientView,
     HarvesterDetail, MetaIngestorForm, HarvesterListView,
     HarvesterAPIWithGeographyAndDateView,
-    HarvesterAPIWithGeographyAndTodayDateView
+    HarvesterAPIWithGeographyAndTodayDateView,
+    SharepointHarvesterView
 )
 
 harvester_create_form_url = [
@@ -24,6 +25,11 @@ harvester_create_form_url = [
         r'^exposed-api',
         HarvestedUsingExposedAPIByExternalClientView.as_view(),
         name=HarvestedUsingExposedAPIByExternalClientView().url_create_name
+    ),
+    url(
+        r'^sharepoint',
+        SharepointHarvesterView.as_view(),
+        name=SharepointHarvesterView().url_create_name
     ),
     url(
         r'^meta-ingestor',
@@ -46,6 +52,11 @@ harvester_edit_form_url = [
         r'^exposed-api',
         HarvestedUsingExposedAPIByExternalClientView.as_view(),
         name=HarvestedUsingExposedAPIByExternalClientView().url_edit_name
+    ),
+    url(
+        r'^sharepoint',
+        SharepointHarvesterView.as_view(),
+        name=SharepointHarvesterView().url_edit_name
     ),
     url(
         r'^meta-ingestor',

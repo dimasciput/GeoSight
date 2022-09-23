@@ -12,3 +12,4 @@ pyexcel-xlsx==0.6.0
 raven==6.10.0
 uwsgi==2.0.20
 django-webpack-loader==1.6.0
+Office365-REST-Python-Client==2.3.14

@@ -80,6 +80,7 @@ class HarvesterLogSerializer(serializers.ModelSerializer):
     html_detail = serializers.SerializerMethodField()
     start_time = serializers.SerializerMethodField()
     api = serializers.SerializerMethodField()
+    note = serializers.SerializerMethodField()
 
     def get_html_detail(self, obj: HarvesterLog):
         """Return detail in html."""
@@ -92,6 +93,13 @@ class HarvesterLogSerializer(serializers.ModelSerializer):
     def get_api(self, obj: HarvesterLog):
         """Return start_time in html."""
         return reverse('harvester-log-api', args=[obj.id])
+
+    def get_note(self, obj: HarvesterLog):
+        """Return note."""
+        if obj.note:
+            return obj.note.replace('\r\n', '<br>').replace('"', "'")
+        else:
+            return ''
 
     class Meta:  # noqa: D106
         model = HarvesterLog

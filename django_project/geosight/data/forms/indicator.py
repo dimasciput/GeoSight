@@ -1,5 +1,6 @@
 """Indicator form."""
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 
 from geosight.data.models.indicator import (
@@ -10,6 +11,11 @@ class IndicatorForm(forms.ModelForm):
     """Indicator form."""
 
     label_suffix = ""
+
+    shortcode = forms.CharField(
+        required=True, help_text=Indicator.shortcode_helptext
+    )
+
     group = forms.ChoiceField(
         label='Category',
         widget=forms.Select(
@@ -48,6 +54,19 @@ class IndicatorForm(forms.ModelForm):
             name=group
         )
         return indicator_group
+
+    def clean_shortcode(self):
+        """Return shortcode."""
+        shortcode = self.cleaned_data['shortcode']
+        try:
+            indicator = Indicator.objects.exclude(
+                id=self.instance.id
+            ).get(shortcode=shortcode)
+            raise ValidationError(
+                f"The shortcode has been used by {indicator.name}"
+            )
+        except Indicator.DoesNotExist:
+            return shortcode
 
     @staticmethod
     def model_to_initial(indicator: Indicator):

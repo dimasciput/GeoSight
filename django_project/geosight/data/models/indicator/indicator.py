@@ -43,14 +43,16 @@ class IndicatorGroup(AbstractTerm):
 class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
     """The indicator model."""
 
+    shortcode_helptext = (
+        'A computer-to-computer shortcode for this indicator. '
+        'For example, an abbreviated '
+        'name that you might use to refer to it in a spreadsheet column.'
+    )
+
     shortcode = models.CharField(
         max_length=512,
         null=True, blank=True,
-        help_text=(
-            'A computer-to-computer shortcode for this indicator. '
-            'For example, an abbreviated '
-            'name that you might use to refer to it in a spreadsheet column.'
-        )
+        help_text=shortcode_helptext
     )
     group = models.ForeignKey(
         IndicatorGroup, on_delete=models.SET_NULL,

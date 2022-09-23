@@ -22,7 +22,7 @@ export default function Detail() {
 
   /** When current log is changed */
   useEffect(() => {
-    if (currentLog && currentLog.status === 'Running') {
+    if (currentLog && ['Running', 'Start'].includes(currentLog.status)) {
       setTimeout(function () {
         $.ajax({
           url: currentLog.api,
@@ -73,7 +73,8 @@ export default function Detail() {
                   'HarvesterStatus ' + currentLog.status
                 }>
                 <span>{currentLog.status} </span>
-                <span> {currentLog.note ? '- ' + currentLog.note : ''}</span>
+                <span
+                  dangerouslySetInnerHTML={{ __html: currentLog.note ? '- ' + currentLog.note : '' }}></span>
                 <span
                   className='HarvesterStatusDetail MuiButtonLike'>
               {

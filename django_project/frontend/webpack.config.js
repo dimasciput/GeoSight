@@ -40,6 +40,7 @@ let conf = {
     ExposedAPI: ['./src/pages/Admin/Harvesters/ExposedAPI'],
     HarvesterApiGeography: ['./src/pages/Admin/Harvesters/HarvesterApiGeography'],
     HarvesterApiGeographyAndDate: ['./src/pages/Admin/Harvesters/HarvesterApiGeographyAndDate'],
+    SharepointHarvester: ['./src/pages/Admin/Harvesters/SharepointHarvester'],
   },
   output: {
     path: path.resolve(__dirname, "./bundles/frontend"),
