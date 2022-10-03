@@ -260,7 +260,7 @@ export function FilterControl(
     })[0]
     const fieldName = indicator?.name
     let isDifferentLevel = true
-    if (indicator?.reporting_levels.length > 0 && Object.keys(selectedAdminLevel)) {
+    if (indicator?.reporting_levels && Object.keys(selectedAdminLevel)) {
       const reportingLevel = indicator?.reporting_levels
       isDifferentLevel = !reportingLevel.includes(
         selectedAdminLevel?.level
