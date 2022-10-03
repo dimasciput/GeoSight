@@ -47,8 +47,8 @@ export default function IndicatorsDataReducer(state = initialState, action) {
       }
       default: {
         const data = APIReducer(state, action, INDICATORS_DATA_ACTION_NAME)
-        const { id, reporting_level } = action
-        data.reporting_level = reporting_level
+        const { id, reporting_levels } = action
+        data.reporting_levels = reporting_levels
         if (Object.keys(data).length !== 0) {
           data.id = id;
           const newState = {

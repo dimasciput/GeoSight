@@ -10,6 +10,9 @@ import { GeorepoUrls } from '../../../../../utils/georepo'
 import MapConfig from './MapConfig'
 
 import './style.scss';
+import {
+  deleteAll
+} from "../../../../../store/dashboard/reducers/geometries/actions";
 
 /**
  * Summary dashboard
@@ -93,6 +96,7 @@ export default function SummaryDashboardForm({ changed }) {
                           return evt.value === row.identifier
                         })[0]
                         dispatch(Actions.ReferenceLayer.update(selected));
+                        dispatch(Actions.Geometries.deleteAll());
                       }}
                     /> :
                     <Select placeholder='Loading'/>

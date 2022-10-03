@@ -20,7 +20,7 @@ function request(id) {
   };
 }
 
-function receive(data, error, id, reporting_level) {
+function receive(data, error, id, reporting_levels) {
   return {
     id: id,
     name: INDICATORS_DATA_ACTION_NAME,
@@ -28,7 +28,7 @@ function receive(data, error, id, reporting_level) {
     data,
     error,
     receivedAt: Date.now(),
-    reporting_level: reporting_level
+    reporting_levels: reporting_levels,
   };
 }
 
@@ -47,11 +47,11 @@ export function updateStyle(id, rules) {
   };
 }
 
-export function fetch(dispatch, id, url, reporting_level) {
+export function fetch(dispatch, id, url, reporting_levels) {
   fetchingData(
     url, {}, {}, function (response, error) {
       dispatch(
-        receive(response, error, id, reporting_level)
+        receive(response, error, id, reporting_levels)
       )
     }
   )

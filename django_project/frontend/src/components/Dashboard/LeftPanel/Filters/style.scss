@@ -226,6 +226,8 @@
     background: none;
 
     &.Disabled {
+      cursor: not-allowed;
+
       .FilterExpressionName {
         opacity: 0.5;
       }

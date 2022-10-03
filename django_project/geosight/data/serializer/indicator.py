@@ -43,7 +43,8 @@ class IndicatorSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'category', 'shortcode', 'source', 'description',
             'url',
-            'reporting_level', 'rules', 'last_update', 'permission')
+            'reporting_level', 'reporting_levels', 'rules', 'last_update', 'permission'
+        )
 
 
 class IndicatorAdminListSerializer(serializers.ModelSerializer):

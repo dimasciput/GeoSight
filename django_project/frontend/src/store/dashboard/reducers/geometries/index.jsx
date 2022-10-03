@@ -4,6 +4,8 @@
 
 export const GEOMETRIES_ACTION_NAME = 'GEOMETRIES';
 export const GEOMETRIES_ACTION_TYPE_ADD = 'GEOMETRIES/ADD';
+export const GEOMETRIES_ACTION_TYPE_ADD_LEVEL_DATA = 'GEOMETRIES/ADD_LEVEL_DATA';
+export const GEOMETRIES_ACTION_TYPE_DELETE_ALL = 'GEOMETRIES/DELETE_ALL';
 
 const initialState = {}
 export default function geometriesReducer(state = initialState, action) {
@@ -20,6 +22,19 @@ export default function geometriesReducer(state = initialState, action) {
           newState[level][key] = value
           return newState
         }
+        return state
+      }
+      case GEOMETRIES_ACTION_TYPE_ADD_LEVEL_DATA: {
+        const { level, data } = action
+        if (!state[level]) {
+          const newState = Object.assign({}, state)
+          newState[level] = data
+          return newState
+        }
+        return state
+      }
+      case GEOMETRIES_ACTION_TYPE_DELETE_ALL: {
+        return {}
       }
     }
   }

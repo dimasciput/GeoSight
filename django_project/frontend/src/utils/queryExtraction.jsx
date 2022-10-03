@@ -160,15 +160,15 @@ export function returnDataToExpression(field, operator, value) {
 /**
  * Return query from dictionary
  */
-export function queryFromDictionary(indicators, dictionary, ignoreActive) {
+export function queryFromDictionary(inputData, dictionary, ignoreActive) {
   let query = 'SELECT * FROM '
   let mainFrom = '';
   const dataList = [];
   let idx = 0
-  indicators.map(indicator => {
-    const data = indicator.data;
+  inputData.map(rowData => {
+    const data = rowData.data;
     if (data) {
-      const id = `${IDENTIFIER}${indicator.id}`;
+      const id = `${rowData.id}`;
       if (idx === 0) {
         mainFrom = `${id}`;
         query += `? ${id}`;
@@ -180,8 +180,8 @@ export function queryFromDictionary(indicators, dictionary, ignoreActive) {
     }
   })
 
-  const ids = indicators.map(indicator => {
-    return "indicator_" + indicator.id
+  const ids = inputData.map(indicator => {
+    return indicator.id
   })
 
   const where = returnWhere(dictionary, ignoreActive, ids);

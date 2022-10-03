@@ -61,7 +61,7 @@ export default function ArcgisConfig({ originalData, setData, ArcgisData }) {
   const data = JSON.parse(JSON.stringify(originalData))
 
   useEffect(() => {
-    if (data && ArcgisData?.data) {
+    if (data && ArcgisData?.data && ArcgisData?.data?.renderer) {
       const style = parseArcRESTStyle(ArcgisData.data)
 
       if (!data?.data_fields || data.data_fields.length === 0) {

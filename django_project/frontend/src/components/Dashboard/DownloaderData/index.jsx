@@ -23,8 +23,6 @@ import './style.scss';
  */
 export default function DownloaderData() {
   const filteredGeometries = useSelector(state => state.filteredGeometries)
-  const geometries = useSelector(state => state.geometries)
-  const { indicators } = useSelector(state => state.dashboard.data)
   const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
   const selectedAdminLevel = useSelector(state => state.selectedAdminLevel)
   const indicatorsData = useSelector(state => state.indicatorsData)

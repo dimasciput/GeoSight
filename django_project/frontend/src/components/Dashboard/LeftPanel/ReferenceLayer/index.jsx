@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Actions } from '../../../../store/dashboard'
 import ReferenceLayer from '../../Map/ReferenceLayer'
+import { fetchFeatureList } from "../../../../utils/georepo";
 
 import './style.scss';
 
@@ -16,6 +17,7 @@ import './style.scss';
  */
 export default function ReferenceLayerSection() {
   const dispatch = useDispatch();
+  const geometries = useSelector(state => state.geometries)
   const { referenceLayer } = useSelector(state => state.dashboard.data)
   const referenceLayerData = useSelector(state => state.referenceLayerData)
   const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
@@ -29,6 +31,35 @@ export default function ReferenceLayerSection() {
       onChange(selectedIndicatorLayer.reporting_level)
     }
   }, [referenceLayerData, selectedIndicatorLayer])
+
+  // Onload for default checked and the layer
+  useEffect(() => {
+    if (levels) {
+      levels.map(level => {
+        if (!geometries[level.level]) {
+          (
+            async () => {
+              const geometryData = await fetchFeatureList(
+                preferences.georepo_api.domain + level.url + '/list'
+              )
+              const geometryDataDict = {}
+              geometryData.map(geom => {
+                const code = geom?.identifier?.admin
+                geometryDataDict[code] = {
+                  label: geom.name,
+                  name: geom.name,
+                  code: code
+                }
+              })
+              dispatch(
+                Actions.Geometries.addLevelData(level.level, geometryDataDict)
+              )
+            }
+          )()
+        }
+      })
+    }
+  }, [levels])
 
   /** Change Admin Level **/
   const onChange = (level) => {

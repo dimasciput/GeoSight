@@ -43,6 +43,7 @@ class DashboardIndicatorLayerSerializer(serializers.ModelSerializer):
     last_update = serializers.SerializerMethodField()
     rules = serializers.SerializerMethodField()
     reporting_level = serializers.SerializerMethodField()
+    reporting_levels = serializers.SerializerMethodField()
 
     def get_name(self, obj: DashboardIndicatorLayer):
         """Return dashboard group name."""
@@ -87,12 +88,20 @@ class DashboardIndicatorLayerSerializer(serializers.ModelSerializer):
             return indicator.indicator.reporting_level
         return None
 
+    def get_reporting_levels(self, obj: DashboardIndicatorLayer):
+        """Return last update."""
+        indicators = obj.dashboardindicatorlayerindicator_set.all()
+        levels = []
+        for indicator in indicators:
+            levels += indicator.indicator.reporting_levels
+        return levels
+
     class Meta:  # noqa: D106
         model = DashboardIndicatorLayer
         fields = (
             'id', 'name', 'description', 'style',
             'order', 'group', 'visible_by_default', 'indicators',
-            'last_update', 'rules', 'reporting_level')
+            'last_update', 'rules', 'reporting_level', 'reporting_levels')
 
 
 class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):

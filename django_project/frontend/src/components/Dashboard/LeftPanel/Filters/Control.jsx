@@ -58,6 +58,7 @@ export function FilterControl(
   const dispatcher = useDispatch()
   const [filters, setFilters] = useState(filtersData)
   const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
+  const selectedAdminLevel = useSelector(state => state.selectedAdminLevel)
 
   // Apply the filters query
   useEffect(() => {
@@ -258,11 +259,14 @@ export function FilterControl(
       return indicatorField.id === field
     })[0]
     const fieldName = indicator?.name
-
-    // TODO: Reporting level
-    //  Remove this after aggregation
-    const reportingLevel = indicator?.reporting_level
-    const differentLevel = !editMode && reportingLevel !== selectedIndicatorLayer.reporting_level
+    let isDifferentLevel = true
+    if (indicator?.reporting_levels.length > 0 && Object.keys(selectedAdminLevel)) {
+      const reportingLevel = indicator?.reporting_levels
+      isDifferentLevel = !reportingLevel.includes(
+        selectedAdminLevel?.level
+      )
+    }
+    let differentLevel = !editMode && isDifferentLevel
 
     /**
      * Return filter input
@@ -296,10 +300,6 @@ export function FilterControl(
     }
 
     const ableToExpand = where.allowModify || editMode;
-    if (differentLevel) {
-      return ""
-    }
-
     return <Accordion
       className={'FilterExpression'}
       expanded={!ableToExpand ? false : expanded}
@@ -411,6 +411,8 @@ export default function FilterSection() {
   const geometries = useSelector(state => state.geometries);
   const dispatcher = useDispatch();
 
+  const levels = referenceLayerData[referenceLayer.identifier]?.data?.levels
+
   // Set older filters
   const prevState = useRef();
   prevState.current = '';
@@ -420,27 +422,48 @@ export default function FilterSection() {
     if (!allDataIsReady(indicatorsData)) {
       return
     }
-    let indicatorsList = [];
-    for (const [key, indicatorDataRow] of Object.entries(indicatorsData)) {
-      const indicator = JSON.parse(JSON.stringify(indicatorDataRow))
-      indicatorsList.push(indicator)
-      const codes = geometries[indicator.reporting_level] ? Object.keys(geometries[indicator.reporting_level]) : []
-      if (indicator.data) {
-        const indicatorCodes = indicator.data.map(data => data.geometry_code)
-        const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
-        missingCodes.map(code => {
-          indicator.data.push({
-            geometry_code: code,
-            indicator_id: indicator.id
+    let dataList = [];
+    if (levels) {
+      levels.map(level => {
+        if (geometries[level.level]) {
+          const data = []
+          for (const [key, geomData] of Object.entries(geometries[level.level])) {
+            const geom = JSON.parse(JSON.stringify(geomData))
+            geom.geometry_code = geom.code
+            data.push(geom)
+          }
+          dataList.push({
+            id: `geometry_${level.level}`,
+            reporting_level: level.level,
+            data: data
           })
-        })
-      }
+        }
+      })
+    }
+    for (const [key, indicatorDataRow] of Object.entries(indicatorsData)) {
+      indicatorDataRow.reporting_levels.map(reporting_level => {
+        const indicator = JSON.parse(JSON.stringify(indicatorDataRow))
+        indicator.id = `indicator_${indicator.id}`
+        indicator.reporting_level = reporting_level
+        dataList.push(indicator)
+        const codes = geometries[reporting_level] ? Object.keys(geometries[reporting_level]) : []
+        if (indicator.data) {
+          const indicatorCodes = indicator.data.map(data => data.geometry_code)
+          const missingCodes = codes.filter(code => !indicatorCodes.includes(code))
+          missingCodes.map(code => {
+            indicator.data.push({
+              geometry_code: code,
+              indicator_id: indicator.id
+            })
+          })
+        }
+      })
     }
 
     const currentFilterStr = JSON.stringify(currentFilter)
     if (prevState.current !== currentFilterStr) {
       const filteredGeometries = filteredGeoms(
-        indicatorsList, currentFilter
+        dataList, currentFilter
       )
       if (filteredGeometries) {
         dispatcher(
@@ -464,6 +487,37 @@ export default function FilterSection() {
 
   // get indicator fields
   let indicatorFields = []
+  if (levels) {
+    levels.map(level => {
+      if (geometries[level.level]) {
+        ['code', 'name'].map(key => {
+          const id = `geometry_${level.level}.${key}`
+          indicatorFields.push({
+            'id': id,
+            'name': `${key}`,
+            'group': `Admin - ${level.level_name}`,
+            'data': [...new Set(
+              Object.keys(geometries[level.level]).map(geom => {
+                return geometries[level.level][geom][key]
+              })
+            )],
+            'reporting_levels': [level.level]
+          })
+        })
+      } else {
+        ['code', 'name'].map(key => {
+          const id = `geometry_${level.level}.${key}`
+          indicatorFields.push({
+            'id': id,
+            'name': `${key}`,
+            'group': `Admin - ${level.level_name}`,
+            'data': ['loading'],
+            'reporting_levels': [level.level]
+          })
+        })
+      }
+    })
+  }
   indicators.map(indicator => {
     const indicatorData = indicatorsData[indicator.id]
     if (indicatorData?.fetched) {
@@ -489,13 +543,26 @@ export default function FilterSection() {
                 return data
               }))
             ],
-            // TODO: Reporting level
-            //  Remove this after aggregation
-            'reporting_level': indicatorData.reporting_level
+            'reporting_levels': indicatorData?.reporting_levels
           })
         })
       }
       indicatorFields = [...new Set(indicatorFields)]
+    } else {
+      let keys = ['label', 'value']
+      keys.forEach(key => {
+        const id = `${IDENTIFIER}${indicator.id}.${key}`
+        if (['indicator_id', 'style', 'date', 'geometry_code'].includes(key)) {
+          return
+        }
+        indicatorFields.push({
+          'id': id,
+          'name': `${key}`,
+          'group': indicator.name,
+          'data': ['loading'],
+          'reporting_levels': indicatorData?.reporting_levels
+        })
+      })
     }
   })
 

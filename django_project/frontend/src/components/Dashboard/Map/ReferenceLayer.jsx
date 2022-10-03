@@ -214,12 +214,6 @@ export default function ReferenceLayer() {
         if (!allowed) {
           return [];
         } else {
-          // If allowed, check the style
-          dispatch(
-            Actions.Geometries.add(
-              properties.code, properties
-            )
-          );
           let style = null;
           if (indicatorShow) {
             if (currentIndicatorLayer?.indicators?.length === 1) {

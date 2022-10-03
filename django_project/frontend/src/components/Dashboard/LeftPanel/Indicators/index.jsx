@@ -24,7 +24,7 @@ export function Indicator({ indicator }) {
     if (!indicatorData?.data) {
       dispatch(
         Actions.IndicatorsData.fetch(
-          dispatch, indicator.id, indicator.url, indicator.reporting_level
+          dispatch, indicator.id, indicator.url, indicator.reporting_levels
         )
       );
     }

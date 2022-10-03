@@ -99,6 +99,18 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
         return 0
 
     @property
+    def reporting_levels(self):
+        """Return reporting level."""
+        levels = list(
+            set(
+                self.query_values().values_list('admin_level', flat=True)
+            )
+        )
+        if levels:
+            return levels
+        return []
+
+    @property
     def last_update(self):
         """Return reporting level."""
         first_value = self.query_values().first()
