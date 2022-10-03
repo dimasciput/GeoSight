@@ -37,6 +37,6 @@ Like users, the intial sharing page allows for groups to be removed from the pro
 ## Adjusting General Access
 General access is the level of availablity for a given project to the entirety of GeoSight. Intially, all projects are viewable to all users. However, one may decide to make a project available to select users for a variety of reasons.
 
-"Organization Access" determines what organizations may be able to access the project. (This option is currently unavailable).
+"Organization Access" determines on what level (and if) the entirety of UNICEF can access this project. The option "None" does not allow the entire organization to see the project. Selection of "Read" would allow everyone to view the project while "Write" would allow everyone to adjust and interact with the project.
 
 "Public Access" allows all users to see the project. Select "read" to allow users to view the project and "None" to hide it from all public users.
