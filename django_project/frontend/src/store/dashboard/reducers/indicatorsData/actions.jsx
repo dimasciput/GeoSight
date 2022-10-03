@@ -1,4 +1,7 @@
-import { INDICATORS_DATA_ACTION_NAME } from './index'
+import {
+  INDICATORS_DATA_ACTION_NAME,
+  INDICATORS_DATA_ACTION_TYPE_STYLE
+} from './index'
 import { fetchingData } from "../../../../Requests";
 
 /**
@@ -29,6 +32,21 @@ function receive(data, error, id, reporting_level) {
   };
 }
 
+
+/**
+ * Update style of indicator data.
+ * @param {object} id indicator ID.
+ * @param {object} rules Rules of data.
+ */
+export function updateStyle(id, rules) {
+  return {
+    name: INDICATORS_DATA_ACTION_NAME,
+    type: INDICATORS_DATA_ACTION_TYPE_STYLE,
+    id: id,
+    rules: rules
+  };
+}
+
 export function fetch(dispatch, id, url, reporting_level) {
   fetchingData(
     url, {}, {}, function (response, error) {
@@ -41,5 +59,5 @@ export function fetch(dispatch, id, url, reporting_level) {
 }
 
 export default {
-  fetch
+  fetch, updateStyle
 }

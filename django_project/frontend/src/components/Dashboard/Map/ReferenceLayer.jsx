@@ -2,7 +2,7 @@
    REFERENCE LAYER
    ========================================================================== */
 
-import React, { Fragment, useEffect, useState, useRef } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import L from 'leaflet';
@@ -19,19 +19,20 @@ import { GeorepoUrls } from '../../../utils/georepo'
 
 // Temporary fix because fake stop does not work on leaflet 1.8.0
 L.Canvas.Tile.include({
-	_onClick: function (e) {
-		var point = this._map.mouseEventToLayerPoint(e).subtract(this.getOffset()), layer, clickedLayer;
+  _onClick: function (e) {
+    var point = this._map.mouseEventToLayerPoint(e).subtract(this.getOffset()),
+      layer, clickedLayer;
 
-		for (var id in this._layers) {
-			layer = this._layers[id];
-			if (layer.options.interactive && layer._containsPoint(point) && !this._map._draggableMoved(layer)) {
-				clickedLayer = layer;
-			}
-		}
-		if (clickedLayer)  {
-			this._fireEvent([clickedLayer], e);
-		}
-	},
+    for (var id in this._layers) {
+      layer = this._layers[id];
+      if (layer.options.interactive && layer._containsPoint(point) && !this._map._draggableMoved(layer)) {
+        clickedLayer = layer;
+      }
+    }
+    if (clickedLayer) {
+      this._fireEvent([clickedLayer], e);
+    }
+  },
 });
 
 /**
@@ -153,14 +154,10 @@ export default function ReferenceLayer() {
   // If there is currentIndicatorLayer that selected
   // Use level from that
   let noDataRule = null
-  let otherDataRule = null
   if (currentIndicatorLayer?.rules) {
     noDataRule = currentIndicatorLayer.rules.filter(
       rule => rule.active
     ).find(rule => rule.rule.toLowerCase() === 'no data')
-    otherDataRule = currentIndicatorLayer.rules.filter(
-      rule => rule.active
-    ).find(rule => rule.rule.toLowerCase() === 'other data')
   }
 
   // When reference layer changed, fetch reference data
@@ -192,18 +189,6 @@ export default function ReferenceLayer() {
                 if (!valuesByGeometry[data.geometry_code]) {
                   valuesByGeometry[data.geometry_code] = []
                 }
-                const rules = indicator.rules
-                const filteredRules = rules.filter(rule => {
-                  const ruleStr = rule.rule.replaceAll('x', data.value).replaceAll('and', '&&').replaceAll('or', '||')
-                  try {
-                    return eval(ruleStr)
-                  } catch (err) {
-                    return false
-                  }
-                })
-                let style = filteredRules[0]
-                style = style ? style : otherDataRule;
-                data.style = style
                 valuesByGeometry[data.geometry_code].push(data);
               })
             }
@@ -213,7 +198,7 @@ export default function ReferenceLayer() {
       const options = {
         rendererFactory: L.canvas.tile,
         maxDetailZoom: 8,
-        vectorTileLayerStyles:{},
+        vectorTileLayerStyles: {},
         interactive: true
       };
 
@@ -227,14 +212,7 @@ export default function ReferenceLayer() {
           allowed = !where || !geometryCodes.length === 0 || geometryCodes.includes(properties.code)
         }
         if (!allowed) {
-          // If not allowed, opacity 0
-          return {
-            fillOpacity: 0,
-            stroke: false,
-            fill: false,
-            opacity: 0,
-            weight: 0,
-          };
+          return [];
         } else {
           // If allowed, check the style
           dispatch(
@@ -290,19 +268,19 @@ export default function ReferenceLayer() {
         let properties = {}
         if (currentIndicatorLayer?.indicators?.length === 1) {
           if (valuesByGeometry[featureProperties.code]) {
-            properties = Object.assign({}, valuesByGeometry[featureProperties.code][0])
+            properties = Object.assign({}, {}, valuesByGeometry[featureProperties.code][0])
           }
         }
-        properties = Object.assign({}, properties, featureProperties)
+        properties[featureProperties.type] = featureProperties.label
+        delete featureProperties.label
+        properties = Object.assign({}, featureProperties, properties)
         delete properties.geometry_code
         delete properties.indicator_id
         delete properties.level
-        delete properties.label
         delete properties.type
         delete properties.code
         delete properties.centroid
         delete properties.style
-        properties[featureProperties.type] = featureProperties.label
         properties['geometry_code'] = featureProperties.code
         properties['name'] = currentIndicatorLayer.name
         delete properties.parent_code

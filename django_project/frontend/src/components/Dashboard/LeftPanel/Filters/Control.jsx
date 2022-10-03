@@ -475,12 +475,12 @@ export default function FilterSection() {
         })
         keys.forEach(key => {
           const id = `${IDENTIFIER}${indicator.id}.${key}`
-          if (key === 'indicator_id') {
+          if (['indicator_id', 'style', 'date', 'geometry_code'].includes(key)) {
             return
           }
           indicatorFields.push({
             'id': id,
-            'name': `${indicator.name}.${key}`,
+            'name': `${key}`,
             'group': indicator.name,
             'data': [...new Set(
               data.map(data => {

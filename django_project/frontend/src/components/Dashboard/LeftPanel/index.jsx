@@ -10,6 +10,7 @@ import MapInfo from './MapInfo'
 import Basemaps from './Basemaps'
 import ProjectOverviewSection from './ProjectOverview'
 import ContextLayersAccordion from './ContextLayers'
+import Indicators from './Indicators'
 import IndicatorLayersAccordion from './IndicatorLayers'
 import ReferenceLayerSection from './ReferenceLayer'
 import FiltersAccordion from './Filters'
@@ -80,6 +81,7 @@ export default function LeftPanel({ setLeftExpanded }) {
             expanded={expanded === 'indicators'}
             handleChange={handleChange}
           />
+          <Indicators/>
         </div>
         <div className='dashboard__content-wrapper__inner filter-wrapper'>
           <FiltersAccordion/>

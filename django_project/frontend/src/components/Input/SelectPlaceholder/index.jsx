@@ -63,7 +63,7 @@ export default function SelectPlaceholder(
           if (label) {
             label = <div className='MuiSelectValue'>
               <div className='MuiSelectValueGroup'>{label.group}</div>
-              <div>{label.name.split('.')[1]}</div>
+              <div>{label.name}</div>
             </div>
           }
         } else {

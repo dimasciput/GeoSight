@@ -27,30 +27,12 @@ import CustomPopover from "../../../CustomPopover";
 export function IndicatorLayer(
   { checked, layer, onChange }
 ) {
-  const dispatch = useDispatch();
   const { indicators } = useSelector(state => state.dashboard.data);
   const indicatorsData = useSelector(state => state.indicatorsData);
   const [showLegend, setShowLegend] = useState(checked);
   const showLegendHandler = (show) => {
     setShowLegend(show);
   };
-
-  /**
-   * Fetch indicator data
-   */
-  useEffect(() => {
-    layer.indicators.map(indicatorData => {
-      const indicator = indicators.find(row => row.id === indicatorData.id)
-      const { id } = indicator
-      if (!indicatorsData[id]?.data) {
-        dispatch(
-          Actions.IndicatorsData.fetch(
-            dispatch, id, indicator.url, indicator.reporting_level
-          )
-        );
-      }
-    })
-  }, []);
 
   // --------------------------------------------
   // Check loading and errors
