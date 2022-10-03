@@ -22,3 +22,13 @@ Finally, select the mathematical operation you wish to apply to the indicator. C
 If you wish, select the source value. (This option is currently unavailable)
 
 If adding group widgets, select the group value. (This option is currently unavailable)
+
+Finally, click "Apply" to create the widget(s).
+
+### Grouping Widgets
+If you wish to group widgets into categories, select "Add group" from the widget page.
+
+This will create a sub-heading group where you can deposit indicators. Click the pencil to adjust the name.
+
+
+Make sure to save your changes when you are complete.
