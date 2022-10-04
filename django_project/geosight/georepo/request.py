@@ -25,7 +25,7 @@ class GeorepoUrl:
         """Return API link for reference detail."""
         return (
             f'{self.georepo_url}/api/reference-layer/<identifier>'
-            f'?token={self.georepo_api_key}'
+            f'?token={self.georepo_api_key}&cached=False'
         )
 
     @property

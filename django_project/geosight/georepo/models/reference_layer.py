@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from core.models.preferences import SitePreferences
 from geosight.data.models.indicator import Indicator
+from geosight.georepo.request import GeorepoRequest
+from geosight.georepo.request import GeorepoUrl
 from geosight.permission.models.manager import PermissionManager
 
 
@@ -30,8 +32,10 @@ class ReferenceLayer(models.Model):
     @property
     def detail_url(self):
         """Return API link for reference detail."""
-        self.georepo_url = SitePreferences.preferences().georepo_url.strip('/')
-        return f'{self.georepo_url}/api/reference-layer/{self.identifier}/'
+        url = GeorepoUrl()
+        return url.reference_layer_detail.replace(
+            '<identifier>', self.identifier
+        )
 
 
 class ReferenceLayerIndicator(models.Model):
