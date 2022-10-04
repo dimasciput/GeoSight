@@ -90,7 +90,7 @@ class IndicatorValueDetail(APIView):
         indicator = get_object_or_404(Indicator, pk=pk)
         try:
             indicator_value = indicator.indicatorvalue_set.get(pk=value_id)
-            delete_permission_resource(indicator_value, request.user)
+            delete_permission_resource(indicator, request.user)
             indicator_value.delete()
             return Response('Deleted')
         except IndicatorValue.DoesNotExist:
