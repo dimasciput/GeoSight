@@ -159,9 +159,9 @@ export default function List(
   let rows = data;
   if (search) {
     rows = rows.filter(row => {
-      return row.name.toLowerCase().includes(search)
-        || row.category.toLowerCase().includes(search)
-        || row.description.toLowerCase().includes(search)
+      return row.name?.toLowerCase().includes(search)
+        || row.category?.toLowerCase().includes(search)
+        || row.description?.toLowerCase().includes(search)
         || row.shortcode?.toLowerCase().includes(search)
     })
   }
