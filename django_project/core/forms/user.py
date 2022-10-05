@@ -1,6 +1,7 @@
 """User form."""
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
@@ -37,6 +38,10 @@ class UserForm(forms.ModelForm):
                 "A user with that username already exists."
             )
         return username
+
+    def clean_password(self):
+        """Check password."""
+        return make_password(self.cleaned_data['password'])
 
     class Meta:  # noqa: D106
         model = User

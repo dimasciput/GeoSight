@@ -74,6 +74,10 @@
     width: 100%;
   }
 
+  input[type='checkbox'] {
+    width: fit-content;
+  }
+
   textarea {
     padding: 0.5rem;
   }
