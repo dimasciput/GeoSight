@@ -156,7 +156,7 @@ export default function ReferenceLayerCentroid({ map, pane }) {
           const indicatorsByGeom = {}
           selectedIndicatorLayer.indicators.map(indicatorLayer => {
             const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
-            if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
+            if (indicator && indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
               if (indicatorsData[indicator.id].data) {
                 indicatorsData[indicator.id].data.forEach(function (data) {
                   if (!indicatorsByGeom[data.geometry_code]) {
