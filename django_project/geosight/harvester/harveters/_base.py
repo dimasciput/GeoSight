@@ -87,6 +87,16 @@ class BaseHarvester(ABC):
         frequency = self.harvester.frequency
         return difference.days >= frequency
 
+    def check_attributes(self):
+        """Check attributes."""
+        # check the attributes
+        for attr_key, attr_value in \
+                self.__class__.additional_attributes().items():
+            if attr_value.get('required', True):
+                if not self.attributes[attr_key]:
+                    raise HarvestingError(
+                        f'{attr_key} is required and it is empty')
+
     def run(self, force=False):
         """To run the process."""
         if self.allow_to_harvest_new_data or force:
@@ -97,15 +107,7 @@ class BaseHarvester(ABC):
                 )
                 self.log.status = LogStatus.RUNNING
                 self.log.save()
-                # check the attributes
-                for attr_key, attr_value in \
-                        self.__class__.additional_attributes().items():
-                    if attr_value.get('required', True):
-                        if not self.attributes[attr_key]:
-                            raise HarvestingError(
-                                f'{attr_key} is required and it is empty'
-                            )
-
+                self.check_attributes()
                 self._process()
                 self._done()
             except HarvestingError as e:
@@ -148,8 +150,9 @@ class BaseHarvester(ABC):
 
     def _update(self, message=''):
         """Update note for the log."""
-        self.log.note = message
-        self.log.save()
+        if self.log:
+            self.log.note = message
+            self.log.save()
 
     def save_indicator_data(
             self, value: str, date: datetime.date, geometry: str

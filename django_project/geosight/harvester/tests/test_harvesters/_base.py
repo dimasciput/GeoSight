@@ -1,6 +1,7 @@
 """Base for test API."""
 from django.test.testcases import TestCase
 
+from core.models.preferences import SitePreferences
 from geosight.data.tests.model_factories import (
     IndicatorF, IndicatorGroupF,
     IndicatorRuleF
@@ -12,9 +13,16 @@ class BaseHarvesterTest(TestCase):
     """Base for test API."""
 
     admin_level = 1
+    georepo_url = 'http://test.com'
+    georepo_api_key = 'AAA'
 
     def setUp(self):
         """To setup tests."""
+        preference = SitePreferences.preferences()
+        preference.georepo_url = self.georepo_url
+        preference.georepo_api_key = self.georepo_api_key
+        preference.save()
+
         self.reference_layer = ReferenceLayerF()
         self.indicator = IndicatorF(
             group=IndicatorGroupF()

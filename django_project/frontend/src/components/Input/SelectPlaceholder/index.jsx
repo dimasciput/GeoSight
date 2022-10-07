@@ -13,10 +13,11 @@ import './style.scss'
  * @param {str} placeholder Placeholder.
  * @param {array} list list of data.
  * @param {str} initValue Value of input.
+ * @param {string} className Class name.
  * @param {function} onChangeFn When the value changed.
  */
 export default function SelectPlaceholder(
-  { placeholder, list, initValue, onChangeFn }
+  { placeholder, list, initValue, className = "", onChangeFn }
 ) {
   const [value, setValue] = useState(initValue ? initValue : 0);
 
@@ -54,7 +55,7 @@ export default function SelectPlaceholder(
       }
     }
     value={value}
-    className={value === 0 ? 'MuiInputBase-empty' : ''}
+    className={value === 0 ? 'MuiInputBase-empty ' + className : className}
     renderValue={
       value => {
         let label

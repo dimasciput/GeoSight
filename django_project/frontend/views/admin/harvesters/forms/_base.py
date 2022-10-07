@@ -127,20 +127,21 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
             except HarvesterAttribute.DoesNotExist:
                 pass
 
-            attributes.append(
-                {
-                    'name': name,
-                    'title': attr.get('title', name).replace(
-                        '_', ' ').capitalize(),
-                    'value': value if value else '',
-                    'description': attr.get('description', ''),
-                    'required': attr.get('required', True),
-                    'type': attr.get('type', ''),
-                    'class': attr.get('class', ''),
-                    'data': attr.get('data', {}),
-                    'read_only': attr.get('read_only', False),
-                }
-            )
+            attribute = {
+                'name': name,
+                'title': attr.get('title', name).replace(
+                    '_', ' ').capitalize(),
+                'value': value if value else '',
+                'description': attr.get('description', ''),
+                'required': attr.get('required', True),
+                'type': attr.get('type', ''),
+                'class': attr.get('class', ''),
+                'data': attr.get('data', {}),
+                'read_only': attr.get('read_only', False)
+            }
+            if attr.get('options', None):
+                attribute['options'] = attr.get('options', None)
+            attributes.append(attribute)
         context.update(
             {
                 'indicator': harvester.indicator if harvester else None,

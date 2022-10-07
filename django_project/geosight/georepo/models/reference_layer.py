@@ -3,7 +3,6 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from core.models.preferences import SitePreferences
 from geosight.data.models.indicator import Indicator
 from geosight.georepo.request import GeorepoRequest
 from geosight.georepo.request import GeorepoUrl
@@ -35,6 +34,13 @@ class ReferenceLayer(models.Model):
         url = GeorepoUrl()
         return url.reference_layer_detail.replace(
             '<identifier>', self.identifier
+        )
+
+    def geojson(self, admin_level: int):
+        """Return geojson by admin level."""
+        return GeorepoRequest().get_reference_layer_geojson(
+            self.identifier,
+            admin_level
         )
 
 

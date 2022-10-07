@@ -16,7 +16,7 @@ export function SelectWithList({ list, value, ...props }) {
     list.map((row, idx) => {
       const option = {
         value: row.value !== undefined ? row.value : row,
-        label: row.name !== undefined ? row.name : row
+        label: row.name !== undefined ? row.name : row.label !== undefined ? row.label : row
       }
       if (!props.isMulti) {
         if ((value !== undefined && value === option.value) || (props.required && idx === 0)) {
@@ -33,6 +33,7 @@ export function SelectWithList({ list, value, ...props }) {
 
   return (
     <Select
+      menuPlacement={'auto'}
       options={options} value={defaultValue} {...props}/>
   )
 }

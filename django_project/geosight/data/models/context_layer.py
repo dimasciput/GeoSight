@@ -1,4 +1,8 @@
 """Context layer models."""
+import json
+from base64 import b64encode
+
+import requests
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,6 +27,15 @@ class ContextLayerGroup(AbstractTerm):
     def save(self, *args, **kwargs):
         """Override save."""
         super(ContextLayerGroup, self).save(*args, **kwargs)
+
+
+class ContextLayerRequestError(Exception):
+    """Error class for ContextLayer Request."""
+
+    def __init__(self, message):
+        """init."""
+        self.message = message
+        super().__init__(self.message)
 
 
 class ContextLayer(AbstractEditData, AbstractTerm):
@@ -97,6 +110,100 @@ class ContextLayer(AbstractEditData, AbstractTerm):
                 as_label=field.get('as_label', False),
                 order=idx
             )
+
+    def _request(self, url, headers=None):
+        """Return request of context layer."""
+        if not headers:
+            headers = {}
+
+        if self.username and self.password:
+            basic_auth = b64encode(
+                bytes(f"{self.username}:{self.password}")
+            ).decode("ascii")
+            headers['Authorization'] = f'Basic {basic_auth}'
+        if self.token:
+            headers['Authorization'] = f'Token {self.token}'
+
+        response = requests.get(url=url, headers=headers)
+        if response.status_code != 200:
+            raise ContextLayerRequestError(
+                f"Error fetching on {url} "
+                f"- {response.status_code} - {response.text}"
+            )
+        return response
+
+    @property
+    def arcgis_definition(self):
+        """Return arcgis definition."""
+        if self.layer_type == LayerType.ARCGIS:
+            base_url = self.url.split('?')[0]
+            return self._request(url=base_url + '?f=json')
+        else:
+            return None
+
+    def _arcgis_geojson(self, page: int = 0, bbox=None):
+        """Return geojson of context layer if arcgis."""
+        # If page is 0, we need to check if it is paginated
+        # If not we will return all data
+        limit = 100
+        base_url = self.url.split('?')[0]
+        parameters = [
+            'where=1=1', 'returnGeometry=true', 'outSR=4326', 'outFields=*',
+            'inSR=4326', 'geometryType=esriGeometryEnvelope', 'f=geojson'
+        ]
+        if bbox:
+            geom = {
+                "xmin": bbox[0], "ymin": bbox[1], "xmax": bbox[2],
+                "ymax": bbox[3], "spatialReference": {"wkid": 4326}
+            }
+            parameters += [f'geometry={json.dumps(geom)}']
+        paginated_parameters = parameters + [
+            f'resultOffset={page * limit}',
+            f'resultRecordCount={limit}'
+        ]
+        request_url = f'{base_url}/query?'
+        if page == 0:
+            response = self.arcgis_definition
+            output = {
+                "type": "FeatureCollection",
+                "crs": {"type": "name", "properties": {"name": "EPSG:4326"}},
+                "features": []
+            }
+            try:
+                # Check if paginated or not
+                paginated = response.json()['advancedQueryCapabilities'][
+                    'supportsPaginationOnAggregatedQueries']
+                if paginated:
+                    # If paginated use the pagination url
+                    # Call next page
+                    output['features'] += self._request(
+                        request_url + '&'.join(paginated_parameters)
+                    ).json()['features'] + self._arcgis_geojson(
+                        page + 1, bbox=bbox
+                    )
+                else:
+                    raise KeyError
+            except KeyError:
+                # If not paginated, call whole query
+                output['features'] = self._request(
+                    request_url + '&'.join(parameters)
+                ).json()['features']
+            return output
+        else:
+            # Call next page
+            features = self._request(
+                request_url + '&'.join(paginated_parameters)
+            ).json()['features']
+            if features:
+                features += self._arcgis_geojson(page + 1, bbox=bbox)
+            return features
+
+    def geojson(self, bbox=None):
+        """Return geojson of context layer."""
+        if self.layer_type == LayerType.ARCGIS:
+            """This is for ARCGIS layer."""
+            return self._arcgis_geojson(bbox=bbox)
+        return None
 
 
 class ContextLayerFieldAbstract(models.Model):

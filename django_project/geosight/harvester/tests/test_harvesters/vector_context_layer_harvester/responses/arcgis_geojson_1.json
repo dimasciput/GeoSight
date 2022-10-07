@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "id": 0,
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0,
+          0
+        ]
+      },
+      "properties": {
+        "OBJECTID": 0,
+        "name": "A",
+        "population": 10,
+        "male": 2,
+        "female": 8,
+        "update_date": 1640998861000
+      }
+    },
+    {
+      "id": 1,
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1,
+          1
+        ]
+      },
+      "properties": {
+        "OBJECTID": 1,
+        "name": "B",
+        "population": 20,
+        "male": 10,
+        "female": 10,
+        "update_date": 1641002461000
+      }
+    },
+    {
+      "id": 2,
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7,
+          7
+        ]
+      },
+      "properties": {
+        "OBJECTID": 2,
+        "name": "C",
+        "population": 15,
+        "male": 5,
+        "female": 10,
+        "update_date": 1640998861000
+      }
+    },
+    {
+      "id": 8,
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1,
+          -1
+        ]
+      },
+      "properties": {
+        "OBJECTID": 8,
+        "name": "OUT2",
+        "population": 10,
+        "male": 5,
+        "female": 5,
+        "update_date": 1641002461000
+      }
+    }
+  ]
+}

@@ -38,11 +38,17 @@ ExcelHarvester = (
     'geosight.harvester.harveters.excel_harvester.ExcelHarvester',
     'Excel Harvesters',
 )
+VectorContextLayerHarvester = (
+    'geosight.harvester.harveters.'
+    'vector_context_layer_harvester.VectorContextLayerHarvester',
+    'Vector Context Layer Harvester',
+)
 HARVESTERS = (
     APIWithGeographyAndTodayDate,
     APIListWithGeographyAndDate,
     SharepointHarvester,
     UsingExposedAPI,
+    VectorContextLayerHarvester
 )
 ALL_HARVESTERS = HARVESTERS + (
     ExcelHarvester,

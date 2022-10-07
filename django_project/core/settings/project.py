@@ -26,8 +26,18 @@ DATABASES = {
         'HOST': os.environ['DATABASE_HOST'],
         'PORT': 5432,
         'TEST_NAME': 'unittests',
+    },
+    'temp': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ['DATABASE_TEMP_NAME'],
+        'USER': os.environ['DATABASE_USERNAME'],
+        'PASSWORD': os.environ['DATABASE_PASSWORD'],
+        'HOST': os.environ['DATABASE_HOST'],
+        'PORT': 5432,
+        'TEST_NAME': 'unittests',
     }
 }
+DATABASE_ROUTERS = ['core.router.Router']
 
 # Due to profile page does not available,
 # this will redirect to home page after login

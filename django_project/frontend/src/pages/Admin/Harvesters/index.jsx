@@ -16,13 +16,16 @@ import './style.scss';
  * @param {bool} geom_mapping Is the harvester has geom mapping.
  * @param {Array} attributes Attributes of data.
  * @param {Function} setAttributes Set Attribute Functions.
+ * @param {Array} excludedAttributes Excluded attributes that will be rendered.
  * @param {React.Component} children React component to be rendered
  */
 export default function Harvesters(
   {
     is_harvester,
     has_indicator,
-    attributes, setAttributes, children
+    attributes, setAttributes,
+    excludedAttributes = [],
+    children
   }
 ) {
 
@@ -131,7 +134,28 @@ export default function Harvesters(
         )
     }
   }
+  `
+  /** Function to update attribute **/`
+  const updateAttribute = (name, value) => {
+    const ref_attr = attributes.find(attr => attr.name === name)
+    if (!ref_attr) {
+      attributes.push({
+        name: name,
+        value: value
+      })
+    } else {
+      ref_attr.value = value
+    }
+  }
 
+  // Indicator list
+  useEffect(() => {
+      updateAttribute('reference_layer', reference)
+      updateAttribute('admin_level', level)
+      updateAttribute('indicator', indicator)
+      setAttributes([...attributes])
+    }, [reference, level, indicator]
+  )
 
   // When reference changed
   useEffect(() => {
@@ -317,6 +341,11 @@ export default function Harvesters(
 
           {
             attributes.map(attribute => {
+              if ([
+                'reference_layer', 'admin_level', 'indicator'
+              ].concat(excludedAttributes).includes(attribute.name)) {
+                return ""
+              }
               return (
                 <div key={attribute.name} className="BasicFormSection">
                   <label

@@ -41,6 +41,7 @@ let conf = {
     HarvesterApiGeography: ['./src/pages/Admin/Harvesters/HarvesterApiGeography'],
     HarvesterApiGeographyAndDate: ['./src/pages/Admin/Harvesters/HarvesterApiGeographyAndDate'],
     SharepointHarvester: ['./src/pages/Admin/Harvesters/SharepointHarvester'],
+    VectorContextLayerHarvester: ['./src/pages/Admin/Harvesters/VectorContextLayerHarvester'],
   },
   output: {
     path: path.resolve(__dirname, "./bundles/frontend"),

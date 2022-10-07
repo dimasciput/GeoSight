@@ -9,6 +9,9 @@ from geosight.harvester.api.harvester_push_api import (
     HarvesterPushIndicatorValues, HarvesterPushIndicatorValuesBatch
 )
 from geosight.harvester.api.sharepoint import SharepointFileDetail
+from geosight.harvester.api.vector_context_layer_harvester import (
+    VectorContextLayerTestConfiguration
+)
 
 harvester_api = [
     url(
@@ -50,4 +53,9 @@ sharepoint = [
 urlpatterns = [
     url(r'^api/', include(api)),
     url(r'^sharepoint/', include(sharepoint)),
+    url(
+        r'^vector-context-layer-harvester/test-data',
+        VectorContextLayerTestConfiguration.as_view(),
+        name='vector-context-layer-harvester-test-configuration'
+    ),
 ]

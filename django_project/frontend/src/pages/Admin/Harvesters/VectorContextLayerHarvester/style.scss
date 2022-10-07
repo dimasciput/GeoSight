@@ -1,0 +1,66 @@
+/* ==========================================================================
+   VectorContextLayerHarvester Content
+   ========================================================================== */
+@import '../../../../app/variables';
+
+.InputInLine {
+  display: flex;
+
+  & > div {
+    min-width: 50%;
+    flex-grow: 1;
+  }
+
+  input[type="number"] {
+    height: 38px;
+  }
+
+  .BasicFormSection {
+    margin-bottom: 0;
+  }
+}
+
+.HarvesterForm {
+  .BasicFormSection {
+    input:disabled {
+      border: 1px solid $disabled-color !important;
+      color: $disabled-color;
+      cursor: pointer;
+    }
+  }
+}
+
+.WhereConfigurationModal {
+  .modal--box {
+    max-width: 90%;
+  }
+}
+
+.TestConfiguration {
+  width: 100%;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.TestConfigurationModal {
+  .modal--box {
+    max-width: 90%;
+
+    .loading, .error {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .modal--content {
+      padding: 0 !important;
+
+      .AdminBaseInput {
+        margin-top: 1rem;
+      }
+
+      .AdminTable {
+        height: 500px;
+      }
+    }
+  }
+}

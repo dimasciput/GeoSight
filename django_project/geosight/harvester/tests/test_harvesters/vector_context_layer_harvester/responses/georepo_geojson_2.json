@@ -1,0 +1,48 @@
+{
+  "page": 2,
+  "total_page": 2,
+  "page_size": 2,
+  "results": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "id": 1,
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                0,
+                10
+              ],
+              [
+                10,
+                10
+              ],
+              [
+                10,
+                20
+              ],
+              [
+                0,
+                20
+              ],
+              [
+                0,
+                10
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "name": "CC",
+          "level_name": "Top",
+          "identifier": {
+            "admin": "CC"
+          }
+        }
+      }
+    ]
+  }
+}

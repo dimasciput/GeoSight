@@ -7,7 +7,7 @@ from frontend.views.admin.harvesters import (
     HarvesterDetail, MetaIngestorForm, HarvesterListView,
     HarvesterAPIWithGeographyAndDateView,
     HarvesterAPIWithGeographyAndTodayDateView,
-    SharepointHarvesterView
+    SharepointHarvesterView, VectorContextLayerHarvesterView
 )
 
 harvester_create_form_url = [
@@ -36,6 +36,11 @@ harvester_create_form_url = [
         MetaIngestorForm.as_view(),
         name=MetaIngestorForm().url_create_name
     ),
+    url(
+        r'^vector-context-layer',
+        VectorContextLayerHarvesterView.as_view(),
+        name=VectorContextLayerHarvesterView().url_create_name
+    ),
 ]
 harvester_edit_form_url = [
     url(
@@ -62,6 +67,11 @@ harvester_edit_form_url = [
         r'^meta-ingestor',
         MetaIngestorForm.as_view(),
         name=MetaIngestorForm().url_edit_name
+    ),
+    url(
+        r'^vector-context-layer',
+        VectorContextLayerHarvesterView.as_view(),
+        name=VectorContextLayerHarvesterView().url_edit_name
     ),
 ]
 harvester_url = [

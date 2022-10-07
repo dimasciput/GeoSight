@@ -121,7 +121,7 @@ export async function postJSON(url, data) {
 
     if (response.status >= 400) {
       const err = new Error(response.statusText);
-      err.data = error;
+      err.data = response;
       throw err;
     }
     return response;

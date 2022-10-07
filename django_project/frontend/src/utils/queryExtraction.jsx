@@ -41,6 +41,9 @@ export const INIT_DATA = {
   },
   WHERE: () => {
     return Object.assign({}, {
+      field: '',
+      operator: '=',
+      whereOperator: WHERE_OPERATOR.AND,
       type: TYPE.EXPRESSION
     })
   }
@@ -59,19 +62,43 @@ export function queryIndicator(indicatorData) {
  * @param where
  * @param ignoreActive
  * @param ids
+ * @param sameGroupOperator If the operator are same in groups queries.
  */
-export function returnWhere(where, ignoreActive, ids) {
+export function returnWhere(where, ignoreActive, ids, sameGroupOperator = true) {
   switch (where.type) {
     case TYPE.GROUP:
-      const queries = where.queries.map(query => {
-        return returnWhere(query, ignoreActive, ids)
+      const queriesData = where.queries.filter(query => {
+        if (query.type === TYPE.GROUP) {
+          return query.queries.length
+        }
+        return true
+      });
+      const queries = queriesData.map((query, idx) => {
+        const queryStr = returnWhere(query, ignoreActive, ids, sameGroupOperator)
+        if (sameGroupOperator || idx === where.queries.length - 1) {
+          return queryStr
+        } else {
+          const targetQuery = queriesData[idx + 1];
+          if (targetQuery) {
+            return `${queryStr} ${targetQuery?.whereOperator ? targetQuery?.whereOperator : targetQuery?.operator}`
+          } else {
+            return `${queryStr}`
+          }
+        }
       }).filter(el => el.length)
+
       if (queries.length === 0) {
         return ''
       } else {
-        return `(${
-          queries.join(` ${where.operator} `)
-        })`
+        if (sameGroupOperator) {
+          return `(${
+            queries.join(` ${where.operator} `)
+          })`
+        } else {
+          return `(${
+            queries.join(` `)
+          })`
+        }
       }
     case TYPE.EXPRESSION:
       const indicatorId = where.field.split('.')[0]
@@ -98,7 +125,7 @@ export function returnWhereToDict(where, upperWhere) {
           field: field,
           operator: operator,
           value: value,
-          whereOperator: upperWhere.operator
+          whereOperator: upperWhere?.operator
         }
       }
       case "InExpressionListPredicate":
@@ -113,7 +140,7 @@ export function returnWhereToDict(where, upperWhere) {
           field: field,
           operator: operator,
           value: value,
-          whereOperator: upperWhere.operator
+          whereOperator: upperWhere?.operator
         }
       case "OrExpression":
         return [].concat(returnWhereToDict(where.left, where)).concat(returnWhereToDict(where.right, where))
@@ -124,12 +151,13 @@ export function returnWhereToDict(where, upperWhere) {
         where.value.value.forEach(query => {
           queries = queries.concat(returnWhereToDict(query, where))
         })
+        if (queries.length >= 2) {
+          queries[1].whereOperator = queries[0].whereOperator
+        }
         return {
           ...INIT_DATA.GROUP(),
           queries: queries,
-          operator: queries.filter(query => {
-            return query.type === TYPE.EXPRESSION;
-          })[0]?.whereOperator
+          operator: upperWhere?.operator
         }
     }
   }

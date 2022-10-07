@@ -1,0 +1,86 @@
+{
+  "page": 1,
+  "total_page": 2,
+  "page_size": 2,
+  "results": {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "id": 1,
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                10
+              ],
+              [
+                10,
+                10
+              ],
+              [
+                10,
+                0
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "name": "AA",
+          "level_name": "Top",
+          "identifier": {
+            "admin": "AA"
+          }
+        }
+      },
+      {
+        "type": "Feature",
+        "id": 1,
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                10,
+                10
+              ],
+              [
+                10,
+                20
+              ],
+              [
+                20,
+                20
+              ],
+              [
+                20,
+                10
+              ],
+              [
+                10,
+                10
+              ]
+            ]
+          ]
+        },
+        "properties": {
+          "name": "BB",
+          "level_name": "Top",
+          "identifier": {
+            "admin": "BB"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Test",
+  "levels": [
+    {
+      "level": 0,
+      "level_name": "Top",
+      "url": "/api/reference-layer/test/top"
+    }
+  ]
+}
