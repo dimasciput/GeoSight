@@ -58,13 +58,14 @@ class GeorepoRequest:
         """Return reference layer."""
         return requests.get(self.urls.reference_layer_list)
 
-    def get_reference_layer_detail(self, reference_layer_identifier: str):
+    def get_reference_layer_detail(
+            self, reference_layer_identifier: str
+    ):
         """Return reference layer."""
-        return requests.get(
-            self.urls.reference_layer_detail.replace(
-                '<identifier>', reference_layer_identifier
-            )
+        url = self.urls.reference_layer_detail.replace(
+            '<identifier>', reference_layer_identifier
         )
+        return requests.get(url)
 
     def _request_paginated(self, url: str, page: int = 1) -> list:
         """Return list of responses of paginated request."""
@@ -85,7 +86,8 @@ class GeorepoRequest:
             return [result] + self._request_paginated(url, page + 1)
 
     def get_reference_layer_geojson(
-            self, reference_layer_identifier: str, admin_level: int
+            self, reference_layer_identifier: str, admin_level: int,
+            codes: list = None
     ):
         """Return geojson of reference layer by admin level."""
         response = GeorepoRequest().get_reference_layer_detail(
@@ -108,9 +110,10 @@ class GeorepoRequest:
             }
             for detail_level in detail['levels']:
                 if detail_level['level'] == admin_level:
-                    geojson_responses = self._request_paginated(
-                        f"{self.urls.georepo_url}{detail_level['url']}"
-                    )
+                    url = f"{self.urls.georepo_url}{detail_level['url']}"
+                    if codes:
+                        url += f'?code={",".join(codes)}'
+                    geojson_responses = self._request_paginated(url)
                     for geojson_response in geojson_responses:
                         geojson['features'] += geojson_response[
                             'results']['features']

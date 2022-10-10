@@ -160,13 +160,13 @@ class VectorContextLayerHarvester(BaseHarvester):
                 f'INSERT INTO {table_name} VALUES {values_str}'
             )
 
-    def return_rows(self) -> list:
+    def return_rows(self, codes=None) -> list:
         """Return rows of data."""
         try:
             with connections['temp'].cursor() as cursor:
                 self.cursor = cursor
                 self.delete_tables()
-                rows = self._return_rows()
+                rows = self._return_rows(codes)
                 self.delete_tables()
                 return rows
         except Exception as e:
@@ -175,7 +175,7 @@ class VectorContextLayerHarvester(BaseHarvester):
                 self.delete_tables()
             raise Exception(e)
 
-    def _return_rows(self):
+    def _return_rows(self, codes: list = None):
         """Run processing harvester."""
         spatial_operator = self.attributes['spatial_operator']
         filter = self.attributes['filter']
@@ -198,8 +198,19 @@ class VectorContextLayerHarvester(BaseHarvester):
         # Create and save geometry table
         self._update('Fetching geometry data.')
         geometry = self.harvester.reference_layer.geojson(
-            self.harvester.admin_level
+            self.harvester.admin_level,
+            codes=codes
         )
+
+        # Filter geometry by codes
+        if codes:
+            features = []
+            for feature in geometry['features']:
+                code = feature['properties']['identifier']['admin']
+                if code in codes:
+                    features.append(feature)
+            geometry['features'] = features
+
         self.insert_features(
             features=geometry['features'],
             table_name=self.geometry_table_name,

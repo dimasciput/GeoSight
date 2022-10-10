@@ -5,6 +5,7 @@ import { Checkbox } from "@mui/material";
 import List, { COLUMNS } from '../../../Components/List'
 import { SaveButton } from "../../../../../components/Elements/Button";
 import Modal, { ModalHeader } from "../../../../../components/Modal";
+import { dictDeepCopy } from "../../../../../utils/main";
 
 /**
  * Form Group
@@ -17,13 +18,15 @@ import Modal, { ModalHeader } from "../../../../../components/Modal";
  * @param {Function} setOpen Set modal open.
  * @param {Function} applyData Apply data that contains added and removed.
  * @param {string} groupLabel Group label
+ * @param {Array} initColumns Column initiation.
  */
 export default function DataSelectionModal(
   {
     pageName, groupName,
     listData, selectedData,
     open, setOpen,
-    applyData, groupLabel
+    applyData, groupLabel,
+    initColumns
   }) {
   const selectedDataList = JSON.parse(JSON.stringify(selectedData))
   const [groupSelectedDataIds, setGroupSelectedDataIds] = useState([]);
@@ -71,7 +74,7 @@ export default function DataSelectionModal(
 
   // ----------------------------------------------
   // Restructure columns
-  const columns = [].concat(COLUMNS(pageName));
+  const columns = initColumns ? dictDeepCopy(initColumns) : [].concat(COLUMNS(pageName));
   columns.pop();
   columns.unshift({
     field: 'actions',

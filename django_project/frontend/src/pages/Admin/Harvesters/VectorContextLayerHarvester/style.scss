@@ -63,4 +63,25 @@
       }
     }
   }
+
+  .TestConfigurationForm {
+    padding: 2rem;
+
+    button {
+      &.TestConfiguration {
+        margin: 0 !important;
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+      }
+    }
+
+    .AdminBaseInput {
+      margin-top: 0 !important;
+    }
+
+    .CodeSelection {
+      padding: 1rem;
+      margin-bottom: 0;
+    }
+  }
 }

@@ -35,6 +35,8 @@ export default function Harvesters(
 
   const [references, setReferences] = useState(null)
   const [reference, setReference] = useState(harvester.reference_layer)
+
+  const [levels, setLevels] = useState(null)
   const [level, setLevel] = useState(harvester.admin_level)
 
   const [indicators, setIndicators] = useState(null)
@@ -136,25 +138,35 @@ export default function Harvesters(
   }
   `
   /** Function to update attribute **/`
-  const updateAttribute = (name, value) => {
-    const ref_attr = attributes.find(attr => attr.name === name)
+  const updateAttribute = (name, value, otherProperties) => {
+    let ref_attr = attributes.find(attr => attr.name === name)
     if (!ref_attr) {
-      attributes.push({
-        name: name,
-        value: value
-      })
+      const properties = Object.assign(
+        {}, {
+          name: name,
+          value: value
+        }, otherProperties
+      )
+      attributes.push(properties)
     } else {
       ref_attr.value = value
+      if (otherProperties) {
+        for (const [key, value] of Object.entries(otherProperties)) {
+          ref_attr[key] = value
+        }
+      }
     }
   }
 
   // Indicator list
   useEffect(() => {
-      updateAttribute('reference_layer', reference)
+      updateAttribute(
+        'reference_layer', reference, { 'levels': levels }
+      )
       updateAttribute('admin_level', level)
       updateAttribute('indicator', indicator)
       setAttributes([...attributes])
-    }, [reference, level, indicator]
+    }, [reference, level, levels, indicator]
   )
 
   // When reference changed
@@ -167,6 +179,7 @@ export default function Harvesters(
           $.ajax({
             url: GeorepoUrls.ReferenceDetail(reference)
           }).done(function (data) {
+            setLevels(data.levels)
             referenceLayer.data = data.levels.map(level => {
               level.value = level.level
               level.name = level.level_name

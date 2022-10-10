@@ -36,11 +36,12 @@ class ReferenceLayer(models.Model):
             '<identifier>', self.identifier
         )
 
-    def geojson(self, admin_level: int):
+    def geojson(self, admin_level: int, codes: list = None):
         """Return geojson by admin level."""
         return GeorepoRequest().get_reference_layer_geojson(
             self.identifier,
-            admin_level
+            admin_level,
+            codes=codes
         )
 
 

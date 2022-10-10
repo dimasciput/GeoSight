@@ -41,7 +41,7 @@ class VectorContextLayerTestConfiguration(APIView):
                 'spatial_operator': data['spatial_operator'],
                 'aggregation': data['aggregation']
             }
-            rows = harvester.return_rows()
+            rows = harvester.return_rows(codes=data['codes'].split(','))
             date = timezone.now().date()
             output = []
             for idx, row in enumerate(rows):
