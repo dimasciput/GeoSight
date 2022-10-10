@@ -116,7 +116,9 @@ export default function Map() {
         layers: [basemapLayerGroup, contextLayerGroup, referenceLayerGroup],
         zoomControl: false,
         maxZoom: maxZoom,
-        renderer: L.canvas()
+        // TODO:
+        //  We comment this for now
+        // renderer: L.canvas()
       });
       newMap.createPane(basemapPane);
       newMap.createPane(referenceLayerPane);

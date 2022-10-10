@@ -136,7 +136,7 @@ class VectorContextLayerHarvester(BaseHarvester):
         self.cursor.execute(f'CREATE TABLE {table_name} {definition}')
         # -------------------------------------------------
         for idx, feature in enumerate(features):
-            geom = GEOSGeometry(json.dumps(feature['geometry']))
+            geom = GEOSGeometry(json.dumps(feature['geometry']), srid=4326)
             properties = feature['properties']
             properties['geom'] = geom.wkt
             properties['_row_'] = idx
@@ -330,13 +330,13 @@ class VectorContextLayerHarvester(BaseHarvester):
                     query = (
                         f"SELECT {aggregation_query} as value, data.code "
                         "FROM ("
-                        "SELECT distinct on (data._row_) * "
+                        "SELECT distinct on (data._row_, geom.code) * "
                         f"from {self.data_table_name} data "
                         f"CROSS JOIN {self.geometry_table_name} geom "
-                        f"WHERE ST_DWithin(data.geom, geom.geom, {distance}) "
+                        f"WHERE ST_DWithin(data.geom::geography, "
+                        f"geom.geom::geography, {distance}) "
                         f"{' AND ' + filter if filter else ''}"
-                        "ORDER BY data._row_, "
-                        "ST_Distance(data.geom, geom.geom) ASC"
+                        "ORDER BY data._row_,geom.code ASC"
                         ") data "
                         "GROUP BY data.code"
                     )
