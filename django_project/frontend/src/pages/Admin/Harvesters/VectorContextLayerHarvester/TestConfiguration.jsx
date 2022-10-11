@@ -61,7 +61,6 @@ export default function TestConfiguration({ attributes }) {
     setData(null)
     setError(null)
     setCodes(null)
-    setSelectedCodes([])
     const adminLevel = attributes.find(attr => attr.name === "admin_level")
     let level = null
     if (refLayer?.levels) {

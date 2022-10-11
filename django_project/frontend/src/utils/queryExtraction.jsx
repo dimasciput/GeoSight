@@ -13,6 +13,7 @@ export const TYPE = {
 //  This is matching the key on OPERATOR
 export const IS_NULL = 'IS NULL'
 export const IS_NOT_NULL = 'IS NOT NULL'
+export const IS_IN = 'IN'
 export const OPERATOR = {
   'IN': 'is any of',
   '=': 'is equal',
@@ -142,6 +143,18 @@ export function returnWhereToDict(where, upperWhere) {
           value: value,
           whereOperator: upperWhere?.operator
         }
+      case "IsNullBooleanPrimary": {
+        const field = where?.value?.value
+        let operator = where.hasNot === 'NOT' ? IS_NOT_NULL : IS_NULL
+        let value = null
+        return {
+          ...INIT_DATA.WHERE(),
+          field: field,
+          operator: operator,
+          value: value,
+          whereOperator: upperWhere?.operator
+        }
+      }
       case "OrExpression":
         return [].concat(returnWhereToDict(where.left, where)).concat(returnWhereToDict(where.right, where))
       case "AndExpression":
@@ -170,6 +183,18 @@ export function returnWhereToDict(where, upperWhere) {
 export function returnDataToExpression(field, operator, value) {
   const cleanOperator = operator === 'IN' ? ' ' + operator + ' ' : operator
   let cleanValue = !value ? 0 : (isNaN(value) ? `'${value}'` : value);
+
+  // if it is interval
+  try {
+    const regex = /now\(\) - interval '\d+ (years|months|days|hours|minutes|seconds)'/g;
+    const matches = cleanValue.match(regex);
+    if (matches) {
+      cleanValue = value
+    }
+  } catch (err) {
+
+  }
+
   if (operator === 'IN') {
     if (value) {
       cleanValue = value.map(val => (isNaN(val) ? `'${val}'` : val)).join(',')
@@ -182,7 +207,7 @@ export function returnDataToExpression(field, operator, value) {
   } else if ([IS_NULL, IS_NOT_NULL].includes(operator)) {
     return `${field} ${cleanOperator}`
   }
-  return `${field}${cleanOperator}${cleanValue}`
+  return `${field} ${cleanOperator} ${cleanValue}`
 }
 
 /**
