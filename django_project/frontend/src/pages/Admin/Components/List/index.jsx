@@ -130,7 +130,7 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
 export default function List(
   {
     columns, pageName, listUrl, initData,
-    selectionChanged
+    selectionChanged, sortingDefault
   }
 ) {
   const [data, setData] = useState(initData);
@@ -180,7 +180,9 @@ export default function List(
       <div className='AdminList'>
         <AdminTable
           rows={rows} columns={columns}
-          selectionChanged={selectionChanged}/>
+          selectionChanged={selectionChanged}
+          sortingDefault={sortingDefault}
+        />
       </div>
     </Fragment>
   );

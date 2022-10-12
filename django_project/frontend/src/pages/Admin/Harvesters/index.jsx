@@ -291,8 +291,10 @@ export default function Harvesters(
             </label>
             <SelectWithList
               name='reference_layer'
+              placeholder={references ? 'Select preference layer' : 'Loading'}
               list={references}
               value={reference}
+              required={true}
               onChange={evt => {
                 setReference(evt.value)
               }}
@@ -305,6 +307,8 @@ export default function Harvesters(
             </label>
             <SelectWithList
               name='admin_level'
+              required={true}
+              placeholder={referenceLayer && referenceLayer.data ? 'Select admin level' : 'Loading'}
               list={referenceLayer && referenceLayer.data}
               value={level}
               onChange={evt => {
@@ -322,6 +326,7 @@ export default function Harvesters(
                   </label>
                   <SelectWithList
                     name='indicator'
+                    required={true}
                     list={indicators}
                     value={indicator}
                     onChange={evt => {

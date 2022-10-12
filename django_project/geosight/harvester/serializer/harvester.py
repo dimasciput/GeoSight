@@ -19,6 +19,7 @@ class HarvesterSerializer(serializers.ModelSerializer):
     creator = serializers.SerializerMethodField()
     creator_name = serializers.SerializerMethodField()
     reference_layer = serializers.SerializerMethodField()
+    reference_layer_name = serializers.SerializerMethodField()
     indicator = serializers.SerializerMethodField()
     indicator_id = serializers.SerializerMethodField()
     last_run = serializers.SerializerMethodField()
@@ -47,6 +48,10 @@ class HarvesterSerializer(serializers.ModelSerializer):
     def get_reference_layer(self, obj: Harvester):
         """Return reference_layer."""
         return obj.reference_layer.identifier
+
+    def get_reference_layer_name(self, obj: Harvester):
+        """Return reference_layer name."""
+        return obj.reference_layer.name
 
     def get_indicator(self, obj: Harvester):
         """Return indicator."""

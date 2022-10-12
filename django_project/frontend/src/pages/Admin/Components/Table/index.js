@@ -8,10 +8,11 @@ import './style.scss';
  * @param {Array} rows List of data.
  * @param {Array} columns Columns for the table.
  * @param {function} selectionChanged Function when selection changed.
+ * @param {dict} sortingDefault Soring default.
  */
 export function AdminTable(
   {
-    rows, columns, selectionChanged = null
+    rows, columns, selectionChanged = null, sortingDefault = null
   }
 ) {
   const [selectionModel, setSelectionModel] = useState([]);
@@ -24,6 +25,12 @@ export function AdminTable(
   }, [selectionModel]);
 
   if (rows) {
+    let sorting = {
+      sortModel: [{ field: 'name', sort: 'asc' }],
+    }
+    if (sortingDefault) {
+      sorting = sortingDefault
+    }
     return (
       <div className='AdminTable'>
         <DataGrid
@@ -35,9 +42,7 @@ export function AdminTable(
           pageSize={20}
           rowsPerPageOptions={[20]}
           initialState={{
-            sorting: {
-              sortModel: [{ field: 'name', sort: 'asc' }],
-            },
+            sorting: sorting,
           }}
           disableSelectionOnClick
 

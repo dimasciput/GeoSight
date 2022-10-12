@@ -147,6 +147,8 @@ class VectorContextLayerHarvester(BaseHarvester):
             values = []
             for field in fields:
                 value = properties[field['name']]
+                if value is None:
+                    value = 'NULL'
                 if field['type'] == 'DATE':
                     value = datetime.fromtimestamp(
                         value / 1000).strftime("%Y-%m-%d")
@@ -156,6 +158,7 @@ class VectorContextLayerHarvester(BaseHarvester):
                     pass
                 values.append(value)
             values_str = str(tuple(values)).replace('"', "'")
+            values_str = values_str.replace("'NULL'", "NULL")
             self.cursor.execute(
                 f'INSERT INTO {table_name} VALUES {values_str}'
             )

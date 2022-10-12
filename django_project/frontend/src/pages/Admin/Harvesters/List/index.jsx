@@ -44,6 +44,7 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
         }
       }
     },
+    { field: 'reference_layer_name', headerName: 'Reference Layer', flex: 1 },
     { field: 'type', headerName: 'Type', flex: 1 },
     { field: 'indicator', headerName: 'Indicator', flex: 1 },
     { field: 'last_run', headerName: 'Last Run', flex: 1 },
@@ -91,6 +92,9 @@ export default function HarvesterList() {
     columns={COLUMNS(pageName, urls.admin.harvesterList)}
     pageName={pageName}
     listUrl={urls.api.list}
+    sortingDefault={{
+      sortModel: [{ field: 'last_run', sort: 'desc' }],
+    }}
     rightHeader={
       <div>
         <a href={urls.api.ingestor}>

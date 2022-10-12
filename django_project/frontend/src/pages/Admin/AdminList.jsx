@@ -20,6 +20,7 @@ export default function AdminList(
     columns, pageName,
     listUrl, selectionChanged,
     rightHeader = null,
+    sortingDefault = null
   }
 ) {
 
@@ -40,7 +41,9 @@ export default function AdminList(
       }>
       <List
         columns={columns} pageName={pageName} listUrl={listUrl}
-        selectionChanged={selectionChanged}/>
+        selectionChanged={selectionChanged}
+        sortingDefault={sortingDefault}
+      />
     </Admin>
   );
 }
