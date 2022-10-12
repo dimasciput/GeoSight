@@ -176,7 +176,7 @@ class VectorContextLayerHarvester(BaseHarvester):
             raise Exception(e)
 
     def save_non_features(self, rows, geometry):
-        """Save a non geometry one that does not have feature"""
+        """Save a non geometry one that does not have features."""
         # check the rows
         # If there is no geometry with data, put it as 0
         rows_code = [row[1] for row in rows]
