@@ -99,6 +99,15 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
             os.path.join(self.responses_folder, 'georepo_geojson_2.json')
         )
 
+        # Geojson page 3
+        self.mock_request(
+            (
+                f'{self.georepo_url}/api/reference-layer/'
+                f'{self.reference_layer_identifier}/top?page=3'
+            ),
+            os.path.join(self.responses_folder, 'georepo_geojson_3.json')
+        )
+
         # Arcgis definition
         self.mock_request(
             f'{self.arcgis_test_url}?f=json',
@@ -112,9 +121,10 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%200.0,%20%22ymin%22:%200.0,'
-                f'%20%22xmax%22:%2020.0,%20%22ymax%22:%2020.0,%20%22'
+                f'%20%22xmax%22:%20100.0,%20%22ymax%22:%20100.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=0&resultRecordCount=100'
+
             ),
             os.path.join(self.responses_folder, 'arcgis_geojson_1.json')
         )
@@ -124,7 +134,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%200.0,%20%22ymin%22:%200.0,'
-                f'%20%22xmax%22:%2020.0,%20%22ymax%22:%2020.0,%20%22'
+                f'%20%22xmax%22:%20100.0,%20%22ymax%22:%20100.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=100&resultRecordCount=100'
             ),
@@ -136,7 +146,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%200.0,%20%22ymin%22:%200.0,'
-                f'%20%22xmax%22:%2020.0,%20%22ymax%22:%2020.0,%20%22'
+                f'%20%22xmax%22:%20100.0,%20%22ymax%22:%20100.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=200&resultRecordCount=100'
             ),
@@ -148,7 +158,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%200.0,%20%22ymin%22:%200.0,'
-                f'%20%22xmax%22:%2020.0,%20%22ymax%22:%2020.0,%20%22'
+                f'%20%22xmax%22:%20100.0,%20%22ymax%22:%20100.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=300&resultRecordCount=100'
             ),
@@ -162,7 +172,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%20-10.0,%20%22ymin%22:%20-10.0,'
-                f'%20%22xmax%22:%2030.0,%20%22ymax%22:%2030.0,%20%22'
+                f'%20%22xmax%22:%20110.0,%20%22ymax%22:%20110.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=0&resultRecordCount=100'
             ),
@@ -174,7 +184,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%20-10.0,%20%22ymin%22:%20-10.0,'
-                f'%20%22xmax%22:%2030.0,%20%22ymax%22:%2030.0,%20%22'
+                f'%20%22xmax%22:%20110.0,%20%22ymax%22:%20110.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=100&resultRecordCount=100'
             ),
@@ -186,7 +196,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%20-10.0,%20%22ymin%22:%20-10.0,'
-                f'%20%22xmax%22:%2030.0,%20%22ymax%22:%2030.0,%20%22'
+                f'%20%22xmax%22:%20110.0,%20%22ymax%22:%20110.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=200&resultRecordCount=100'
             ),
@@ -198,7 +208,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
                 f'where=1=1&returnGeometry=true&outSR=4326&outFields=*&'
                 f'inSR=4326&geometryType=esriGeometryEnvelope&f=geojson&'
                 f'geometry=%7B%22xmin%22:%20-10.0,%20%22ymin%22:%20-10.0,'
-                f'%20%22xmax%22:%2030.0,%20%22ymax%22:%2030.0,%20%22'
+                f'%20%22xmax%22:%20110.0,%20%22ymax%22:%20110.0,%20%22'
                 f'spatialReference%22:%20%7B%22wkid%22:%204326%7D%7D&'
                 f'resultOffset=300&resultRecordCount=100'
             ),

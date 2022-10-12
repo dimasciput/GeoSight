@@ -375,4 +375,12 @@ class VectorContextLayerHarvester(BaseHarvester):
         )
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
+
+        # check the rows
+        # If there is no geometry with data, put it as 0
+        rows_code = [row[1] for row in rows]
+        for feature in geometry['features']:
+            code = feature['properties']['identifier']['admin']
+            if code not in rows_code:
+                rows.append((0, code))
         return rows
