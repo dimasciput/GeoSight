@@ -53,7 +53,7 @@ export default function Detail() {
       <div className='PageContent'>
         <b className='light'>Harvester Class</b> : {harvester.type}<br/>
         <b className='light'>Reference
-          Layer</b> : {harvester.reference_layer}<br/>
+          Layer</b> : {harvester.reference_layer_name} ({harvester.reference_layer})<br/>
         <b className='light'>Admin Level</b> : {harvester.admin_level}<br/>
         {
           harvester.indicator ? <Fragment><b
