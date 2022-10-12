@@ -249,9 +249,10 @@ export function IndicatorOtherRule({ rule, idx, onChange }) {
       <td colSpan={2}>
         <Checkbox
           checked={active}
-          onChange={(evt) => {
-            setActive(evt.target.checked)
-          }}/>
+          onClick={() => {
+            setActive(!active)
+          }}
+        />
         <input
           type="hidden" name={ruleNameActive} value={active}
           onChange={(evt) => {

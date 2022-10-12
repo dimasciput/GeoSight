@@ -24,7 +24,7 @@ class IndicatorValueAdmin(admin.ModelAdmin):
     list_filter = (
         'indicator', 'date', 'reference_layer', 'admin_level'
     )
-    search_fields = ('indicator', 'geom_identifier')
+    search_fields = ('indicator__name', 'geom_identifier')
     inlines = (IndicatorExtraValueRuleInline,)
 
 

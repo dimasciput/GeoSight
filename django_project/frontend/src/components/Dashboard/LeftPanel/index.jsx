@@ -10,6 +10,7 @@ import MapInfo from './MapInfo'
 import Basemaps from './Basemaps'
 import ProjectOverviewSection from './ProjectOverview'
 import ContextLayersAccordion from './ContextLayers'
+import GlobalDateSelector from './GlobalDateSelector'
 import Indicators from './Indicators'
 import IndicatorLayersAccordion from './IndicatorLayers'
 import ReferenceLayerSection from './ReferenceLayer'
@@ -94,6 +95,7 @@ export default function LeftPanel({ setLeftExpanded }) {
         <ReferenceLayerSection/>
         <MapInfo/>
       </div>
+      <GlobalDateSelector/>
     </section>
   )
 }

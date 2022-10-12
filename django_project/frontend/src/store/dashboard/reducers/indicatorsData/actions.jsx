@@ -59,5 +59,5 @@ export function fetch(dispatch, id, url, reporting_levels) {
 }
 
 export default {
-  fetch, updateStyle
+  fetch, request, receive, updateStyle
 }

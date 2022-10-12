@@ -1,6 +1,7 @@
 """Context Analysis API.."""
 from datetime import datetime
 
+from dateutil import parser as date_parser
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -104,9 +105,52 @@ class DashboardIndicatorValuesAPI(APIView):
         except DashboardIndicator.DoesNotExist:
             pass
 
+        time_limit = request.GET.get('time__lte', None)
+        if time_limit:
+            time_limit = date_parser.isoparse(time_limit)
+        else:
+            time_limit = datetime.now()
+
         return Response(
             indicator.values(
-                datetime.now(), rule_set=rule_set,
+                time_limit, rule_set=rule_set,
                 reference_layer=dashboard.reference_layer
             )
         )
+
+
+class DashboardIndicatorDatesAPI(APIView):
+    """API for of indicator."""
+
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, slug, pk, **kwargs):
+        """Return Values."""
+        dashboard = get_object_or_404(Dashboard, slug=slug)
+        indicator = get_object_or_404(Indicator, pk=pk)
+        ref, created = ReferenceLayerIndicator.permissions.get_or_create(
+            user=request.user,
+            indicator=indicator,
+            have_creator=False,
+            reference_layer=dashboard.reference_layer
+        )
+        try:
+            read_permission_resource(ref, request.user)
+        except ReferenceLayerIndicatorPermission.DoesNotExist:
+            ref.permission = ReferenceLayerIndicatorPermission(
+                organization_permission=PERMISSIONS.NONE.name,
+                public_permission=PERMISSIONS.NONE.name
+            )
+            read_permission_resource(ref, request.user)
+
+        dates = [
+            datetime.combine(date_str, datetime.max.time()).isoformat()
+            for date_str in set(
+                indicator.query_values(
+                    reference_layer=dashboard.reference_layer
+                ).values_list('date', flat=True)
+            )
+        ]
+        dates.sort()
+
+        return Response(dates)

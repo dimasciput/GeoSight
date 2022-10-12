@@ -11,7 +11,7 @@ from geosight.data.api.context_layers import (
 )
 from geosight.data.api.dashboard import (
     DashboardData, DashboardDetail, DashboardListAPI,
-    DashboardIndicatorValuesAPI
+    DashboardIndicatorValuesAPI, DashboardIndicatorDatesAPI
 )
 from geosight.data.api.dashboard_bookmark import (
     DashboardBookmarkAPI,
@@ -48,6 +48,11 @@ dashboard_specific_api = [
         r'^indicator/(?P<pk>\d+)/values/latest',
         DashboardIndicatorValuesAPI.as_view(),
         name='dashboard-indicator-values-api'
+    ),
+    url(
+        r'^indicator/(?P<pk>\d+)/dates',
+        DashboardIndicatorDatesAPI.as_view(),
+        name='dashboard-indicator-dates-api'
     ),
     url(
         r'^bookmarks/create',

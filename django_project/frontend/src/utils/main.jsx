@@ -240,3 +240,20 @@ export function jsonToXlsx(data, filename, sheetName = "Sheet 1") {
   XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
   XLSX.writeFile(workbook, filename);
 }
+
+/**
+ * Json to xls
+ * @param {Date} d
+ */
+export function formatDate(d) {
+  let month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2)
+    month = '0' + month;
+  if (day.length < 2)
+    day = '0' + day;
+
+  return [year, month, day].join('-');
+}

@@ -2,9 +2,10 @@
    INDICATOR
    ========================================================================== */
 
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Actions } from "../../../../store/dashboard";
+import { fetchingData } from "../../../../Requests";
 
 
 /**
@@ -16,19 +17,47 @@ export function Indicator({ indicator }) {
   const indicatorData = useSelector(
     state => state.indicatorsData[indicator.id]
   );
+  const selectedGlobalTime = useSelector(state => state.selectedGlobalTime);
+  const [responseAndTime, setResponseAndTime] = useState(null);
+  const prevState = useRef();
+  prevState.selectedGlobalTime = '';
 
   /**
-   * Fetch indicator data
+   * Fetch indicator data by the current global selected time
    */
   useEffect(() => {
-    if (!indicatorData?.data) {
-      dispatch(
-        Actions.IndicatorsData.fetch(
-          dispatch, indicator.id, indicator.url, indicator.reporting_levels
-        )
-      );
+    if (selectedGlobalTime && selectedGlobalTime !== prevState.selectedGlobalTime) {
+      prevState.selectedGlobalTime = selectedGlobalTime
+      setResponseAndTime(null)
+
+      const { id, url } = indicator
+      fetchingData(
+        url, { 'time__lte': selectedGlobalTime }, {}, function (response, error) {
+          setResponseAndTime({
+            'time': selectedGlobalTime,
+            'response': response,
+            'error': error
+          })
+        }
+      )
+      dispatch(Actions.IndicatorsData.request(id))
     }
-  }, []);
+  }, [selectedGlobalTime]);
+
+  /**
+   * Update style
+   */
+  useEffect(() => {
+    if (responseAndTime) {
+      const { time, response, error } = responseAndTime
+      const { id, reporting_levels } = indicator
+      if (time === selectedGlobalTime) {
+        dispatch(
+          Actions.IndicatorsData.receive(response, error, id, reporting_levels)
+        )
+      }
+    }
+  }, [responseAndTime]);
 
   /**
    * Update style

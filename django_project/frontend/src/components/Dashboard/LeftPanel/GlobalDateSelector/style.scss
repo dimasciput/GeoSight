@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Date selection
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.GlobalDateSelection {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin-left: 1rem;
+  width: 100vw;
+  height: 0;
+
+  .GlobalDateSelectionIconWrapper {
+    position: relative;
+    width: 100%;
+
+    .GlobalDateSelectionIcon {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      padding: 6px 0.5rem;
+      height: 20px;
+      cursor: pointer;
+      margin-left: -88px;
+      border-radius: $border-radius;
+      box-shadow: $box-shadow;
+      background-color: rgb(255, 255, 255);
+      color: $secondary-color;
+      display: flex;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover {
+        opacity: $base-hovered-opacity;
+      }
+
+      .GlobalDateSelectionIconDate {
+        margin-top: -1px;
+        font-weight: $base-font-weight;
+        width: 100px;
+        text-align: center;
+      }
+    }
+  }
+
+  .GlobalDateSelectionOuterWrapper {
+    position: relative;
+    width: 100%;
+
+    .GlobalDateSelectionWrapper {
+      position: absolute;
+      transition: bottom 0.3s;
+      bottom: -75px;
+      left: 50%;
+      height: 75px;
+      width: 600px;
+      margin-left: -300px;
+      padding: 0.5rem 3rem;
+
+      box-shadow: $box-shadow;
+      background-color: rgb(255, 255, 255);
+      border-radius: $border-radius;
+      box-sizing: border-box;
+      color: $secondary-color;
+
+      .GlobalDateSelectionSlider {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.GlobalDateSelection {
+  &.Open {
+    .GlobalDateSelectionWrapper {
+      bottom: 3.5rem;
+    }
+  }
+}

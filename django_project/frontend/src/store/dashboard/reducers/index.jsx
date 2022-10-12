@@ -10,6 +10,7 @@ import filteredGeometriesReducer from "./filteredGeometries";
 import selectedIndicatorLayerReducer from "./selectedIndicatorLayer";
 import selectedAdminLevelReducer from "./selectedAdminLevel";
 import selectedBookmarkReducer from "./selectedBookmark";
+import selectedGlobalTimeReducer from "./selectedGlobalTime";
 
 
 export default combineReducers({
@@ -25,4 +26,5 @@ export default combineReducers({
   selectedAdminLevel: selectedAdminLevelReducer,
   selectedIndicatorLayer: selectedIndicatorLayerReducer,
   selectedBookmark: selectedBookmarkReducer,
+  selectedGlobalTime: selectedGlobalTimeReducer,
 });

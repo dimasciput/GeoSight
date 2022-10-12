@@ -19,6 +19,7 @@ import ReferenceLayerData from './reducers/referenceLayerData/actions'
 import SelectedAdminLevel from './reducers/selectedAdminLevel/actions'
 import SelectedIndicatorLayer from './reducers/selectedIndicatorLayer/actions'
 import SelectedBookmark from './reducers/selectedBookmark/actions'
+import SelectedGlobalTime from './reducers/selectedGlobalTime/actions'
 import Widgets from './reducers/widgets/actions'
 
 const Actions = {
@@ -39,6 +40,7 @@ const Actions = {
   SelectedAdminLevel,
   SelectedIndicatorLayer,
   SelectedBookmark,
+  SelectedGlobalTime,
   Widgets
 }
 
