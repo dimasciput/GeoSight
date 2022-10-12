@@ -175,6 +175,17 @@ class VectorContextLayerHarvester(BaseHarvester):
                 self.delete_tables()
             raise Exception(e)
 
+    def save_non_features(self, rows, geometry):
+        """Save a non geometry one that does not have feature"""
+        # check the rows
+        # If there is no geometry with data, put it as 0
+        rows_code = [row[1] for row in rows]
+        for feature in geometry['features']:
+            code = feature['properties']['identifier']['admin']
+            if code not in rows_code:
+                rows.append((0, code))
+        return rows
+
     def _return_rows(self, codes: list = None):
         """Run processing harvester."""
         spatial_operator = self.attributes['spatial_operator']
@@ -353,7 +364,7 @@ class VectorContextLayerHarvester(BaseHarvester):
                     )
                     self.cursor.execute(query)
                     rows = self.cursor.fetchall()
-                    return rows
+                    return self.save_non_features(rows=rows, geometry=geometry)
                 except ValueError:
                     raise HarvestingError(
                         f'Distance {spatial_operator_value} is not integer.'
@@ -375,12 +386,4 @@ class VectorContextLayerHarvester(BaseHarvester):
         )
         self.cursor.execute(query)
         rows = self.cursor.fetchall()
-
-        # check the rows
-        # If there is no geometry with data, put it as 0
-        rows_code = [row[1] for row in rows]
-        for feature in geometry['features']:
-            code = feature['properties']['identifier']['admin']
-            if code not in rows_code:
-                rows.append((0, code))
-        return rows
+        return self.save_non_features(rows=rows, geometry=geometry)
