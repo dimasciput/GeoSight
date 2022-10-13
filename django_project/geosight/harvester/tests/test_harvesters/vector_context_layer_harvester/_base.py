@@ -85,7 +85,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
         self.mock_request(
             (
                 f'{self.georepo_url}/api/reference-layer/'
-                f'{self.reference_layer_identifier}/top?page=1'
+                f'{self.reference_layer_identifier}/top?page=1&page_size=25'
             ),
             os.path.join(self.responses_folder, 'georepo_geojson_1.json')
         )
@@ -94,7 +94,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
         self.mock_request(
             (
                 f'{self.georepo_url}/api/reference-layer/'
-                f'{self.reference_layer_identifier}/top?page=2'
+                f'{self.reference_layer_identifier}/top?page=2&page_size=25'
             ),
             os.path.join(self.responses_folder, 'georepo_geojson_2.json')
         )
@@ -103,7 +103,7 @@ class BaseVectorContextLayerHarvesterTest(BaseHarvesterTest):
         self.mock_request(
             (
                 f'{self.georepo_url}/api/reference-layer/'
-                f'{self.reference_layer_identifier}/top?page=3'
+                f'{self.reference_layer_identifier}/top?page=3&page_size=25'
             ),
             os.path.join(self.responses_folder, 'georepo_geojson_3.json')
         )
