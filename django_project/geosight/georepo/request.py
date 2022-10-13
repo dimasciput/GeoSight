@@ -49,6 +49,7 @@ class GeorepoRequestError(Exception):
 
 class GeorepoRequest:
     """Request to georepo."""
+
     page_size = 25
 
     def __init__(self):
