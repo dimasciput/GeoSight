@@ -49,6 +49,7 @@ class GeorepoRequestError(Exception):
 
 class GeorepoRequest:
     """Request to georepo."""
+    page_size = 25
 
     def __init__(self):
         """Init Class."""
@@ -70,13 +71,13 @@ class GeorepoRequest:
     def _request_paginated(self, url: str, page: int = 1) -> list:
         """Return list of responses of paginated request."""
         if '?' not in url:
-            url_request = f'{url}?page={page}'
+            url_request = f'{url}?page={page}&page_size={self.page_size}'
         else:
-            url_request = f'{url}&page={page}'
+            url_request = f'{url}&page={page}&page_size={self.page_size}'
         response = requests.get(url_request)
         if response.status_code != 200:
             raise GeorepoRequestError(
-                f"Error fetching on {url} "
+                f"Error fetching on {url_request} "
                 f"- {response.status_code} - {response.text}"
             )
         result = response.json()
