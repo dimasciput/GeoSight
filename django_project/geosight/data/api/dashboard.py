@@ -7,9 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from geosight.data.models.dashboard import (
-    Dashboard, DashboardIndicator
-)
+from geosight.data.models.dashboard import Dashboard
 from geosight.data.models.indicator import Indicator
 from geosight.data.serializer.dashboard import (
     DashboardBasicSerializer, DashboardSerializer
