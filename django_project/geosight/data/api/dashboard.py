@@ -94,26 +94,20 @@ class DashboardIndicatorValuesAPI(APIView):
             )
             read_permission_resource(ref, request.user)
 
-        # If there is dashboard indicator, use it's rule
-        rule_set = None
-        try:
-            dashboard_indicator = dashboard.dashboardindicator_set.get(
-                object=indicator)
-
-            if dashboard_indicator.dashboardindicatorrule_set.count():
-                rule_set = dashboard_indicator.dashboardindicatorrule_set.all()
-        except DashboardIndicator.DoesNotExist:
-            pass
-
-        time_limit = request.GET.get('time__lte', None)
-        if time_limit:
-            time_limit = date_parser.isoparse(time_limit)
+        max_time = request.GET.get('time__lte', None)
+        if max_time:
+            max_time = date_parser.isoparse(max_time)
         else:
-            time_limit = datetime.now()
+            max_time = datetime.now()
+
+        min_time = request.GET.get('time__gte', None)
+        if min_time:
+            min_time = date_parser.isoparse(min_time).date()
 
         return Response(
             indicator.values(
-                time_limit, rule_set=rule_set,
+                date_data=max_time,
+                min_date_data=min_time,
                 reference_layer=dashboard.reference_layer
             )
         )
@@ -144,7 +138,7 @@ class DashboardIndicatorDatesAPI(APIView):
             read_permission_resource(ref, request.user)
 
         dates = [
-            datetime.combine(date_str, datetime.max.time()).isoformat()
+            datetime.combine(date_str, datetime.min.time()).isoformat()
             for date_str in set(
                 indicator.query_values(
                     reference_layer=dashboard.reference_layer

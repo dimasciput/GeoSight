@@ -172,7 +172,7 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
         return indicator_value
 
     def query_values(
-            self, date_data: date = None,
+            self, date_data: date = None, min_date_data: date = None,
             reference_layer=None, admin_level: int = None
     ):
         """Return query of indicator values."""
@@ -183,6 +183,8 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
             query = query.filter(admin_level=admin_level)
         if date_data:
             query = query.filter(date__lte=date_data)
+        if min_date_data:
+            query = query.filter(date__gte=min_date_data)
         return query
 
     def rule_by_value(self, value, rule_set=None):
@@ -220,7 +222,7 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
         return values
 
     def values(
-            self, date_data: date, rule_set=None,
+            self, date_data: date, min_date_data: date = None,
             reference_layer=None, admin_level: int = None):
         """Return list data based on date.
 
@@ -229,8 +231,8 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
         """
         values = []
         query = self.query_values(
-            date_data, reference_layer=reference_layer,
-            admin_level=admin_level)
+            date_data=date_data, min_date_data=min_date_data,
+            reference_layer=reference_layer, admin_level=admin_level)
         query_report = query.order_by(
             'geom_identifier', '-date').distinct(
             'geom_identifier')

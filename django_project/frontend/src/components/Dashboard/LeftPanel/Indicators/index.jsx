@@ -18,23 +18,29 @@ export function Indicator({ indicator }) {
     state => state.indicatorsData[indicator.id]
   );
   const selectedGlobalTime = useSelector(state => state.selectedGlobalTime);
+  const selectedGlobalTimeStr = JSON.stringify(selectedGlobalTime);
   const [responseAndTime, setResponseAndTime] = useState(null);
   const prevState = useRef();
-  prevState.selectedGlobalTime = '';
 
   /**
    * Fetch indicator data by the current global selected time
    */
   useEffect(() => {
-    if (selectedGlobalTime && selectedGlobalTime !== prevState.selectedGlobalTime) {
-      prevState.selectedGlobalTime = selectedGlobalTime
+    if (selectedGlobalTime.max && selectedGlobalTimeStr !== prevState.selectedGlobalTimeStr) {
+      prevState.selectedGlobalTimeStr = selectedGlobalTimeStr
       setResponseAndTime(null)
 
       const { id, url } = indicator
+      const params = {
+        'time__lte': selectedGlobalTime.max
+      }
+      if (selectedGlobalTime.min) {
+        params['time__gte'] = selectedGlobalTime.min
+      }
       fetchingData(
-        url, { 'time__lte': selectedGlobalTime }, {}, function (response, error) {
+        url, params, {}, function (response, error) {
           setResponseAndTime({
-            'time': selectedGlobalTime,
+            'timeStr': selectedGlobalTimeStr,
             'response': response,
             'error': error
           })
@@ -49,9 +55,9 @@ export function Indicator({ indicator }) {
    */
   useEffect(() => {
     if (responseAndTime) {
-      const { time, response, error } = responseAndTime
+      const { timeStr, response, error } = responseAndTime
       const { id, reporting_levels } = indicator
-      if (time === selectedGlobalTime) {
+      if (timeStr === selectedGlobalTimeStr) {
         dispatch(
           Actions.IndicatorsData.receive(response, error, id, reporting_levels)
         )

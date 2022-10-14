@@ -21,6 +21,7 @@ export default function PlayControl({ dates, initDate }) {
   const dispatch = useDispatch();
   const selectedGlobalTime = useSelector(state => state.selectedGlobalTime);
   const indicatorsData = useSelector(state => state.indicatorsData);
+  const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
 
   // Speed it 2 second for 0%
   const minSpeed = 10; // second

@@ -415,7 +415,6 @@ export default function FilterSection() {
 
   // Set older filters
   const prevState = useRef();
-  prevState.current = '';
 
   /** Filter data **/
   const filter = (currentFilter) => {

@@ -12,4 +12,12 @@
   padding: 0.3rem 0.5rem;
   box-sizing: border-box;
   color: $secondary-color;
+  max-width: 15rem;
+
+  div {
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }

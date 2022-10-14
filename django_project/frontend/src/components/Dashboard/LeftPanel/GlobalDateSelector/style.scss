@@ -12,38 +12,52 @@
   width: 100vw;
   height: 0;
 
-  .GlobalDateSelectionIconWrapper {
+  .GlobalDateSelectionIconOuterWrapper {
     position: relative;
     width: 100%;
 
-    .GlobalDateSelectionIcon {
+    .GlobalDateSelectionIconWrapper {
       position: absolute;
       bottom: 1rem;
-      left: 50%;
-      padding: 6px 0.5rem;
-      height: 20px;
-      cursor: pointer;
-      margin-left: -88px;
-      border-radius: $border-radius;
-      box-shadow: $box-shadow;
-      background-color: rgb(255, 255, 255);
-      color: $secondary-color;
+      width: 100%;
+      margin-bottom: 34px;
+      height: 0;
       display: flex;
 
-      svg {
-        width: 20px;
-        height: 20px;
+      .Separator {
+        flex-grow: 1;
       }
 
-      &:hover {
-        opacity: $base-hovered-opacity;
-      }
+      .GlobalDateSelectionIcon {
+        padding: 6px 0.5rem;
+        height: 22px;
+        cursor: pointer;
+        border-radius: $border-radius;
+        box-shadow: $box-shadow;
+        background-color: rgb(255, 255, 255);
+        color: $secondary-color;
+        display: flex;
 
-      .GlobalDateSelectionIconDate {
-        margin-top: -1px;
-        font-weight: $base-font-weight;
-        width: 100px;
-        text-align: center;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        &:hover {
+          opacity: $base-hovered-opacity;
+        }
+
+        .GlobalDateSelectionIconDate {
+          font-weight: $base-font-weight;
+          margin: -1px 0.5rem;
+          text-align: center;
+
+          .DateSeparator {
+            margin: 0 0.5rem;
+            display: inline-block;
+            font-weight: 500;
+          }
+        }
       }
     }
   }
@@ -52,15 +66,19 @@
     position: relative;
     width: 100%;
 
+    .GlobalDateSelectionWrapperInterval {
+      margin-bottom: 0.5rem;
+    }
+
     .GlobalDateSelectionWrapper {
       position: absolute;
       transition: bottom 0.3s;
-      bottom: -80px;
+      bottom: -140px;
       left: 50%;
-      height: 80px;
+      height: 140px;
       width: 600px;
       margin-left: -300px;
-      padding: 0.5rem 3rem;
+      padding: 1rem 3rem;
 
       box-shadow: $box-shadow;
       background-color: rgb(255, 255, 255);
@@ -68,15 +86,33 @@
       box-sizing: border-box;
       color: $secondary-color;
 
-      .GlobalDateSelectionSlider {
-        width: 100%;
+      .GlobalDateSelectionSliderWrapper {
+        display: flex;
 
-        .MuiSlider-thumb {
-          color: $secondary-color;
+        .Separator {
+          flex-grow: 1;
         }
 
-        .MuiSlider-root {
-          color: $secondary-color;
+        .GlobalDateSelectionSlider {
+          width: 100%;
+
+          &.Small {
+            width: 0;
+          }
+
+          .MuiSlider-thumb {
+            color: $secondary-color;
+          }
+
+          .MuiSlider-root {
+            color: $secondary-color;
+          }
+
+          .MuiSlider-markLabel {
+            text-align: center;
+            white-space: unset;
+            width: 75px;
+          }
         }
       }
     }
