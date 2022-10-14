@@ -9,6 +9,7 @@ import Filter from "./Filter"
 import Aggregation from "./Aggregation"
 import SpatialOperator from "./SpatialOperator"
 import TestConfiguration from "./TestConfiguration"
+import { SaveButton } from "../../../../components/Elements/Button";
 
 import './style.scss';
 
@@ -40,6 +41,18 @@ export default function VectorContextLayerHarvester() {
   const prevState = useRef();
   prevState.attributes = '';
 
+  const referenceLayerAttr = attributes.find(
+    attr => attr.name === 'reference_layer'
+  )
+  const adminLevelAttr = attributes.find(
+    attr => attr.name === 'admin_level'
+  )
+  const indicatorAttr = attributes.find(
+    attr => attr.name === 'indicator'
+  )
+  const contextLayerIdAttr = attributes.find(
+    attr => attr.name === 'context_layer_id'
+  )
   const filterAttr = attributes.find(
     attr => attr.name === 'filter'
   )
@@ -85,6 +98,19 @@ export default function VectorContextLayerHarvester() {
         setAttributes={setAttributes}
         excludedAttributes={
           ['aggregation', 'spatial_operator', 'filter']
+        }
+        rightHeader={
+          <SaveButton
+            disabled={
+              referenceLayerAttr?.value === undefined ||
+              adminLevelAttr?.value === undefined ||
+              indicatorAttr?.value === undefined ||
+              contextLayerIdAttr?.value === undefined
+            }
+            variant="secondary"
+            text="Submit"
+            type="submit"
+          />
         }
       >
         <Fragment>

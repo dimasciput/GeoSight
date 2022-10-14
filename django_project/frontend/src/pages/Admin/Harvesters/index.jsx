@@ -17,6 +17,7 @@ import './style.scss';
  * @param {Array} attributes Attributes of data.
  * @param {Function} setAttributes Set Attribute Functions.
  * @param {Array} excludedAttributes Excluded attributes that will be rendered.
+ * @param {React.Component} rightHeader React component to be rendered on right header
  * @param {React.Component} children React component to be rendered
  */
 export default function Harvesters(
@@ -25,7 +26,8 @@ export default function Harvesters(
     has_indicator,
     attributes, setAttributes,
     excludedAttributes = [],
-    children
+    rightHeader,
+    children,
   }
 ) {
 
@@ -163,7 +165,11 @@ export default function Harvesters(
       updateAttribute(
         'reference_layer', reference, { 'levels': levels }
       )
-      updateAttribute('admin_level', level)
+      if (levels) {
+        updateAttribute('admin_level', level)
+      } else {
+        updateAttribute('admin_level', undefined)
+      }
       updateAttribute('indicator', indicator)
       setAttributes([...attributes])
     }, [reference, level, levels, indicator]
@@ -176,6 +182,7 @@ export default function Harvesters(
           return row.identifier === reference
         })[0]
         if (!referenceLayer.data) {
+          setLevels(null)
           $.ajax({
             url: GeorepoUrls.ReferenceDetail(reference)
           }).done(function (data) {
@@ -190,7 +197,7 @@ export default function Harvesters(
               return level.value
             });
             if (!levels.includes(level)) {
-              setLevel(referenceLayer.data[0].value)
+              setLevel(referenceLayer?.data[0]?.value)
             }
           });
         } else {
@@ -198,7 +205,7 @@ export default function Harvesters(
             return level.value
           });
           if (!levels.includes(level)) {
-            setLevel(referenceLayer.data[0].value)
+            setLevel(referenceLayer?.data[0]?.value)
           }
         }
       } else {
@@ -245,16 +252,32 @@ export default function Harvesters(
     })[0]
   }
 
+  const referenceLayerAttr = attributes.find(
+    attr => attr.name === 'reference_layer'
+  )
+  const adminLevelAttr = attributes.find(
+    attr => attr.name === 'admin_level'
+  )
+  const indicatorAttr = attributes.find(
+    attr => attr.name === 'indicator'
+  )
+
   return (
     <form className="BasicForm" method="post" encType="multipart/form-data">
       <Admin
         pageName={pageNames.Harvester}
         rightHeader={
-          <SaveButton
-            variant="secondary"
-            text="Submit"
-            type="submit"
-          />
+          rightHeader ? rightHeader :
+            <SaveButton
+              variant="secondary"
+              text="Submit"
+              type="submit"
+              disabled={
+                referenceLayerAttr?.value === undefined ||
+                adminLevelAttr?.value === undefined ||
+                indicatorAttr?.value === undefined
+              }
+            />
         }
       >
         <div className='HarvesterForm'>
