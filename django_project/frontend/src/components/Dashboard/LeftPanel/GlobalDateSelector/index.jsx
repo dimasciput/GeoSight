@@ -167,7 +167,7 @@ export default function GlobalDateSelector() {
         let month = '' + (date.getUTCMonth() + 1)
         if (month.length < 2)
           month = '0' + month;
-        return date.getUTCFullYear() + '-' + month
+        return month + '-' + date.getUTCFullYear()
       case INTERVALS.DAILY:
         return formatDate(date)
       case INTERVALS.HOURLY:

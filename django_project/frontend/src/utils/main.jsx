@@ -255,7 +255,7 @@ export function formatDate(d) {
   if (day.length < 2)
     day = '0' + day;
 
-  return [year, month, day].join('-');
+  return [day, month, year].join('-');
 }
 
 /**
@@ -280,5 +280,5 @@ export function formatDateTime(d) {
   if (second.length < 2)
     second = '0' + second;
 
-  return [year, month, day].join('-') + ' ' + [hour, minute, second].join(':');
+  return [day, month, year].join('-') + ' ' + [hour, minute, second].join(':');
 }
