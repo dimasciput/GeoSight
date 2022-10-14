@@ -1,0 +1,15 @@
+/* ==========================================================================
+   Date selection
+   ========================================================================== */
+
+@import '../../../app/variables';
+
+.DashboardBottomPanel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-left: 1rem;
+  width: 100vw;
+  height: 0;
+  z-index: 1001;
+}

@@ -15,6 +15,13 @@ class LayerUsed(object):
     INDICATOR = 'Indicator'
 
 
+DATE_FILTER_TYPES = [
+    ('No filter', 'No filter (global latest values will be used)'),
+    ('Global datetime filter', 'Use datetime filter from Dashboard level.'),
+    ('Custom filter', 'Use custom datetime filter.'),
+]
+
+
 class Widget(AbstractTerm, DashboardRelation):
     """Widget model."""
 
@@ -86,6 +93,15 @@ class Widget(AbstractTerm, DashboardRelation):
         help_text=(
             "Use this layer when layer used is context layer."
         )
+    )
+    date_filter_type = models.CharField(
+        max_length=256,
+        default=DATE_FILTER_TYPES[0][0],
+        choices=DATE_FILTER_TYPES
+    )
+    date_filter_value = models.CharField(
+        max_length=256,
+        blank=True, null=True,
     )
 
     def __str__(self):

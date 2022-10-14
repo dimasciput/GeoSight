@@ -40,8 +40,6 @@ export default function GlobalDateSelector() {
   const [minDate, setMinDate] = useState(null)
   const [maxDate, setMaxDate] = useState(null)
   const [interval, setInterval] = useState(INTERVALS.DAILY)
-
-  const selectedGlobalTimeStr = JSON.stringify(selectedGlobalTime);
   const prevState = useRef();
 
   /** Update dates
@@ -172,17 +170,6 @@ export default function GlobalDateSelector() {
         return formatDate(date)
       case INTERVALS.HOURLY:
         return formatDateTime(date)
-    }
-  }
-
-  /***
-   * Change the value text of the slider
-   */
-  function valueLabelFormat(value) {
-    if (dates[value]) {
-      return dateLabel(new Date(dates[value]))
-    } else {
-      return ''
     }
   }
 

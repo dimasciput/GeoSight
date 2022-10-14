@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import LeftPanel from '../../components/Dashboard/LeftPanel'
 import Map from '../../components/Dashboard/Map'
 import RightPanel from '../../components/Dashboard/RightPanel'
+import BottomPanel from '../../components/Dashboard/BottomPanel'
 
 import './style.scss';
 
@@ -26,6 +27,7 @@ export default function Dashboard({ children }) {
           <LeftPanel setLeftExpanded={setLeftExpanded}/>
           <Map/>
           <RightPanel/>
+          <BottomPanel/>
         </Fragment> :
         <div></div>
       }

@@ -4,9 +4,14 @@
 
 import React, { Fragment, useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
-import { Button, FormControl, Input, InputLabel } from "@mui/material";
+import DatePicker from "react-datepicker";
+import { Button, FormControl, Input, InputLabel, Radio } from "@mui/material";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormLabel from "@mui/material/FormLabel";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 import { DEFINITION } from "../Widget/index"
 import Modal, { ModalContent, ModalHeader } from "../Modal";
@@ -32,6 +37,11 @@ export default function WidgetEditor({ open, onCreated, data, children }) {
   const [property, setProperty] = useState('');
   const [additionalData, setAdditionalData] = useState({});
 
+  const [dateFilterType, setDateFilterType] = useState('');
+  const [dateFilterValue, setDateFilterValue] = useState('');
+  const [minDateFilter, setMinDateFilter] = useState(0)
+  const [maxDateFilter, setMaxDateFilter] = useState(0)
+
 
   // onSubmitted
   useEffect(() => {
@@ -42,6 +52,20 @@ export default function WidgetEditor({ open, onCreated, data, children }) {
     setOperation(data.operation ? data.operation : DEFINITION.WidgetOperation.SUM)
     setUnit(data.unit ? data.unit : '')
     setProperty(data.property ? data.property : '')
+    setDateFilterType(data.date_filter_type ? data.date_filter_type : 'No filter')
+    const dateFilterValue = data.date_filter_value ? data.date_filter_value : ''
+    setDateFilterValue(dateFilterValue)
+
+    let [minDateFilter, maxDateFilter] = dateFilterValue.split(';')
+    if ((new Date(minDateFilter)).toString() === 'Invalid Date') {
+      minDateFilter = new Date().toISOString()
+    }
+    if ((new Date(maxDateFilter)).toString() === 'Invalid Date') {
+      maxDateFilter = null
+    }
+    setMinDateFilter(minDateFilter ? minDateFilter : new Date().toISOString())
+    setMaxDateFilter(maxDateFilter)
+
     setAdditionalData({})
   }, [data])
 
@@ -62,6 +86,8 @@ export default function WidgetEditor({ open, onCreated, data, children }) {
         operation: operation,
         unit: unit,
         property: property,
+        date_filter_type: dateFilterType,
+        date_filter_value: [minDateFilter, maxDateFilter].join(';')
       }
     }
     onCreated(newData)
@@ -94,7 +120,6 @@ export default function WidgetEditor({ open, onCreated, data, children }) {
     }
   } catch (error) {
   }
-
 
   return (
     <Fragment>
@@ -216,6 +241,63 @@ export default function WidgetEditor({ open, onCreated, data, children }) {
               })
             })
           }
+
+          <FormControl className='MuiForm-RadioGroup'>
+            <FormLabel
+              className={'MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined MuiFormLabel-colorPrimary MuiFormLabel-filled MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiInputLabel-outlined css-1sumxir-MuiFormLabel-root-MuiInputLabel-root'}>
+              Date Filter
+            </FormLabel>
+            <RadioGroup value={dateFilterType} onChange={(evt) => {
+              setDateFilterType(evt.target.value)
+            }}>
+              <FormControlLabel
+                value="No filter" control={<Radio/>}
+                label="No filter (global latest values will be used)"/>
+              <FormControlLabel
+                value="Global datetime filter" control={<Radio/>}
+                label="Use datetime filter from Dashboard level."/>
+              <FormControlLabel
+                value="Custom filter" control={<Radio/>}
+                label="Use custom datetime filter."/>
+            </RadioGroup>
+
+            {
+              dateFilterType === "Custom filter" ?
+                <div className='BasicForm'>
+                  <div className='CustomDateFilterValues BasicFormSection'>
+                    <DatePicker
+                      showTimeSelect
+                      dateFormat="dd-MM-yyyy hh:mm:ss"
+                      selected={minDateFilter ? new Date(minDateFilter) : null}
+                      maxDate={new Date(maxDateFilter)}
+                      onChange={date => {
+                        setMinDateFilter(new Date(date).toISOString())
+                      }}
+                    />
+                    <div className='Separator'><RemoveIcon/></div>
+                    <DatePicker
+                      showTimeSelect
+                      dateFormat="dd-MM-yyyy hh:mm:ss"
+                      selected={maxDateFilter ? new Date(maxDateFilter) : null}
+                      minDate={new Date(minDateFilter)}
+                      onChange={date => {
+                        if (date) {
+                          setMaxDateFilter(new Date(date).toISOString())
+                        } else {
+                          setMaxDateFilter(null)
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className='helptext' style={{ width: '100%' }}>
+                    Make the max date empty to make the data filtered up to
+                    `today`.
+                  </div>
+                </div> :
+                ""
+            }
+          </FormControl>
+
           <Button
             variant="primary"
             className="modal__widget__editor__apply"
