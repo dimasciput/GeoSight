@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Date selection
+   ========================================================================== */
+
+@import '../../../../../app/variables';
+
+
+.GlobalDateSelectionControl {
+  text-align: center;
+  margin-top: 0.5rem;
+  position: relative;
+
+  .GlobalDateSelectionSpeedControl {
+    display: flex;
+    border: 1px solid $secondary-color;
+    width: 156px;
+    position: absolute;
+    right: -1.5rem;
+    top: 0;
+    padding: 5px 1.5rem 5px 1rem;
+    border-radius: $border-radius;
+
+    .GlobalDateSelectionSpeedControlText {
+      margin-right: 1rem;
+      padding-top: 2px;
+    }
+
+    .MuiSlider-thumb {
+      color: $secondary-color;
+    }
+
+    .MuiSlider-root {
+      color: $secondary-color;
+    }
+  }
+
+  button {
+    margin: 0 0.2rem;
+  }
+}
