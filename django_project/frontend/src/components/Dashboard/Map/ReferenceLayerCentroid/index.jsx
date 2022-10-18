@@ -152,7 +152,7 @@ export default function ReferenceLayerCentroid({ map, pane }) {
       if (indicatorShow) {
 
         // Create data
-        if (selectedIndicatorLayer && selectedIndicatorLayer.indicators.length >= 2) {
+        if (selectedIndicatorLayer?.indicators?.length >= 2) {
           const indicatorsByGeom = {}
           selectedIndicatorLayer.indicators.map(indicatorLayer => {
             const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
