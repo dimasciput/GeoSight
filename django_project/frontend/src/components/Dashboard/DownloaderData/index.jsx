@@ -32,12 +32,12 @@ export default function DownloaderData() {
   const [geojson, setGeojson] = useState(false)
 
   const selectedLayerData = []
-  selectedIndicatorLayer.indicators.map(indicator => {
+  selectedIndicatorLayer?.indicators?.map(indicator => {
     if (indicatorsData[indicator.id]?.fetched) {
       selectedLayerData.push(indicatorsData[indicator.id].data)
     }
   })
-  const disabled = downloading || selectedLayerData.length !== selectedIndicatorLayer.indicators.length
+  const disabled = downloading || selectedLayerData.length !== selectedIndicatorLayer?.indicators?.length
 
   // Construct the data
   const download = () => {
@@ -124,6 +124,9 @@ export default function DownloaderData() {
         }
       )()
     }
+  }
+  if (Object.keys(selectedIndicatorLayer).length === 0) {
+    return ""
   }
 
   return (
