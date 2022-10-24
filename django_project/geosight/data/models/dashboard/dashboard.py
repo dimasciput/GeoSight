@@ -252,6 +252,8 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                 widget.unit = data['unit']
                 widget.property = data['property']
                 widget.layer_used = data['layer_used']
+                widget.date_filter_value = data['date_filter_value']
+                widget.date_filter_type = data['date_filter_type']
 
                 if widget.layer_used == LayerUsed.INDICATOR:
                     try:

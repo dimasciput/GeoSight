@@ -174,3 +174,35 @@
     border: none;
   }
 }
+
+.MuiForm-RadioGroup {
+  border: 1px solid rgba(0, 0, 0, 0.23) !important;
+  border-radius: $border-radius;
+  padding-bottom: 1rem !important;
+
+  label {
+    width: fit-content;
+  }
+
+  .MuiFormControlLabel-root {
+    margin-left: 1rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .BasicForm {
+    padding: 0 1rem 0 3rem !important;
+
+    .helptext {
+      font-size: 0.8rem;
+    }
+  }
+
+  .CustomDateFilterValues {
+    display: flex;
+    margin-bottom: 0 !important;
+
+    .Separator {
+      padding: 0.5rem;
+    }
+  }
+}

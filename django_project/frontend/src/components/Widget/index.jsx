@@ -10,6 +10,7 @@ import SummaryWidget from "./SummaryWidget"
 import SummaryGroupWidget from "./SummaryGroupWidget"
 import { cleanLayerData } from "../../utils/indicators"
 import { returnWhere } from "../../utils/queryExtraction";
+import { fetchingData } from "../../Requests";
 
 import './style.scss';
 
@@ -29,36 +30,80 @@ export const DEFINITION = {
  * @param {string} data Data of widget
  */
 export function Widget({ idx, data }) {
+  const {
+    name, description, type,
+    layer_id, layer_used, property,
+    date_filter_type, date_filter_value
+  } = data
   const { indicators } = useSelector(state => state.dashboard.data);
-  const indicatorsData = useSelector(state => state.indicatorsData);
+  const indicatorLayerData = useSelector(state => state.indicatorsData[layer_id]);
   const filteredGeometries = useSelector(state => state.filteredGeometries);
   const filtersData = useSelector(state => state.filtersData);
   const [showInfo, setShowInfo] = useState(false);
-  const {
-    name, description, type,
-    layer_id, layer_used, property
-  } = data
+  const [layerData, setLayerData] = useState({});
+
+  // Fetch the data if it is using global filter
+  useEffect(() => {
+    if (date_filter_type === 'Global datetime filter') {
+      setLayerData(indicatorLayerData)
+    }
+  }, [indicatorLayerData])
 
 
-  const layer = indicators.filter((layer) => {
+  const layer = indicators.find((layer) => {
     return layer.id === layer_id;
-  })[0]
+  })
+  // Fetch the data if it is using no filter or custom
+  useEffect(() => {
+    setLayerData({
+      fetching: true,
+      fetched: false,
+      data: {},
+      error: null
+    })
+    let params = {}
+    if (date_filter_type === 'Custom filter') {
+      if (date_filter_value) {
+        let [minDateFilter, maxDateFilter] = date_filter_value.split(';')
+        params = {
+          'time__gte': minDateFilter,
+        }
+        if (maxDateFilter) {
+          params['time__lte'] = maxDateFilter
+        }
+      }
+    }
+
+    fetchingData(
+      layer.url, params, {}, function (response, error) {
+        let newState = {
+          fetching: false,
+          fetched: true,
+          receivedAt: Date.now(),
+          data: null,
+          error: null
+        };
+
+        if (error) {
+          newState.error = error;
+        } else {
+          newState.data = response;
+        }
+        setLayerData(newState);
+      }
+    )
+  }, [data])
 
   const where = returnWhere(filtersData ? filtersData : [])
   let indicatorData = null
   if (layer) {
-    indicatorData = indicatorsData[layer_id] ? indicatorsData[layer_id] : {}
-    indicatorData = Object.assign({}, indicatorData)
+    indicatorData = Object.assign({}, layerData)
     if (indicatorData.fetched && indicatorData.data) {
       indicatorData.data = indicatorData.data.filter(indicator => {
         return !filteredGeometries || !where || filteredGeometries.includes(indicator.geometry_code)
       })
     }
   }
-
-  // onSubmitted
-  useEffect(() => {
-  }, [indicatorData])
 
 
   const showInfoHandler = () => {
@@ -136,7 +181,7 @@ export function Widget({ idx, data }) {
 /**
  * Widget List rendering
  */
-export default function WidgetList({widgets}) {
+export default function WidgetList({ widgets }) {
   return <Fragment>
     {
       widgets ?
