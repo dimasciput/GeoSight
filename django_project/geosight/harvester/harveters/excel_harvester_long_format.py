@@ -1,9 +1,8 @@
 """Harvest data from spreadsheet for multi indicator."""
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 from django.db import transaction
-from django.utils.timezone import now
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
 
@@ -11,7 +10,7 @@ from geosight.data.models import Indicator, IndicatorValue
 from geosight.harvester.harveters._base import BaseHarvester, HarvestingError
 
 
-class ExcelHarvester(BaseHarvester):
+class ExcelHarvesterLongFormat(BaseHarvester):
     """Harvest data from spreadsheet for multi indicator."""
 
     description = (
@@ -26,12 +25,6 @@ class ExcelHarvester(BaseHarvester):
     def additional_attributes(**kwargs) -> dict:
         """Return additional attributes."""
         attr = {
-            'date': {
-                'title': "Date of Data",
-                'description': "The date for the data that will be used.",
-                'required': False,
-                'type': 'date'
-            },
             'file': {
                 'title': "URL of file",
                 'description': (
@@ -55,25 +48,32 @@ class ExcelHarvester(BaseHarvester):
                     "the file contains administration code"
                 ),
                 'type': 'select'
+            },
+            'column_name_indicator_shortcode': {
+                'title': "Column Name: Indicator Shortcode",
+                'description': (
+                    "The name of column in "
+                    "the file contains shortcode of indicator."
+                ),
+                'type': 'select'
+            },
+            'column_name_value': {
+                'title': "Column Name: value of data",
+                'description': (
+                    "The name of column in "
+                    "the file contains value of data."
+                ),
+                'type': 'select'
+            },
+            'column_name_date': {
+                'title': "Column Name: Date of data",
+                'description': (
+                    "The name of column in "
+                    "the file contains date of data."
+                ),
+                'type': 'select'
             }
         }
-        try:
-            for indicator in Indicator.objects.all().order_by(
-                    'group__name', 'name'):
-                shortcode = indicator.shortcode
-                attr[f'{indicator.id}'] = {
-                    'title': "Column Name: " + indicator.__str__(),
-                    'description': indicator.description,
-                    'class': 'indicator-name',
-                    'required': False,
-                    'data': {
-                        'name': indicator.name,
-                        'description': indicator.description,
-                        'shortcode': shortcode if shortcode else '',
-                    }
-                }
-        except KeyError:
-            pass
         return attr
 
     def get_records(self):
@@ -104,25 +104,26 @@ class ExcelHarvester(BaseHarvester):
                 )
         return records
 
+    def check_attr(self, headers, attr_name):
+        """Check and return attr."""
+        try:
+            return headers.index(self.attributes[attr_name])
+        except ValueError as e:
+            if 'not in list' in str(e):
+                raise HarvestingError(str(e).replace(
+                    'is not in list', '') + ' column is not found')
+
     def _process(self):
         """Run the harvester."""
         harvester = self.harvester
         reference_layer = harvester.reference_layer
         admin_level = harvester.admin_level
-        default_attr = ExcelHarvester.additional_attributes()
+        default_attr = ExcelHarvesterLongFormat.additional_attributes()
+
         # fetch data
         self._update('Fetching data')
 
-        # date
-        date = now().date()
-        if self.attributes['date']:
-            try:
-                date = datetime.strptime(
-                    self.attributes['date'], "%Y-%m-%d").date()
-            except ValueError:
-                raise HarvestingError('Date is not in format %Y-%m-%d')
-
-            # format data
+        # format data
         row_number_for_header = 'row_number_for_header'
         try:
             column_header = int(self.attributes[row_number_for_header])
@@ -136,24 +137,14 @@ class ExcelHarvester(BaseHarvester):
         headers = records[0]
 
         # get keys
-        indicators_column = {}
-        key_column_name_administration_code = None
-        try:
-            key_column_name_administration_code = headers.index(
-                self.attributes['column_name_administration_code']
-            )
-        except ValueError as e:
-            if 'not in list' in str(e):
-                raise HarvestingError(str(e).replace(
-                    'is not in list', '') + ' column is not found')
-
-        for indicator in Indicator.objects.all():
-            try:
-                indicators_column[
-                    headers.index(self.attributes[str(indicator.id)])
-                ] = indicator
-            except ValueError:
-                pass
+        column_name_administration_code = self.check_attr(
+            headers, 'column_name_administration_code'
+        )
+        column_name_indicator_shortcode = self.check_attr(
+            headers, 'column_name_indicator_shortcode'
+        )
+        column_name_value = self.check_attr(headers, 'column_name_value')
+        column_name_date = self.check_attr(headers, 'column_name_date')
 
         # Save the data in atomic
         # When 1 is error, we need to raise exeptions
@@ -169,61 +160,73 @@ class ExcelHarvester(BaseHarvester):
                     f'{total + column_header}'
                 )
                 detail = [str(r) for r in record]
-                administrative_code = record[
-                    key_column_name_administration_code]
+                administrative_code = record[column_name_administration_code]
+                indicator_shortcode = record[column_name_indicator_shortcode]
+                date_data = record[column_name_date]
 
-                # we check the values per indicator
-                for idx, indicator in indicators_column.items():
-                    value = record[idx]
-                    try:
-                        value = value.strip()
-                    except AttributeError:
-                        pass
-                    try:
-                        if value is None or value == '':
-                            continue
-                        else:
-                            try:
-                                # Cast value to float
-                                # It will check the rule by name if not float
-                                value = float(value)
-                            except ValueError:
-                                rules = indicator.indicatorrule_set
-                                rule = rules.filter(
-                                    name__iexact=value).first()
-                                if not rule:
-                                    detail[idx] += (
-                                        f'{error_separator}'
-                                        f'Value is not recognized'
-                                    )
-                                    continue
-                                value = float(
-                                    rule.rule.replace(' ', '').replace(
-                                        'x==', '')
-                                )
+                # Check requirements
+                if not administrative_code:
+                    detail[column_name_administration_code] += (
+                        f'{error_separator}This is required'
+                    )
 
-                            if administrative_code:
-                                indicator_value, created = \
-                                    IndicatorValue.objects.get_or_create(
-                                        indicator=indicator,
-                                        date=date,
-                                        geom_identifier=administrative_code,
-                                        defaults={
-                                            'value': value,
-                                            'reference_layer': reference_layer,
-                                            'admin_level': admin_level
-                                        }
-                                    )
-                                indicator_value.value = value
-                                indicator_value.save()
+                if not indicator_shortcode:
+                    detail[column_name_indicator_shortcode] += (
+                        f'{error_separator}This is required'
+                    )
+
+                if not date_data:
+                    detail[column_name_date] += (
+                        f'{error_separator}This is required'
+                    )
+
+                # Format date
+                if not isinstance(date_data, date):
+                    try:
+                        date_data = datetime.strptime(
+                            date_data, "%Y-%m-%d"
+                        ).date()
+                    except ValueError:
+                        detail[column_name_date] += (
+                            f'{error_separator}Date is not in format %Y-%m-%d'
+                        )
+
+                # Cast value to float
+                try:
+                    value = record[column_name_value]
+                except IndexError:
+                    value = None
+                if not value:
+                    continue
+                try:
+                    value = float(value)
+                except ValueError:
+                    detail[column_name_value] += (
+                        f'{error_separator}Value is not float'
+                    )
+
+                # If no error, save the data
+                if error_separator not in json.dumps(detail):
+                    try:
+                        indicator_value, created = \
+                            IndicatorValue.objects.get_or_create(
+                                indicator=Indicator.objects.get(
+                                    shortcode=indicator_shortcode
+                                ),
+                                date=date_data,
+                                geom_identifier=administrative_code,
+                                defaults={
+                                    'value': value,
+                                    'reference_layer': reference_layer,
+                                    'admin_level': admin_level
+                                }
+                            )
+                        indicator_value.value = value
+                        indicator_value.save()
                     except Indicator.DoesNotExist:
-                        detail[idx] += (
+                        detail[column_name_indicator_shortcode] += (
                             f'{error_separator}Indicator does not exist'
                         )
-                    except ValueError:
-                        detail[
-                            key_column_name_administration_code
-                        ] += error_separator + 'Value is not a number'
 
                 # check if error separator is in detail
                 if error_separator in json.dumps(detail):

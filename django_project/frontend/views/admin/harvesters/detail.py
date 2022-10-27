@@ -8,7 +8,8 @@ from frontend.views._base import BaseView
 from frontend.views.admin.harvesters.forms import HarvesterFormView
 from geosight.data.models import Indicator, ContextLayer
 from geosight.harvester.models import (
-    Harvester, ExcelHarvester, UsingExposedAPI
+    Harvester, ExcelHarvesterWideFormatHarvester,
+    ExcelHarvesterLongFormatHarvester, UsingExposedAPI
 )
 from geosight.harvester.serializer.harvester import (
     HarvesterSerializer, HarvesterLogSerializer, HarvesterAttributeSerializer
@@ -91,7 +92,8 @@ class HarvesterDetail(BaseView):
             'can_harvest_now': True
         }
         if harvester.harvester_class in [
-            ExcelHarvester[0],
+            ExcelHarvesterWideFormatHarvester[0],
+            ExcelHarvesterLongFormatHarvester[0],
             UsingExposedAPI[0]
 
         ]:
@@ -116,7 +118,8 @@ class HarvesterDetail(BaseView):
         except Indicator.DoesNotExist:
             raise Http404('Harvester does not exist')
         if harvester.harvester_class in [
-            ExcelHarvester[0],
+            ExcelHarvesterWideFormatHarvester[0],
+            ExcelHarvesterLongFormatHarvester[0],
             UsingExposedAPI[0]
 
         ]:

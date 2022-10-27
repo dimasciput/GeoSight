@@ -4,7 +4,8 @@ from django.urls import include
 
 from frontend.views.admin.harvesters import (
     HarvestedUsingExposedAPIByExternalClientView,
-    HarvesterDetail, MetaIngestorForm, HarvesterListView,
+    HarvesterDetail, HarvesterListView,
+    MetaIngestorWideFormatForm, MetaIngestorLongFormatForm,
     HarvesterAPIWithGeographyAndDateView,
     HarvesterAPIWithGeographyAndTodayDateView,
     SharepointHarvesterView, VectorContextLayerHarvesterView
@@ -32,9 +33,14 @@ harvester_create_form_url = [
         name=SharepointHarvesterView().url_create_name
     ),
     url(
-        r'^meta-ingestor',
-        MetaIngestorForm.as_view(),
-        name=MetaIngestorForm().url_create_name
+        r'^import-excel-wide-format',
+        MetaIngestorWideFormatForm.as_view(),
+        name=MetaIngestorWideFormatForm().url_create_name
+    ),
+    url(
+        r'^import-excel-long-format',
+        MetaIngestorLongFormatForm.as_view(),
+        name=MetaIngestorLongFormatForm().url_create_name
     ),
     url(
         r'^vector-context-layer',
@@ -64,9 +70,14 @@ harvester_edit_form_url = [
         name=SharepointHarvesterView().url_edit_name
     ),
     url(
-        r'^meta-ingestor',
-        MetaIngestorForm.as_view(),
-        name=MetaIngestorForm().url_edit_name
+        r'^import-excel-wide-format',
+        MetaIngestorWideFormatForm.as_view(),
+        name=MetaIngestorWideFormatForm().url_edit_name
+    ),
+    url(
+        r'^import-excel-long-format',
+        MetaIngestorLongFormatForm.as_view(),
+        name=MetaIngestorLongFormatForm().url_edit_name
     ),
     url(
         r'^vector-context-layer',

@@ -34,9 +34,15 @@ UsingExposedAPI = (
     'geosight.harvester.harveters.using_exposed_api.UsingExposedAPI',
     'Harvested using exposed API by external client',
 )
-ExcelHarvester = (
-    'geosight.harvester.harveters.excel_harvester.ExcelHarvester',
-    'Excel Harvesters',
+ExcelHarvesterWideFormatHarvester = (
+    'geosight.harvester.harveters.'
+    'excel_harvester_wide_format.ExcelHarvesterWideFormat',
+    'Import data from Excel (WIDE format)',
+)
+ExcelHarvesterLongFormatHarvester = (
+    'geosight.harvester.harveters.'
+    'excel_harvester_long_format.ExcelHarvesterLongFormat',
+    'Import data from Excel (LONG format)',
 )
 VectorContextLayerHarvester = (
     'geosight.harvester.harveters.'
@@ -51,7 +57,8 @@ HARVESTERS = (
     VectorContextLayerHarvester
 )
 ALL_HARVESTERS = HARVESTERS + (
-    ExcelHarvester,
+    ExcelHarvesterWideFormatHarvester,
+    ExcelHarvesterLongFormatHarvester
 )
 
 

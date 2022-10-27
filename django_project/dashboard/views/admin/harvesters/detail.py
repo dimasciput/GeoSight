@@ -5,7 +5,9 @@ from django.shortcuts import get_object_or_404, reverse, redirect
 from dashboard.views.admin._base import AdminView
 from geosight.data.models import Indicator
 from geosight.harvester.models import (
-    Harvester, ExcelHarvester, UsingExposedAPI
+    Harvester, ExcelHarvesterWideFormatHarvester,
+    ExcelHarvesterLongFormatHarvester,
+    UsingExposedAPI
 )
 from geosight.harvester.tasks import run_harvester
 
@@ -34,7 +36,7 @@ class HarvesterIndicatorDetail(AdminView):
             'can_harvest_now': True
         }
         if harvester.harvester_class in [
-            ExcelHarvester[0],
+            ExcelHarvesterWideFormatHarvester[0],
             UsingExposedAPI[0]
 
         ]:
@@ -128,7 +130,8 @@ class HarvesterDetail(HarvesterIndicatorDetail):
         except Indicator.DoesNotExist:
             raise Http404('Harvester does not exist')
         if harvester.harvester_class in [
-            ExcelHarvester[0],
+            ExcelHarvesterWideFormatHarvester[0],
+            ExcelHarvesterLongFormatHarvester[0],
             UsingExposedAPI[0]
 
         ]:

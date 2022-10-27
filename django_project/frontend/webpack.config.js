@@ -36,7 +36,8 @@ let conf = {
     // HARVESTERS
     AdminHarvesterList: ['./src/pages/Admin/Harvesters/List'],
     HarvesterDetail: ['./src/pages/Admin/Harvesters/Detail'],
-    MetaIngestor: ['./src/pages/Admin/Harvesters/MetaIngestor'],
+    MetaIngestorWideFormat: ['./src/pages/Admin/Harvesters/MetaIngestorWideFormat'],
+    MetaIngestorLongFormat: ['./src/pages/Admin/Harvesters/MetaIngestorLongFormat'],
     ExposedAPI: ['./src/pages/Admin/Harvesters/ExposedAPI'],
     HarvesterApiGeography: ['./src/pages/Admin/Harvesters/HarvesterApiGeography'],
     HarvesterApiGeographyAndDate: ['./src/pages/Admin/Harvesters/HarvesterApiGeographyAndDate'],
@@ -107,7 +108,7 @@ if (isDev) {
     },
   }
   conf['plugins'].push(
-    isDev && new ReactRefreshWebpackPlugin({overlay: false})
+    isDev && new ReactRefreshWebpackPlugin({ overlay: false })
   )
 }
 module.exports = conf;

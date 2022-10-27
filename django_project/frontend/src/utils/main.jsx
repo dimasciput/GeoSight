@@ -245,7 +245,7 @@ export function jsonToXlsx(data, filename, sheetName = "Sheet 1") {
  * Json to xls
  * @param {Date} d
  */
-export function formatDate(d) {
+export function formatDate(d, reverseDate = false) {
   let month = '' + (d.getMonth() + 1),
     day = '' + d.getDate(),
     year = d.getFullYear();
@@ -254,8 +254,11 @@ export function formatDate(d) {
     month = '0' + month;
   if (day.length < 2)
     day = '0' + day;
-
-  return [day, month, year].join('-');
+  if (reverseDate) {
+    return [day, month, year].join('-');
+  } else {
+    return [year, month, day].join('-');
+  }
 }
 
 /**

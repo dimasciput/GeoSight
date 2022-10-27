@@ -2,27 +2,27 @@
 
 from django.shortcuts import reverse
 
-from geosight.harvester.harveters.excel_harvester import ExcelHarvester
-from geosight.harvester.models.harvester import Harvester
+from geosight.harvester.harveters.excel_harvester_wide_format import (
+    ExcelHarvesterWideFormat
+)
+from geosight.harvester.models.harvester import (
+    Harvester,
+    ExcelHarvesterWideFormatHarvester, ExcelHarvesterLongFormatHarvester
+)
 from geosight.harvester.tasks import run_harvester
 from ._base import HarvesterFormView
 
-MetaIngestor = (
-    'geosight.harvester.harveters.excel_harvester.ExcelHarvester',
-    'Local Master File',
-)
 
+class MetaIngestorWideFormatForm(HarvesterFormView):
+    """Meta Ingestor Wide Format View."""
 
-class MetaIngestorForm(HarvesterFormView):
-    """Meta Ingestor View."""
-
-    harvester_class = ExcelHarvester
-    template_name = 'frontend/admin/harvesters/meta_ingestor.html'
+    harvester_class = ExcelHarvesterWideFormat
+    template_name = 'frontend/admin/harvesters/meta_ingestor_wide_format.html'
 
     @property
     def page_title(self):
         """Return page title that used on tab bar."""
-        return 'Meta Ingestor'
+        return 'Import data from Excel (WIDE format)'
 
     @property
     def content_title(self):
@@ -31,7 +31,7 @@ class MetaIngestorForm(HarvesterFormView):
         return (
             f'<a href="{list_url}">Harvesters</a> '
             f'<span>></span> '
-            f'<a>Meta Ingestor</a> '
+            f'<a>Import data from Excel (WIDE format)</a> '
         )
 
     def get_harvester(self) -> Harvester:
@@ -46,7 +46,10 @@ class MetaIngestorForm(HarvesterFormView):
     @property
     def harvesters(self) -> tuple:
         """Return harvesters."""
-        return (MetaIngestor,)
+        return (
+            ExcelHarvesterWideFormatHarvester,
+            ExcelHarvesterLongFormatHarvester,
+        )
 
     def context_data(self, **kwargs) -> dict:
         """Return context data."""
@@ -65,4 +68,4 @@ class MetaIngestorForm(HarvesterFormView):
         """For calling after post success."""
         harvester.creator = self.request.user
         harvester.save()
-        run_harvester.delay(harvester.pk)
+        run_harvester(harvester.pk)

@@ -41,7 +41,7 @@ export default function GlobalDateSelector() {
   const [isInFilter, setIsInFilter] = useState(false)
   const [isInLatestValue, setIsInLatestValue] = useState(false)
   const [selectedDatePoint, setSelectedDatePoint] = useState(null)
-  const [interval, setInterval] = useState(INTERVALS.MONTHLY)
+  const [interval, setInterval] = useState(INTERVALS.DAILY)
   const [minDate, setMinDate] = useState(null)
   const [maxDate, setMaxDate] = useState(null)
 
@@ -60,7 +60,7 @@ export default function GlobalDateSelector() {
           month = '0' + month;
         return month + '-' + date.getFullYear()
       case INTERVALS.DAILY:
-        return formatDate(date)
+        return formatDate(date, true)
     }
   }
 
@@ -151,7 +151,7 @@ export default function GlobalDateSelector() {
           group = date.getUTCFullYear() + '-' + date.getUTCMonth()
           break
         case INTERVALS.DAILY:
-          group = formatDate(date)
+          group = formatDate(date, true)
           break
       }
       if (!intervalGroupDates[group]) {
@@ -186,10 +186,10 @@ export default function GlobalDateSelector() {
    */
   useEffect(() => {
     updateDatesTime()
-    if (!minDate || !currentDates.includes(minDate)) {
+    if (!minDate || !currentDates.includes(minDate) || minDate === maxDate) {
       setMinDate(currentDates[0])
     }
-    if (!maxDate || !currentDates.includes(maxDate)) {
+    if (!maxDate || !currentDates.includes(maxDate) || minDate === maxDate) {
       setMaxDate(currentDates[currentDates.length - 1])
     }
   }, [selectedDatePoint, interval, isInLatestValue, isInFilter]);
@@ -268,6 +268,22 @@ export default function GlobalDateSelector() {
             className={'GlobalDateSelectionOuterWrapper ' + (!isInFilter ? 'Disabled' : '')}>
             <div className='GlobalDateSelectionWrapper'>
               <div className='GlobalAdvancedFilter'>
+                <div
+                  className='GlobalDateSelectionIconDate'>
+                  {
+                    selectedGlobalTime.min && selectedGlobalTime.min !== selectedGlobalTime.max ?
+                      <Fragment>
+                        {
+                          formatDateTime(new Date(selectedGlobalTime.min), true)
+                        }
+                        <span className='DateSeparator'>-</span>
+                      </Fragment> :
+                      ""
+                  }
+                  {
+                    formatDateTime(new Date(selectedGlobalTime.max), true)
+                  }
+                </div>
                 <div className='Separator'/>
                 <Switch
                   className='Secondary'
@@ -277,7 +293,6 @@ export default function GlobalDateSelector() {
                   }}
                 />
                 <div className='GlobalAdvancedFilterText'>Advanced Filter</div>
-                <div className='Separator'/>
               </div>
               <div className='GlobalDateSelectionSliderWrapper'>
                 <div
@@ -376,22 +391,6 @@ export default function GlobalDateSelector() {
                 {open ? <KeyboardDoubleArrowDownIcon/> :
                   <KeyboardDoubleArrowUpIcon/>}
                 <AccessTimeIcon/>
-                <div
-                  className='GlobalDateSelectionIconDate'>
-                  {
-                    selectedGlobalTime.min && selectedGlobalTime.min !== selectedGlobalTime.max ?
-                      <Fragment>
-                        {
-                          formatDateTime(new Date(selectedGlobalTime.min), true)
-                        }
-                        <span className='DateSeparator'>-</span>
-                      </Fragment> :
-                      ""
-                  }
-                  {
-                    formatDateTime(new Date(selectedGlobalTime.max), true)
-                  }
-                </div>
                 {open ? <KeyboardDoubleArrowDownIcon/> :
                   <KeyboardDoubleArrowUpIcon/>}
               </div>

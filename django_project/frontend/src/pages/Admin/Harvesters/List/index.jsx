@@ -15,6 +15,7 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import PermissionModal from "../../Permission";
 
 import './style.scss';
+import MoreAction from "../../../../components/Elements/MoreAction";
 
 
 /**
@@ -96,14 +97,22 @@ export default function HarvesterList() {
       sortModel: [{ field: 'last_run', sort: 'desc' }],
     }}
     rightHeader={
-      <div>
-        <a href={urls.api.ingestor}>
-          <ThemeButton
-            variant="secondary"
-          >
-            <PublishIcon/>Meta Ingestor
-          </ThemeButton>
-        </a>
+      <div className='AdminContentHeader-Right-Inner'>
+        <MoreAction
+          moreIcon={
+            <ThemeButton
+              variant="secondary"
+            >
+              <PublishIcon/>Import data from Excel
+            </ThemeButton>
+          }>
+          <div className='IngestorList'>
+            <a href={urls.api.meta_ingestor_wide_format}>WIDE Format</a>
+          </div>
+          <div className='IngestorList'>
+            <a href={urls.api.meta_ingestor_long_format}>LONG Format</a>
+          </div>
+        </MoreAction>
         <a href={urls.api.create}>
           <AddButton
             variant="secondary"

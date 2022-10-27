@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import $ from "jquery";
 import DatePicker from "react-datepicker";
-import Moment from 'moment';
 import Admin, { pageNames } from '../index';
 import { SaveButton } from "../../../components/Elements/Button";
 import { SelectWithList } from "../../../components/Input/SelectWithList";
@@ -76,7 +75,7 @@ export default function Harvesters(
             dateFormat="yyyy-MM-dd"
             selected={attribute.value ? new Date(attribute.value) : ""}
             onChange={date => {
-              attribute.value = Moment(date).format('YYYY-MM-DD')
+              attribute.value = (new Date(date)).toISOString()
               setAttributes([...attributes])
             }
             }

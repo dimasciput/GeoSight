@@ -3,21 +3,22 @@ import React, { useEffect, useState } from 'react';
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
 import Harvesters from '../../Harvesters'
-import { SelectWithList } from "../../../../components/Input/SelectWithList";
 
 import './style.scss';
 
 
 /**
- * MetaIngestor App
+ * MetaIngestorWideFormat App
  */
-export default function MetaIngestor() {
+export default function MetaIngestorLongFormat() {
   const sheetName = "sheet_name";
   const rowNumberHeader = "row_number_for_header";
   const admCodeName = "column_name_administration_code";
+  const indicatorShortcodeName = "column_name_indicator_shortcode";
+  const valueName = "column_name_value";
+  const dateName = "column_name_date";
 
   const attributesInputs = []
-  const mappingInputs = []
   const [workbook, setWorkbook] = useState(null);
 
   // When file changed
@@ -64,14 +65,10 @@ export default function MetaIngestor() {
           break
       }
       attributesInputs.push(attribute)
-    } else {
-      mappingInputs.push(attribute)
     }
   })
 
   const [attributes, setAttributes] = useState(attributesInputs);
-  const [mappingAttributes, setMappingAttributes] = useState(mappingInputs);
-
 
   // When Sheet changed
   const SheetChanged = (attribute, evt) => {
@@ -86,43 +83,33 @@ export default function MetaIngestor() {
         blankrows: true
       });
 
-      const admCode = attributes.filter(attr => {
-        return attr.name === admCodeName
-      })[0]
-
+      // Change the options
       const headers = array[rowNumber.value - 1] ? array[rowNumber.value - 1] : []
+      const admCode = attributes.find(attr => attr.name === admCodeName)
       admCode.options = headers
       admCode.value = findMostMatched(admCode.options, 'pcode').value
 
-      // CHECK THE ATTRIBUTES
-      mappingAttributes.map(attribute => {
-        attribute.options = headers
-        const name = attribute.data.name
-        const shortcode = attribute.data.shortcode
-        const {
-          value: valueName,
-          score: scoreName
-        } = findMostMatched(admCode.options, name)
-        const {
-          value: valueShortcode,
-          score: scoreShortcode
-        } = findMostMatched(admCode.options, shortcode)
-        if (valueName && valueShortcode) {
-          if (scoreName < scoreShortcode) {
-            attribute.value = valueName
-          } else {
-            attribute.value = valueShortcode
-          }
-        } else if (valueName) {
-          attribute.value = valueName
-        } else if (valueShortcode) {
-          attribute.value = valueShortcode
-        }
-      })
-      setMappingAttributes([...mappingAttributes])
+      const indicatorShortcode = attributes.find(attr => attr.name === indicatorShortcodeName)
+      indicatorShortcode.options = headers
+      indicatorShortcode.value = findMostMatched(admCode.options, 'indicatorcode').value
+      if (!indicatorShortcode.value) {
+        indicatorShortcode.value = findMostMatched(admCode.options, 'indicator').value
+      }
+      if (!indicatorShortcode.value) {
+        indicatorShortcode.value = findMostMatched(admCode.options, 'shortcode').value
+      }
+
+      const valueAttr = attributes.find(attr => attr.name === valueName)
+      valueAttr.options = headers
+      valueAttr.value = findMostMatched(admCode.options, 'value').value
+
+      const dateAttr = attributes.find(attr => attr.name === dateName)
+      dateAttr.options = headers
+      dateAttr.value = findMostMatched(admCode.options, 'date').value
     }
     setAttributes([...attributes])
   }
+
   /** When workbook changed */
   useEffect(() => {
     if (workbook) {
@@ -149,39 +136,9 @@ export default function MetaIngestor() {
   }, [workbook]);
 
   return (
-    <Harvesters attributes={attributes} setAttributes={setAttributes}>
-      <table className='IndicatorSelection'>
-        <tbody>
-        <tr>
-          <th colSpan={2}>Indicator Mapping</th>
-        </tr>
-        {
-          mappingAttributes.map(attribute => {
-            return (
-              <tr key={attribute.name}>
-                <td>{
-                  attribute.value ?
-                    <span className='HasClass'></span> : ''
-                } {attribute.title}</td>
-                <td>
-                  <SelectWithList
-                    name={'attribute_' + attribute.name}
-                    list={attribute.options}
-                    value={attribute.value}
-                    onChange={evt => {
-                      attribute.value = evt.value
-                      setMappingAttributes([...mappingAttributes])
-                    }}/>
-                </td>
-              </tr>
-            )
-          })
-        }
-        </tbody>
-      </table>
-    </Harvesters>
+    <Harvesters attributes={attributes} setAttributes={setAttributes}/>
   );
 }
 
 
-render(MetaIngestor, store)
+render(MetaIngestorLongFormat, store)

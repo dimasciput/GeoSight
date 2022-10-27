@@ -1,5 +1,7 @@
 """MetaIngestor View."""
-from geosight.harvester.harveters.excel_harvester import ExcelHarvester
+from geosight.harvester.harveters.excel_harvester_wide_format import (
+    ExcelHarvesterWideFormat
+)
 from geosight.harvester.models.harvester import Harvester
 from geosight.harvester.tasks import run_harvester
 from ._base import HarvesterFormView
@@ -13,8 +15,8 @@ MetaIngestor = (
 class MetaIngestorView(HarvesterFormView):
     """Meta Ingestor View."""
 
-    harvester_class = ExcelHarvester
-    template_name = 'admin/harvesters/forms/meta_ingestor.html'
+    harvester_class = ExcelHarvesterWideFormat
+    template_name = 'admin/harvesters/forms/meta_ingestor_wide_format.html'
 
     @property
     def content_title(self):

@@ -1,12 +1,14 @@
 /* ==========================================================================
    MetaIngestor Content
    ========================================================================== */
+
 @import '../../../../app/variables';
 
 .IndicatorSelection {
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
+  margin-bottom: 3rem;
 
   th {
     background: $secondary-color;
@@ -15,19 +17,38 @@
   }
 
   th, td {
-    padding: 0.5rem 1rem;
+    padding: 1rem;
   }
 
   tr {
     border: 1px solid $secondary-color;
+
+    td:first-child {
+      width: 70%;
+    }
   }
 
-  .HasClass {
-    display: inline-block;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 1rem;
-    background: green;
-    margin-right: 5px;
+  .IndicatorSelectionTitle {
+    position: relative;
+
+    button {
+      position: absolute;
+      right: -4px;
+      top: -9px;
+    }
+  }
+}
+
+.DeleteButtonSection {
+  padding-left: 0 !important;
+  width: 25px;
+
+  svg {
+    cursor: pointer;
+    margin-top: 4px;
+
+    &:hover {
+      opacity: $base-hovered-opacity;
+    }
   }
 }

@@ -60,7 +60,7 @@ class HarvesterAdmin(admin.ModelAdmin):
         'is_finished', 'logs'
     )
     list_filter = ('harvester_class',)
-    list_editable = ('active', 'creator')
+    list_editable = ('active',)
     search_fields = ('indicator__name',)
 
     def _indicator(self, object: Harvester):
