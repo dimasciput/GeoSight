@@ -10,6 +10,7 @@ import KeyboardDoubleArrowDownIcon
 import KeyboardDoubleArrowUpIcon
   from '@mui/icons-material/KeyboardDoubleArrowUp';
 import Slider from '@mui/material/Slider';
+import Switch from "@mui/material/Switch";
 
 import { fetchingData } from "../../../../Requests";
 import { Actions } from "../../../../store/dashboard";
@@ -20,7 +21,6 @@ import './style.scss';
 
 /** TYPE INTERVAL SECTION */
 export const INTERVALS = {
-  HOURLY: 'Hourly',
   DAILY: 'Daily',
   MONTHLY: 'Monthly',
   YEARLY: 'Yearly'
@@ -34,50 +34,97 @@ export default function GlobalDateSelector() {
   const selectedGlobalTime = useSelector(state => state.selectedGlobalTime);
   const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const [datesByIndicators, setDatesByIndicators] = useState({})
   const [dates, setDates] = useState([])
+
+  const [isInFilter, setIsInFilter] = useState(false)
+  const [isInLatestValue, setIsInLatestValue] = useState(false)
+  const [selectedDatePoint, setSelectedDatePoint] = useState(null)
+  const [interval, setInterval] = useState(INTERVALS.MONTHLY)
   const [minDate, setMinDate] = useState(null)
   const [maxDate, setMaxDate] = useState(null)
-  const [interval, setInterval] = useState(INTERVALS.DAILY)
+
   const prevState = useRef();
 
-  /** Update dates
+  /***
+   * Return date label
    */
-  useEffect(() => {
-    indicators.map(indicator => {
-      if (!datesByIndicators[indicator.id]) {
-        datesByIndicators[indicator.id] = null
-
-        fetchingData(
-          indicator.url.replace('/values/latest', '/dates'), {}, {}, function (response, error) {
-            if (!error) {
-              datesByIndicators[indicator.id] = response
-            } else {
-              datesByIndicators[indicator.id] = error.toString()
-            }
-            setDatesByIndicators({ ...datesByIndicators })
-          }
-        )
-      }
-    })
-    setDatesByIndicators({ ...datesByIndicators })
-  }, [indicators]);
-
-  /** Update global dates
-   */
-  useEffect(() => {
-    if (minDate === dates[0]) {
-      dispatch(Actions.SelectedGlobalTime.change(null, maxDate))
-    } else {
-      dispatch(Actions.SelectedGlobalTime.change(minDate, maxDate))
+  const dateLabel = (date) => {
+    switch (interval) {
+      case INTERVALS.YEARLY:
+        return date.getFullYear()
+      case INTERVALS.MONTHLY:
+        let month = '' + (date.getMonth() + 1)
+        if (month.length < 2)
+          month = '0' + month;
+        return month + '-' + date.getFullYear()
+      case INTERVALS.DAILY:
+        return formatDate(date)
     }
-  }, [minDate, maxDate]);
+  }
 
   /**
-   * Update dates
-   */
-  useEffect(() => {
+   *  Update dates time
+   * **/
+  const updateDatesTime = () => {
+    if (!isInFilter) {
+      const min = null
+      const max = dates[dates.length - 1]
+      const newSelectedGlobalStr = JSON.stringify({
+        min: min,
+        max: max
+      })
+      if (newSelectedGlobalStr !== prevState.selectedGlobalTimeStr) {
+        prevState.selectedGlobalTimeStr = newSelectedGlobalStr
+        dispatch(Actions.SelectedGlobalTime.change(null, max))
+      }
+      return
+    }
+    // if it is in filter
+    if (selectedDatePoint) {
+      let min = null
+      let max = selectedDatePoint
+
+      const selectedDate = new Date(selectedDatePoint)
+      const year = selectedDate.getFullYear()
+      const month = selectedDate.getMonth()
+      const date = selectedDate.getDate()
+
+      // construct min/max
+      switch (interval) {
+        case INTERVALS.YEARLY:
+          min = formatDateTime(new Date(year, 0, 1, 0, 0, 0))
+          max = formatDateTime(new Date(year, 11, 31, 23, 59, 59))
+          break
+        case INTERVALS.MONTHLY:
+          min = formatDateTime(new Date(year, month, 1, 0, 0, 0))
+          max = formatDateTime(new Date(year, month + 1, 0, 23, 59, 59))
+          break
+        case INTERVALS.DAILY:
+          min = formatDateTime(new Date(year, month, date, 0, 0, 0))
+          max = formatDateTime(new Date(year, month, date, 23, 59, 59))
+          break
+      }
+
+      if (!isInFilter || isInLatestValue) {
+        min = null
+      }
+      const newSelectedGlobalStr = JSON.stringify({
+        min: min,
+        max: max
+      })
+      if (newSelectedGlobalStr !== prevState.selectedGlobalTimeStr) {
+        prevState.selectedGlobalTimeStr = newSelectedGlobalStr
+        dispatch(Actions.SelectedGlobalTime.change(min, max))
+      }
+    }
+  }
+
+  /**
+   * Return dates list of data
+   * **/
+  const formatDates = () => {
     let newDates = []
     if (Object.keys(currentIndicatorLayer).length !== 0) {
       // Get dates list
@@ -106,9 +153,6 @@ export default function GlobalDateSelector() {
         case INTERVALS.DAILY:
           group = formatDate(date)
           break
-        case INTERVALS.HOURLY:
-          group = formatDate(date) + ' ' + date.getHours()
-          break
       }
       if (!intervalGroupDates[group]) {
         intervalGroupDates[group] = []
@@ -122,100 +166,203 @@ export default function GlobalDateSelector() {
       newDates.push(dates[0])
     }
     newDates.sort()
+
+    return newDates;
+  }
+
+  /**
+   * CURRENT DATES
+   * **/
+  const currentDates = formatDates()
+  const options = currentDates.map(date => {
+    return {
+      name: dateLabel(new Date(date)),
+      value: date
+    }
+  })
+
+  /**
+   * Update Global Dates
+   */
+  useEffect(() => {
+    updateDatesTime()
+    if (!minDate || !currentDates.includes(minDate)) {
+      setMinDate(currentDates[0])
+    }
+    if (!maxDate || !currentDates.includes(maxDate)) {
+      setMaxDate(currentDates[currentDates.length - 1])
+    }
+  }, [selectedDatePoint, interval, isInLatestValue, isInFilter]);
+
+  /**
+   * Update Global Dates
+   */
+  useEffect(() => {
+    if (!(selectedDatePoint >= minDate && selectedDatePoint <= maxDate)) {
+      setSelectedDatePoint(maxDate)
+    }
+  }, [minDate, maxDate]);
+
+  /**
+   * Update dates
+   */
+  useEffect(() => {
+    indicators.map(indicator => {
+      if (!datesByIndicators[indicator.id]) {
+        datesByIndicators[indicator.id] = null
+
+        fetchingData(
+          indicator.url.replace('/values/latest', '/dates'), {}, {}, function (response, error) {
+            if (!error) {
+              datesByIndicators[indicator.id] = response
+            } else {
+              datesByIndicators[indicator.id] = error.toString()
+            }
+            setDatesByIndicators({ ...datesByIndicators })
+          }
+        )
+      }
+    })
+    setDatesByIndicators({ ...datesByIndicators })
+  }, [indicators]);
+
+  /**
+   * Update dates
+   */
+  useEffect(() => {
+    let newDates = currentDates
     setDates([...newDates])
 
     // Check current min/max
-    let min = selectedGlobalTime.min
     let max = selectedGlobalTime.max
-    if (newDates) {
-      if (newDates.indexOf(selectedGlobalTime.min) < 0) {
-        min = newDates[0]
-      }
-      if (newDates.indexOf(selectedGlobalTime.max) < 0) {
-        max = newDates[newDates.length - 1]
-      }
-    } else {
-      min = null
-      max = null
+    if (newDates && newDates.indexOf(selectedGlobalTime.max) < 0) {
+      max = newDates[newDates.length - 1]
     }
-    setMinDate(min)
-    setMaxDate(max)
-    const newSelectedGlobalStr = JSON.stringify({
-      min: min,
-      max: max
-    })
-    if (newSelectedGlobalStr !== prevState.selectedGlobalTimeStr) {
-      prevState.selectedGlobalTimeStr = newSelectedGlobalStr
-      if (min === newDates[0]) {
-        dispatch(Actions.SelectedGlobalTime.change(null, max))
-      } else {
-        dispatch(Actions.SelectedGlobalTime.change(min, max))
-      }
-    }
+    setSelectedDatePoint(max)
   }, [datesByIndicators, currentIndicatorLayer, interval]);
 
-  /***
-   * Return date label
-   */
-  const dateLabel = (date) => {
-    switch (interval) {
-      case INTERVALS.YEARLY:
-        return date.getUTCFullYear()
-      case INTERVALS.MONTHLY:
-        let month = '' + (date.getUTCMonth() + 1)
-        if (month.length < 2)
-          month = '0' + month;
-        return month + '-' + date.getUTCFullYear()
-      case INTERVALS.DAILY:
-        return formatDate(date)
-      case INTERVALS.HOURLY:
-        return formatDateTime(date)
-    }
+  // Update the inputs
+  let currentSelectedDatePointMark = 0
+  let usedDates = dates
+  if (minDate && maxDate) {
+    usedDates = usedDates.filter(date => date >= minDate && date <= maxDate)
   }
-
-  const count = dates.length - 1
-  const steps = [0, Math.floor(count * 0.33), Math.floor(count * 0.66), count]
-  const marks = dates.map((date, idx) => {
+  const count = usedDates.length - 1
+  const steps = [0, Math.floor(count * 0.5), count]
+  const marks = usedDates.map((date, idx) => {
+    if (date === selectedDatePoint) {
+      currentSelectedDatePointMark = idx
+    }
     return {
       value: idx,
+      date: date,
       label: steps.includes(idx) ? dateLabel(new Date(date)) : '',
     }
   })
 
   return <div className={'GlobalDateSelection ' + (open ? 'Open' : '')}>
     {
-      selectedGlobalTime.max ?
+      selectedDatePoint ?
         <Fragment>
-          <div className='GlobalDateSelectionOuterWrapper'>
+          <div
+            className={'GlobalDateSelectionOuterWrapper ' + (!isInFilter ? 'Disabled' : '')}>
             <div className='GlobalDateSelectionWrapper'>
-              <div className='GlobalDateSelectionWrapperInterval'>
-                <SelectWithList
-                  list={[INTERVALS.HOURLY, INTERVALS.DAILY, INTERVALS.MONTHLY, INTERVALS.YEARLY]}
-                  required={true}
-                  value={interval}
-                  onChange={evt => {
-                    setInterval(evt.value)
-                  }}/>
+              <div className='GlobalAdvancedFilter'>
+                <div className='Separator'/>
+                <Switch
+                  className='Secondary'
+                  checked={isInFilter}
+                  onChange={() => {
+                    setIsInFilter(!isInFilter)
+                  }}
+                />
+                <div className='GlobalAdvancedFilterText'>Advanced Filter</div>
+                <div className='Separator'/>
               </div>
               <div className='GlobalDateSelectionSliderWrapper'>
-                <div className='Separator'></div>
                 <div
                   className={'GlobalDateSelectionSlider ' + (dates.length <= 1 ? 'Small' : '')}>
                   <Slider
-                    value={[dates.indexOf(minDate), dates.indexOf(maxDate)]}
-                    max={dates.length - 1}
-                    valueLabelFormat={value => dates[value] ? dateLabel(new Date(dates[value])) : ''}
+                    value={currentSelectedDatePointMark}
+                    max={marks.length - 1}
                     step={null}
+                    track={false}
                     valueLabelDisplay="auto"
                     marks={marks}
-
+                    valueLabelFormat={value => dates[value] ? dateLabel(new Date(dates[value])) : ''}
                     onChange={(evt) => {
-                      setMinDate(dates[evt.target.value[0]])
-                      setMaxDate(dates[evt.target.value[1]])
+                      setSelectedDatePoint(marks[evt.target.value].date)
                     }}
+                    disabled={!isInFilter}
                   />
                 </div>
-                <div className='Separator'></div>
+                <div className='GlobalDateSelectionWrapperInterval'>
+                  <SelectWithList
+                    list={[INTERVALS.DAILY, INTERVALS.MONTHLY, INTERVALS.YEARLY]}
+                    required={true}
+                    value={interval}
+                    isDisabled={!isInFilter}
+                    onChange={evt => {
+                      setInterval(evt.value)
+                    }}/>
+                  <div className='GlobalDateSelectionShowLatestValue'>
+                    <Switch
+                      className='Secondary'
+                      checked={isInLatestValue}
+                      disabled={!isInFilter}
+                      onChange={() => {
+                        setIsInLatestValue(!isInLatestValue)
+                      }}
+                    />
+                    <div className='GlobalDateSelectionShowLatestValueText'>
+                      Show any latest values
+                    </div>
+                  </div>
+                  {
+                    minDate ?
+                      <div className='GlobalDateSelectionShowMinMax'>
+                        <div className='GlobalDateSelectionShowMinMaxText'>
+                          From
+                        </div>
+                        <SelectWithList
+                          className='Selection'
+                          list={options}
+                          required={true}
+                          value={minDate}
+                          isDisabled={!isInFilter}
+                          onChange={evt => {
+                            if (evt.value > maxDate) {
+                              setMinDate(maxDate)
+                            } else {
+                              setMinDate(evt.value)
+                            }
+                          }}/>
+                      </div>
+                      : ""
+                  }
+                  {
+                    maxDate ?
+                      <div className='GlobalDateSelectionShowMinMax'>
+                        <div className='GlobalDateSelectionShowMinMaxText'>
+                          To
+                        </div>
+                        <SelectWithList
+                          className='Selection'
+                          list={options}
+                          required={true}
+                          value={maxDate}
+                          isDisabled={!isInFilter}
+                          onChange={evt => {
+                            if (evt.value < minDate) {
+                              setMaxDate(minDate)
+                            } else {
+                              setMaxDate(evt.value)
+                            }
+                          }}/>
+                      </div>
+                      : ""
+                  }
+                </div>
               </div>
             </div>
           </div>
@@ -234,12 +381,16 @@ export default function GlobalDateSelector() {
                   {
                     selectedGlobalTime.min && selectedGlobalTime.min !== selectedGlobalTime.max ?
                       <Fragment>
-                        {dateLabel(new Date(selectedGlobalTime.min))}
+                        {
+                          formatDateTime(new Date(selectedGlobalTime.min), true)
+                        }
                         <span className='DateSeparator'>-</span>
                       </Fragment> :
                       ""
                   }
-                  {dateLabel(new Date(selectedGlobalTime.max))}
+                  {
+                    formatDateTime(new Date(selectedGlobalTime.max), true)
+                  }
                 </div>
                 {open ? <KeyboardDoubleArrowDownIcon/> :
                   <KeyboardDoubleArrowUpIcon/>}

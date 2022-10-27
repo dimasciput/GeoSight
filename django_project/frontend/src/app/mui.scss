@@ -261,3 +261,26 @@
 .MuiCircularProgress-root {
   color: $primary-color !important;
 }
+
+// -----------------------------------------------
+// SWITCH THEME
+// -----------------------------------------------
+.MuiSwitch-root {
+  &.Secondary {
+    .Mui-checked {
+      .MuiSwitch-thumb {
+        color: $secondary-color;
+      }
+    }
+
+    .Mui-disabled {
+      .MuiSwitch-thumb {
+        color: $gray-500;
+      }
+    }
+
+    .Mui-checked + .MuiSwitch-track {
+      background-color: $secondary-color !important;
+    }
+  }
+}

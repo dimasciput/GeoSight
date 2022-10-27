@@ -246,9 +246,9 @@ export function jsonToXlsx(data, filename, sheetName = "Sheet 1") {
  * @param {Date} d
  */
 export function formatDate(d) {
-  let month = '' + (d.getUTCMonth() + 1),
-    day = '' + d.getUTCDate(),
-    year = d.getUTCFullYear();
+  let month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
 
   if (month.length < 2)
     month = '0' + month;
@@ -262,7 +262,7 @@ export function formatDate(d) {
  * Json to xls
  * @param {Date} d
  */
-export function formatDateTime(d) {
+export function formatDateTime(d, reverseDate = false) {
   let month = '' + (d.getMonth() + 1),
     day = '' + d.getDate(),
     year = d.getFullYear(),
@@ -280,5 +280,9 @@ export function formatDateTime(d) {
   if (second.length < 2)
     second = '0' + second;
 
-  return [day, month, year].join('-') + ' ' + [hour, minute, second].join(':');
+  if (reverseDate) {
+    return [day, month, year].join('-') + ' ' + [hour, minute, second].join(':');
+  } else {
+    return [year, month, day].join('-') + ' ' + [hour, minute, second].join(':');
+  }
 }

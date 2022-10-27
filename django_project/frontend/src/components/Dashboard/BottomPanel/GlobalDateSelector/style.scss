@@ -5,6 +5,20 @@
 @import '../../../../app/variables';
 
 .GlobalDateSelection {
+  .GlobalAdvancedFilter {
+    display: flex;
+    border-bottom: 1px solid $secondary-color;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+
+    .GlobalAdvancedFilterText {
+      margin-top: 0.5rem;
+    }
+
+    .Separator {
+      flex-grow: 1;
+    }
+  }
 
   .GlobalDateSelectionIconOuterWrapper {
     position: relative;
@@ -61,24 +75,73 @@
     width: 100%;
 
     .GlobalDateSelectionWrapperInterval {
-      margin-bottom: 0.5rem;
+      width: 220px;
+      padding-left: 1rem;
+
+      .GlobalDateSelectionShowLatestValue {
+        display: flex;
+        font-size: 1rem;
+        color: $base-black-color;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+
+        .GlobalDateSelectionShowLatestValueText {
+          margin-top: 8px;
+        }
+
+        .MuiSwitch-root {
+          margin-left: -10px;
+        }
+      }
+    }
+
+    .GlobalDateSelectionShowMinMax {
+      display: flex;
+      color: $base-black-color;
+      margin-top: 0.5rem;
+
+      .GlobalDateSelectionShowMinMaxText {
+        font-size: 1rem;
+        margin-top: 8px;
+        margin-right: 0.5rem;
+        width: 50px;
+      }
+
+      .Selection {
+        flex-grow: 1;
+      }
+    }
+
+    &.Disabled {
+      .GlobalDateSelectionShowLatestValue {
+        color: $gray-500;
+      }
     }
 
     .GlobalDateSelectionWrapper {
       position: absolute;
       transition: bottom 0.3s;
-      bottom: -140px;
+      bottom: -270px;
       left: 50%;
-      height: 140px;
+      height: 270px;
       width: 600px;
       margin-left: -300px;
-      padding: 1rem 3rem;
+      padding: 1rem 1rem;
 
       box-shadow: $box-shadow;
       background-color: rgb(255, 255, 255);
       border-radius: $border-radius;
       box-sizing: border-box;
       color: $secondary-color;
+
+      .AccessFilterIcon {
+        margin-top: 7px;
+        cursor: pointer;
+
+        &:hover {
+          opacity: $base-hovered-opacity;
+        }
+      }
 
       .GlobalDateSelectionSliderWrapper {
         display: flex;
@@ -88,7 +151,9 @@
         }
 
         .GlobalDateSelectionSlider {
-          width: 100%;
+          flex-grow: 1;
+          margin: 0 3rem;
+          margin-top: 4px;
 
           &.Small {
             width: 0;
@@ -106,6 +171,20 @@
             text-align: center;
             white-space: unset;
             width: 75px;
+          }
+
+          .Mui-disabled {
+            .MuiSlider-markLabel {
+              color: $gray-500;
+            }
+
+            .MuiSlider-thumb {
+              color: $gray-500;
+            }
+
+            .MuiSlider-track {
+              color: $gray-300;
+            }
           }
         }
       }

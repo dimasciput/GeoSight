@@ -215,7 +215,7 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
         values = {
             'geometry_code': geometry_code,
             'value': value,
-            'date': date
+            'date': date.strftime("%d-%m-%Y")
         }
         if attributes:
             values.update(attributes)

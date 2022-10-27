@@ -1,7 +1,9 @@
 """Context Analysis API.."""
 from datetime import datetime
 
+import pytz
 from dateutil import parser as date_parser
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -94,13 +96,13 @@ class DashboardIndicatorValuesAPI(APIView):
 
         max_time = request.GET.get('time__lte', None)
         if max_time:
-            max_time = date_parser.isoparse(max_time)
+            max_time = date_parser.parse(max_time)
         else:
             max_time = datetime.now()
 
         min_time = request.GET.get('time__gte', None)
         if min_time:
-            min_time = date_parser.isoparse(min_time).date()
+            min_time = date_parser.parse(min_time).date()
 
         return Response(
             indicator.values(
@@ -136,7 +138,10 @@ class DashboardIndicatorDatesAPI(APIView):
             read_permission_resource(ref, request.user)
 
         dates = [
-            datetime.combine(date_str, datetime.min.time()).isoformat()
+            datetime.combine(
+                date_str, datetime.min.time(),
+                tzinfo=pytz.timezone(settings.TIME_ZONE)
+            ).isoformat()
             for date_str in set(
                 indicator.query_values(
                     reference_layer=dashboard.reference_layer

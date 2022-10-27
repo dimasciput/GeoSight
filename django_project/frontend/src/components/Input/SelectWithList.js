@@ -34,6 +34,7 @@ export function SelectWithList({ list, value, ...props }) {
   return (
     <Select
       menuPlacement={'auto'}
-      options={options} value={defaultValue} {...props}/>
+      options={options} value={defaultValue} {...props}
+    />
   )
 }
