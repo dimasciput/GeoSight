@@ -9,6 +9,7 @@ Pillow==9.2.0
 psycopg2-binary==2.9.5
 pyexcel-xls==0.7.0
 pyexcel-xlsx==0.6.0
+python-dateutil==2.8.2
 raven==6.10.0
 uwsgi==2.0.21
 django-webpack-loader==1.6.0
