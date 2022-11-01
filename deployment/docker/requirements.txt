@@ -13,4 +13,4 @@ python-dateutil==2.8.2
 raven==6.10.0
 uwsgi==2.0.21
 django-webpack-loader==1.6.0
-Office365-REST-Python-Client==2.3.14
+Office365-REST-Python-Client==2.3.15
