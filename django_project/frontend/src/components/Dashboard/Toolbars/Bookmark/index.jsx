@@ -11,11 +11,11 @@ import TextField from "@mui/material/TextField";
 import EditIcon from '@mui/icons-material/Edit';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-import { fetchingData } from "../../../Requests";
-import { Actions } from '../../../store/dashboard/index'
-import { SaveButton, ThemeButton } from "../../Elements/Button";
+import { fetchingData } from "../../../../Requests";
+import { Actions } from '../../../../store/dashboard/index'
+import { SaveButton, ThemeButton } from "../../../Elements/Button";
+import Modal, { ModalContent, ModalFooter, ModalHeader } from "../../../Modal";
 
-import Modal, { ModalContent, ModalFooter, ModalHeader } from "../../Modal";
 import './style.scss';
 
 /**

@@ -14,10 +14,12 @@ import IndicatorLayers from './reducers/indicatorLayers/actions'
 import Indicators from './reducers/indicators/actions'
 import IndicatorsData from './reducers/indicatorsData/actions'
 import Map from './reducers/map/actions'
+import MapMode from './reducers/mapMode/actions'
 import ReferenceLayer from './reducers/referenceLayer/actions'
 import ReferenceLayerData from './reducers/referenceLayerData/actions'
 import SelectedAdminLevel from './reducers/selectedAdminLevel/actions'
 import SelectedIndicatorLayer from './reducers/selectedIndicatorLayer/actions'
+import SelectedIndicatorSecondLayer from './reducers/selectedIndicatorSecondLayer/actions'
 import SelectedBookmark from './reducers/selectedBookmark/actions'
 import SelectedGlobalTime from './reducers/selectedGlobalTime/actions'
 import Widgets from './reducers/widgets/actions'
@@ -35,10 +37,12 @@ const Actions = {
   Indicators,
   IndicatorsData,
   Map,
+  MapMode,
   ReferenceLayer,
   ReferenceLayerData,
   SelectedAdminLevel,
   SelectedIndicatorLayer,
+  SelectedIndicatorSecondLayer,
   SelectedBookmark,
   SelectedGlobalTime,
   Widgets

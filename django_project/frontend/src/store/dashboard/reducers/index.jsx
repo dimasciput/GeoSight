@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 
 import mapReducer from './map'
+import mapModeReducer from './mapMode'
 import dashboardRequestReducer from './dashboard'
 import indicatorsDataReducer from "./indicatorsData";
 import ReferenceLayerDataReducer from "./referenceLayerData";
@@ -8,6 +9,8 @@ import filtersDataReducer from "./filtersData";
 import geometriesReducer from "./geometries";
 import filteredGeometriesReducer from "./filteredGeometries";
 import selectedIndicatorLayerReducer from "./selectedIndicatorLayer";
+import selectedIndicatorSecondLayerReducer
+  from "./selectedIndicatorSecondLayer";
 import selectedAdminLevelReducer from "./selectedAdminLevel";
 import selectedBookmarkReducer from "./selectedBookmark";
 import selectedGlobalTimeReducer from "./selectedGlobalTime";
@@ -18,6 +21,7 @@ export default combineReducers({
   dashboard: dashboardRequestReducer,
 
   map: mapReducer,
+  mapMode: mapModeReducer,
   indicatorsData: indicatorsDataReducer,
   referenceLayerData: ReferenceLayerDataReducer,
   filtersData: filtersDataReducer,
@@ -25,6 +29,7 @@ export default combineReducers({
   filteredGeometries: filteredGeometriesReducer,
   selectedAdminLevel: selectedAdminLevelReducer,
   selectedIndicatorLayer: selectedIndicatorLayerReducer,
+  selectedIndicatorSecondLayer: selectedIndicatorSecondLayerReducer,
   selectedBookmark: selectedBookmarkReducer,
   selectedGlobalTime: selectedGlobalTimeReducer,
 });

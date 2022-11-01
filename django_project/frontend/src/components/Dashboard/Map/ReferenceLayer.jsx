@@ -10,7 +10,7 @@ import vectorTileLayer from 'leaflet-vector-tile-layer';
 import vectorgrid from 'leaflet.vectorgrid';
 
 import { Actions } from '../../../store/dashboard'
-import { featurePopupContent } from '../../../utils/main'
+import { dictDeepCopy, featurePopupContent } from '../../../utils/main'
 import Modal, { ModalContent, ModalHeader } from "../../Modal";
 import { fetchingData } from "../../../Requests";
 import { allDataIsReady } from "../../../utils/indicators";
@@ -122,6 +122,62 @@ export function IndicatorDetailsModal({ group, feature, onClose }) {
 }
 
 /**
+ * Return value by geometry
+ */
+function returnValueByGeometry(layer, indicators, indicatorsData) {
+  const byGeometry = {}
+  if (Object.keys(layer).length) {
+    layer.indicators.map(indicatorLayer => {
+      const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
+      if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
+        if (indicatorsData[indicator.id].data) {
+          indicatorsData[indicator.id].data.forEach(function (data) {
+            if (!byGeometry[data.geometry_code]) {
+              byGeometry[data.geometry_code] = []
+            }
+            byGeometry[data.geometry_code].push(data);
+          })
+        }
+      }
+    })
+  }
+  return byGeometry
+}
+
+/**
+ * Return no data style
+ */
+function returnNoDataStyle(layer) {
+  let noDataRule = null
+  if (layer?.rules) {
+    noDataRule = layer.rules.filter(
+      rule => rule.active
+    ).find(rule => rule.rule.toLowerCase() === 'no data')
+  }
+  return noDataRule
+}
+
+/**
+ * Return style
+ */
+function returnStyle(layer, values, noDataStyle) {
+  let style = null
+  if (layer?.indicators?.length === 1) {
+    if (values) {
+      const indicatorData = values[0];
+      if (indicatorData) {
+        style = indicatorData.style
+      } else {
+        style = noDataStyle;
+      }
+    } else {
+      style = noDataStyle;
+    }
+  }
+  return style
+}
+
+/**
  * ReferenceLayer selector.
  */
 export default function ReferenceLayer() {
@@ -137,8 +193,10 @@ export default function ReferenceLayer() {
   const filtersData = useSelector(state => state.filtersData);
   const filteredGeometries = useSelector(state => state.filteredGeometries);
   const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
+  const currentIndicatorSecondLayer = useSelector(state => state.selectedIndicatorSecondLayer);
   const selectedAdminLevel = useSelector(state => state.selectedAdminLevel);
   const { zoom, indicatorShow } = useSelector(state => state.map);
+  const { compareMode } = useSelector(state => state.mapMode)
   let popup = L.popup();
 
   const [clickedFeature, setClickedFeature] = useState(null);
@@ -146,19 +204,6 @@ export default function ReferenceLayer() {
   const [VTLayer, setVTLayer] = useState(null);
   const where = returnWhere(filtersData ? filtersData : [])
   const [prevWhere, setPrevWhere] = useState(JSON.stringify(where));
-
-  // Filter geometry_code based on indicators layer
-  // Also filter by levels that found on indicators
-  let geometryCodes = filteredGeometries;
-
-  // If there is currentIndicatorLayer that selected
-  // Use level from that
-  let noDataRule = null
-  if (currentIndicatorLayer?.rules) {
-    noDataRule = currentIndicatorLayer.rules.filter(
-      rule => rule.active
-    ).find(rule => rule.rule.toLowerCase() === 'no data')
-  }
 
   // When reference layer changed, fetch reference data
   useEffect(() => {
@@ -171,6 +216,14 @@ export default function ReferenceLayer() {
     }
   }, [referenceLayer]);
 
+  // Filter geometry_code based on indicators layer
+  // Also filter by levels that found on indicators
+  let geometryCodes = filteredGeometries;
+
+  // Get style for no data style
+  let noDataStyle = returnNoDataStyle(currentIndicatorLayer)
+  let noDataStyleSecondLayer = returnNoDataStyle(currentIndicatorSecondLayer)
+
   // Current level
   let currentLevel = selectedAdminLevel ? selectedAdminLevel.level : referenceLayerData[referenceLayer.identifier]?.levels[0]?.level
   const updateLayer = () => {
@@ -179,22 +232,12 @@ export default function ReferenceLayer() {
     if (vectorTiles && levels) {
       // Save indicator data per geom
       // This is needed for popup and rendering
-      const valuesByGeometry = {}
-      if (Object.keys(currentIndicatorLayer).length) {
-        currentIndicatorLayer.indicators.map(indicatorLayer => {
-          const indicator = indicators.find(indicator => indicatorLayer.id === indicator.id)
-          if (indicatorsData[indicator.id] && indicatorsData[indicator.id].fetched) {
-            if (indicatorsData[indicator.id].data) {
-              indicatorsData[indicator.id].data.forEach(function (data) {
-                if (!valuesByGeometry[data.geometry_code]) {
-                  valuesByGeometry[data.geometry_code] = []
-                }
-                valuesByGeometry[data.geometry_code].push(data);
-              })
-            }
-          }
-        })
-      }
+      const indicatorValueByGeometry = returnValueByGeometry(
+        currentIndicatorLayer, indicators, indicatorsData
+      )
+      const indicatorSecondValueByGeometry = returnValueByGeometry(
+        currentIndicatorSecondLayer, indicators, indicatorsData
+      )
       const options = {
         rendererFactory: L.canvas.tile,
         maxDetailZoom: 8,
@@ -214,31 +257,41 @@ export default function ReferenceLayer() {
         if (!allowed) {
           return [];
         } else {
+          // Generate style
           let style = null;
+          let secondStyle = null;
           if (indicatorShow) {
-            if (currentIndicatorLayer?.indicators?.length === 1) {
-              const values = valuesByGeometry[properties.code]
-              if (values) {
-                const indicatorData = values[0];
-                if (indicatorData) {
-                  style = indicatorData.style
-                } else {
-                  style = noDataRule;
-                }
-              } else {
-                style = noDataRule;
-              }
-            }
+            style = returnStyle(
+              currentIndicatorLayer, indicatorValueByGeometry[properties.code], noDataStyle
+            )
+            secondStyle = returnStyle(
+              currentIndicatorSecondLayer, indicatorSecondValueByGeometry[properties.code], noDataStyleSecondLayer
+            )
           }
-          let fillColor = style ? style.color : null;
-          let strokeColor = style ? style.outline_color : '#000000';
           let weight = 0.5;
+          let fillColor = style ? style.color : null;
+          let strokeColor = style ? style.outline_color : null;
+
+          // If compare mode
+          // Fill color is using second style color and stroke is from first style
+          if (compareMode) {
+            fillColor = null;
+            strokeColor = style ? style.color : null;
+            weight = 5;
+          }
+          if (secondStyle) {
+            fillColor = secondStyle.color
+          }
+
           let fillOpacity = 0;
           if (fillColor) {
             fillOpacity = 0.7;
           }
+          if (!strokeColor) {
+            weight = 0.5;
+          }
           return {
-            color: strokeColor,
+            color: strokeColor ? strokeColor : '#000000',
             opacity: 1,
             weight: weight,
             fill: true,
@@ -261,8 +314,8 @@ export default function ReferenceLayer() {
         // CREATE POPUP
         let properties = {}
         if (currentIndicatorLayer?.indicators?.length === 1) {
-          if (valuesByGeometry[featureProperties.code]) {
-            properties = Object.assign({}, {}, valuesByGeometry[featureProperties.code][0])
+          if (indicatorValueByGeometry[featureProperties.code]) {
+            properties = Object.assign({}, {}, indicatorValueByGeometry[featureProperties.code][0])
           }
         }
         properties[featureProperties.type] = featureProperties.label
@@ -277,18 +330,31 @@ export default function ReferenceLayer() {
         delete properties.style
         properties['geometry_code'] = featureProperties.code
         properties['name'] = currentIndicatorLayer.name
+
         delete properties.parent_code
+
+        // IF COMPARE MODE
+        if (compareMode) {
+          properties[currentIndicatorLayer.name] = properties.value
+          if (currentIndicatorSecondLayer?.indicators?.length === 1) {
+            if (indicatorSecondValueByGeometry[featureProperties.code]) {
+              properties[currentIndicatorSecondLayer.name] = indicatorSecondValueByGeometry[featureProperties.code][0]?.value
+            }
+          }
+          delete properties.value
+          delete properties.name
+        }
         return featurePopupContent(properties.name ? properties.name : 'Reference Layer', properties)
       }
       newVtLayer.onClick = (e, map) => {
         L.popup()
-          .setContent(getPopup(e.layer.properties))
+          .setContent(getPopup(dictDeepCopy(e.layer.properties)))
           .setLatLng(e.latlng)
           .openOn(map)
       }
       newGridLayer.onClick = (e, map) => {
         L.popup()
-          .setContent(getPopup(e.layer.properties))
+          .setContent(getPopup(dictDeepCopy(e.layer.properties)))
           .setLatLng(e.latlng)
           .openOn(map)
       }
@@ -326,12 +392,17 @@ export default function ReferenceLayer() {
       currentIndicatorLayer.indicators.map(indicatorLayer => {
         indicatorLayerData.push(indicatorsData[indicatorLayer.id])
       })
-      if (allDataIsReady(indicatorLayerData)) {
-        callUpdateLayer()
-      }
+    }
+    if (currentIndicatorSecondLayer.indicators) {
+      currentIndicatorSecondLayer.indicators.map(indicatorLayer => {
+        indicatorLayerData.push(indicatorsData[indicatorLayer.id])
+      })
+    }
+    if (allDataIsReady(indicatorLayerData)) {
+      callUpdateLayer()
     }
   }, [
-    indicatorsData, currentIndicatorLayer
+    indicatorsData, currentIndicatorLayer, currentIndicatorSecondLayer, compareMode
   ]);
 
   useEffect(() => {

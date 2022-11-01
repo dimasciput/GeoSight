@@ -4,13 +4,13 @@
 
 import React, { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Radio } from "@mui/material";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from "@mui/material/Accordion";
 import InfoIcon from '@mui/icons-material/Info';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Checkbox, Radio } from "@mui/material";
 
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
@@ -20,16 +20,21 @@ import CustomPopover from "../../../CustomPopover";
 
 /**
  * Indicator selector.
- * @param {bool} checked Is indicator checked.
  * @param {dict} layer Layer dictionary.
+ * @param {bool} checked Is indicator checked.
  * @param {function} onChange Function when on changed
+ * @param {bool} checkedAsSecond Is indicator checked as second.
+ * @param {function} onChangeAsSecond Function when on changed as second
  */
 export function IndicatorLayer(
-  { checked, layer, onChange }
+  { layer, checked, onChange, checkedAsSecond, onChangeAsSecond }
 ) {
-  const { indicators } = useSelector(state => state.dashboard.data);
-  const indicatorsData = useSelector(state => state.indicatorsData);
-  const [showLegend, setShowLegend] = useState(checked);
+  const { indicators } = useSelector(state => state.dashboard.data)
+  const indicatorsData = useSelector(state => state.indicatorsData)
+  const { compareMode } = useSelector(state => state.mapMode)
+  const active = checked | checkedAsSecond
+  const [showLegend, setShowLegend] = useState(active)
+
   const showLegendHandler = (show) => {
     setShowLegend(show);
   };
@@ -54,30 +59,51 @@ export function IndicatorLayer(
     }
   })
   // --------------------------------------------
+  const changed = (id) => {
+    if (compareMode) {
+      onChangeAsSecond(id)
+    } else {
+      onChange(id)
+    }
+  }
 
+  const disabled = errors.length !== 0 || (compareMode && checked)
   return (
-    <table className='dashboard__left_side__row'
-           key={layer.id}>
+    <table
+      className={'dashboard__left_side__row ' + (compareMode ? "CompareMode" : "")}
+      key={layer.id}>
       <tbody>
-      <tr className='dashboard__left_side__row__title' onClick={() => {
-        if (!errors.length) {
-          if (!checked) {
-            onChange(!checked, layer.id)
-          }
-        }
-      }}>
+      <tr className='dashboard__left_side__row__title'
+          onClick={() => {
+            if (!errors.length && !active) {
+              changed(layer.id)
+            }
+          }}
+      >
         <td valign="top">
           <div className='RadioButtonSection'>
-            <Radio
-              checked={checked}
-              disabled={errors.length === 0 ? false : true}
-              onChange={() => {
+            {
+              !compareMode ?
+                <Radio
+                  checked={active}
+                  disabled={disabled}
+                  onChange={() => {
 
-              }}/>
+                  }}/>
+                :
+                <Checkbox
+                  checked={active}
+                  disabled={disabled}
+                  onChange={() => {
+
+                  }}
+                />
+            }
             {
               loading ? <CircularProgress/> : ""
             }
           </div>
+
         </td>
         <td valign="top">
           <div className='text title'>
@@ -148,7 +174,7 @@ export function IndicatorLayer(
         }
         <td valign="top">
           {
-            checked ? (
+            active ? (
               <Fragment>
                 {
                   showLegend ?
@@ -206,20 +232,14 @@ export function IndicatorLayer(
  * Indicators selector.
  */
 export function IndicatorLayers() {
-  const dispatch = useDispatch();
-  const { indicatorLayers } = useSelector(state => state.dashboard.data);
-  const [currentIndicatorLayer, setCurrentIndicatorLayer] = useState(0);
-
-  const change = (checked, id) => {
-    if (checked) {
-      setCurrentIndicatorLayer(id);
-    } else {
-      setCurrentIndicatorLayer(null);
-    }
-  };
+  const dispatch = useDispatch()
+  const { indicatorLayers } = useSelector(state => state.dashboard.data)
+  const [currentIndicatorLayer, setCurrentIndicatorLayer] = useState(0)
+  const { compareMode } = useSelector(state => state.mapMode)
+  const [currentIndicatorSecondLayer, setCurrentIndicatorSecondLayer] = useState(0)
 
   /**
-   * Fetch indicator data
+   * Change selected indicator layer
    */
   useEffect(() => {
     const indicator = indicatorLayers.filter(indicator => {
@@ -232,7 +252,30 @@ export function IndicatorLayers() {
   }, [currentIndicatorLayer]);
 
   /**
-   * Fetch indicator data
+   * Change selected indicator layer
+   */
+  useEffect(() => {
+    const indicator = indicatorLayers.filter(indicator => {
+      return indicator.id === currentIndicatorSecondLayer
+    })[0]
+    if (indicator) {
+      const indicatorData = JSON.parse(JSON.stringify(indicator))
+      dispatch(Actions.SelectedIndicatorSecondLayer.change(indicatorData))
+    }
+  }, [currentIndicatorSecondLayer]);
+
+  /**
+   * Change selected indicator layer
+   */
+  useEffect(() => {
+    if (!compareMode) {
+      setCurrentIndicatorSecondLayer(0)
+      dispatch(Actions.SelectedIndicatorSecondLayer.change({}))
+    }
+  }, [compareMode]);
+
+  /**
+   * Init the current indicator layer
    */
   useEffect(() => {
     if (indicatorLayers) {
@@ -263,8 +306,10 @@ export function IndicatorLayers() {
               return <IndicatorLayer
                 key={layer.id}
                 layer={layer}
-                onChange={change}
                 checked={currentIndicatorLayer === layer.id}
+                onChange={setCurrentIndicatorLayer}
+                checkedAsSecond={currentIndicatorSecondLayer === layer.id}
+                onChangeAsSecond={setCurrentIndicatorSecondLayer}
               />
             }
           )

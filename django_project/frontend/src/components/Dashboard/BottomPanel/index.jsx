@@ -6,7 +6,7 @@ import './style.scss';
 /**
  * Left panel.
  */
-export default function LeftPanel() {
+export default function BottomPanel() {
   return <section className={'DashboardBottomPanel'}>
     <GlobalDateSelector/>
   </section>

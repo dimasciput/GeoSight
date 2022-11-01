@@ -16,8 +16,7 @@ import LeafletMeasure from 'leaflet-measure-v2';
 import ReferenceLayerCentroid from './ReferenceLayerCentroid'
 import { Plugin, PluginChild } from './Plugin'
 import CustomPopover from '../../CustomPopover'
-import Bookmark from '../Bookmark'
-import DownloaderData from '../DownloaderData'
+import { Bookmark, DownloaderData, CompareLayer } from '../Toolbars'
 import { Actions } from '../../../store/dashboard/index'
 
 import './style.scss';
@@ -263,6 +262,9 @@ export default function Map() {
           </Plugin>
           <Plugin>
             <DownloaderData/>
+          </Plugin>
+          <Plugin>
+            <CompareLayer/>
           </Plugin>
         </div> : ""
     }

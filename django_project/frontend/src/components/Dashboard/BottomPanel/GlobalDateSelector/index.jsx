@@ -33,6 +33,7 @@ export default function GlobalDateSelector() {
   const { indicators } = useSelector(state => state.dashboard.data);
   const selectedGlobalTime = useSelector(state => state.selectedGlobalTime);
   const currentIndicatorLayer = useSelector(state => state.selectedIndicatorLayer);
+  const currentIndicatorSecondLayer = useSelector(state => state.selectedIndicatorSecondLayer);
 
   const [open, setOpen] = useState(false)
   const [datesByIndicators, setDatesByIndicators] = useState({})
@@ -126,17 +127,21 @@ export default function GlobalDateSelector() {
    * **/
   const formatDates = () => {
     let newDates = []
-    if (Object.keys(currentIndicatorLayer).length !== 0) {
-      // Get dates list
-      currentIndicatorLayer.indicators.map(indicator => {
-        const indicatorDates = datesByIndicators[indicator.id]
-        if (Array.isArray(indicatorDates)) {
-          newDates = newDates.concat(indicatorDates)
-        }
-      })
-      newDates = [...new Set(newDates)]
-      newDates = newDates.reverse()
-    }
+    // Get dates list
+    currentIndicatorLayer?.indicators?.map(indicator => {
+      const indicatorDates = datesByIndicators[indicator.id]
+      if (Array.isArray(indicatorDates)) {
+        newDates = newDates.concat(indicatorDates)
+      }
+    })
+    currentIndicatorSecondLayer?.indicators?.map(indicator => {
+      const indicatorDates = datesByIndicators[indicator.id]
+      if (Array.isArray(indicatorDates)) {
+        newDates = newDates.concat(indicatorDates)
+      }
+    })
+    newDates = [...new Set(newDates)]
+    newDates = newDates.reverse()
 
     // Check interval and create dates
     const intervalGroupDates = {}
@@ -239,7 +244,7 @@ export default function GlobalDateSelector() {
       max = newDates[newDates.length - 1]
     }
     setSelectedDatePoint(max)
-  }, [datesByIndicators, currentIndicatorLayer, interval]);
+  }, [datesByIndicators, currentIndicatorLayer, currentIndicatorSecondLayer, interval]);
 
   // Update the inputs
   let currentSelectedDatePointMark = 0

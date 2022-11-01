@@ -23,6 +23,7 @@ export default function ReferenceLayerCentroid({ map, pane }) {
   const filteredGeometries = useSelector(state => state.filteredGeometries)
   const indicatorsData = useSelector(state => state.indicatorsData);
   const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
+  const selectedAdminLevel = useSelector(state => state.selectedAdminLevel)
 
   const [layer, setLayer] = useState(null);
   const [charts, setCharts] = useState({});
@@ -174,7 +175,7 @@ export default function ReferenceLayerCentroid({ map, pane }) {
           // Creating features for center data
           let maxValue = 0
           const features = []
-          const geometriesData = geometries[selectedIndicatorLayer.reporting_level]
+          const geometriesData = geometries[selectedAdminLevel.level]
           if (geometriesData) {
             filteredGeometries.map(geom => {
               const geometry = geometriesData[geom]
