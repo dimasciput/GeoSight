@@ -68,4 +68,4 @@ class MetaIngestorWideFormatForm(HarvesterFormView):
         """For calling after post success."""
         harvester.creator = self.request.user
         harvester.save()
-        run_harvester(harvester.pk)
+        run_harvester.delay(harvester.pk)

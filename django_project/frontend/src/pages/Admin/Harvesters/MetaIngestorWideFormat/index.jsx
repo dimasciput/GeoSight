@@ -168,7 +168,7 @@ export default function MetaIngestorWideFormat() {
         {
           mappingAttributes.map((attribute, idx) => {
             return (
-              <tr key={attribute.name}>
+              <tr key={idx}>
                 <td>
                   <SelectWithList
                     list={mappingInputs.map(attr => {
