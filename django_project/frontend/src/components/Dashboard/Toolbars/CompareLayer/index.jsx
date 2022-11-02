@@ -22,7 +22,7 @@ export default function CompareLayer() {
   return (
     <Fragment>
       <div
-        className={'CompareLayerComponent ' + (compareMode ? "" : "Disabled")}>
+        className={'CompareLayerComponent ' + (compareMode ? "Active" : "Inactive")}>
         <PluginChild title={
           (compareMode ? 'Turn off' : 'Turn on') + ' compare Layers'
         }>

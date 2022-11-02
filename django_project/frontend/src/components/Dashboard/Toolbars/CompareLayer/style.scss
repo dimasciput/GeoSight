@@ -9,12 +9,18 @@
 
   a {
     cursor: pointer !important;
-    transition: color 0.5s;
   }
 
-  &.Disabled {
+  &.Inactive {
     .CompareLayerComponentPopup {
       opacity: 0;
+    }
+  }
+
+  &.Active {
+    a {
+      background-color: $primary-color !important;
+      color: white !important;
     }
   }
 
