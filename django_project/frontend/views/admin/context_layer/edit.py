@@ -2,6 +2,7 @@
 
 import json
 
+from braces.views import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
 
@@ -11,7 +12,7 @@ from geosight.data.models.context_layer import ContextLayer
 from geosight.permission.access import edit_permission_resource
 
 
-class ContextLayerEditView(BaseView):
+class ContextLayerEditView(LoginRequiredMixin, BaseView):
     """ContextLayer Edit View."""
 
     template_name = 'frontend/admin/context_layer/form.html'

@@ -67,7 +67,7 @@ class BaseViewTest(BasePermissionTest):
 
         # Check the edit permission
         url = reverse(self.edit_url_tag, kwargs={'pk': new_resource.id})
-        self.assertRequestGetView(url, 403)  # Non login
+        self.assertRequestGetView(url, 302)  # Non login
         self.assertRequestGetView(url, 403, self.viewer)  # Viewer
         self.assertRequestGetView(url, 403, self.contributor)  # Contributor
         self.assertRequestGetView(url, 200, self.creator)  # Creator
@@ -77,10 +77,10 @@ class BaseViewTest(BasePermissionTest):
     def test_edit_view(self):
         """Test for edit view."""
         url = reverse(self.edit_url_tag, kwargs={'pk': 999})
-        self.assertRequestGetView(url, 404)  # Resource not found
+        self.assertRequestGetView(url, 302)  # Resource not found
 
         url = reverse(self.edit_url_tag, kwargs={'pk': self.resource.id})
-        self.assertRequestGetView(url, 403)  # Non login
+        self.assertRequestGetView(url, 302)  # Non login
         self.assertRequestGetView(url, 403, self.viewer)  # Viewer
         self.assertRequestGetView(url, 403, self.contributor)  # Contributor
         self.assertRequestGetView(url, 403, self.creator)  # Creator
@@ -115,7 +115,7 @@ class BaseViewTest(BasePermissionTest):
         # POST it
         new_payload = copy.deepcopy(self.payload)
         new_payload['name'] = 'name 1'
-        self.assertRequestPostView(url, 403, new_payload)
+        self.assertRequestPostView(url, 302, new_payload)
         self.assertRequestPostView(url, 403, new_payload, self.viewer)
         self.assertRequestPostView(url, 403, new_payload, self.contributor)
 
