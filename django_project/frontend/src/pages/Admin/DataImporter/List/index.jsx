@@ -1,16 +1,18 @@
 import React from 'react';
+
+import PublishIcon from '@mui/icons-material/Publish';
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
 import { pageNames } from '../../index';
-import { COLUMNS_ACTION } from "../../Components/List";
 import AdminList from "../../AdminList";
 
-import { AddButton } from "../../../../components/Elements/Button";
+import { ThemeButton } from "../../../../components/Elements/Button";
+import MoreAction from "../../../../components/Elements/MoreAction";
+import { COLUMNS_ACTION } from "../../Components/List";
 import PermissionModal from "../../Permission";
 
 import './style.scss';
-
 
 /**
  *
@@ -50,7 +52,6 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
       width: 100
     },
     { field: 'type', headerName: 'Type', flex: 1 },
-    { field: 'indicator', headerName: 'Indicator', flex: 1 },
     { field: 'last_run', headerName: 'Last Run', flex: 1 },
     { field: 'creator_name', headerName: 'Creator', flex: 1 },
     {
@@ -91,9 +92,9 @@ export function COLUMNS(pageName, redirectUrl, editUrl = null, detailUrl = null)
  * Indicator List App
  */
 export default function HarvesterList() {
-  const pageName = pageNames.Harvester
+  const pageName = pageNames.DataImporter
   return <AdminList
-    columns={COLUMNS(pageName, urls.admin.harvesterList)}
+    columns={COLUMNS(pageName, urls.admin.dataImporterList)}
     pageName={pageName}
     listUrl={urls.api.list}
     sortingDefault={{
@@ -101,12 +102,21 @@ export default function HarvesterList() {
     }}
     rightHeader={
       <div className='AdminContentHeader-Right-Inner'>
-        <a href={urls.api.create}>
-          <AddButton
-            variant="secondary"
-            text={"Add New Harvester"}
-          />
-        </a>
+        <MoreAction
+          moreIcon={
+            <ThemeButton
+              variant="secondary"
+            >
+              <PublishIcon/>Import data from Excel
+            </ThemeButton>
+          }>
+          <div className='IngestorList'>
+            <a href={urls.api.meta_ingestor_wide_format}>WIDE Format</a>
+          </div>
+          <div className='IngestorList'>
+            <a href={urls.api.meta_ingestor_long_format}>LONG Format</a>
+          </div>
+        </MoreAction>
       </div>
     }
   />

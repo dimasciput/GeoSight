@@ -7,9 +7,10 @@ import { store } from '../../../../store/admin';
 import Harvesters from '../../Harvesters'
 import { SelectWithList } from "../../../../components/Input/SelectWithList";
 import { dictDeepCopy } from "../../../../utils/main"
+import { ThemeButton } from "../../../../components/Elements/Button";
+import { pageNames } from "../../index";
 
 import './style.scss';
-import { ThemeButton } from "../../../../components/Elements/Button";
 
 
 /**
@@ -143,7 +144,9 @@ export default function MetaIngestorWideFormat() {
   }, [workbook]);
 
   return (
-    <Harvesters attributes={attributes} setAttributes={setAttributes}>
+    <Harvesters
+      attributes={attributes} setAttributes={setAttributes}
+      pageName={pageNames.DataImporter}>
       <table className='IndicatorSelection'>
         <tbody>
         <tr>

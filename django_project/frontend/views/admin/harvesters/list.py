@@ -3,16 +3,14 @@
 from django.shortcuts import reverse
 
 from frontend.views._base import BaseView
-from frontend.views.admin.harvesters import (
-    MetaIngestorWideFormatForm,
-    MetaIngestorLongFormatForm,
+from frontend.views.admin.harvesters.forms.using_exposed_api import (
     HarvestedUsingExposedAPIByExternalClientView
 )
 from geosight.permission.access import RoleCreatorRequiredMixin
 
 
 class HarvesterListView(RoleCreatorRequiredMixin, BaseView):
-    """Basemap Detail View."""
+    """Harvesters List View."""
 
     template_name = 'frontend/admin/harvesters/list.html'
 
@@ -31,12 +29,6 @@ class HarvesterListView(RoleCreatorRequiredMixin, BaseView):
         """Return context data."""
         context = super().get_context_data(**kwargs)
         context.update({
-            'meta_ingestor_wide_format': reverse(
-                MetaIngestorWideFormatForm().url_create_name
-            ),
-            'meta_ingestor_long_format': reverse(
-                MetaIngestorLongFormatForm().url_create_name
-            ),
             'create_harvester_api': reverse(
                 HarvestedUsingExposedAPIByExternalClientView().url_create_name
             ),

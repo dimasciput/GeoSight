@@ -9,6 +9,7 @@ export const pageNames = {
   Indicators: 'Indicator',
   Basemaps: 'Basemap',
   Harvester: 'Harvesters',
+  DataImporter: 'Data Importer',
   ContextLayer: 'Context Layer',
   Users: 'Users',
   Groups: 'Groups',

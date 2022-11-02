@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
 import Harvesters from '../../Harvesters'
+import { pageNames } from "../../index";
 
 import './style.scss';
 
@@ -136,7 +137,8 @@ export default function MetaIngestorLongFormat() {
   }, [workbook]);
 
   return (
-    <Harvesters attributes={attributes} setAttributes={setAttributes}/>
+    <Harvesters attributes={attributes} setAttributes={setAttributes}
+                pageName={pageNames.DataImporter}/>
   );
 }
 

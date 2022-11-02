@@ -14,7 +14,9 @@ import './style.scss';
  * @param {Function} submit Submit.
  * @param {React.Component} children React component to be rendered.
  */
-export default function AdminForm({ isSubmitted, submit, children }) {
+export default function AdminForm(
+  { isSubmitted, submit, children }
+) {
 
   // onSubmitted
   useEffect(() => {
@@ -99,7 +101,11 @@ export default function AdminForm({ isSubmitted, submit, children }) {
   /** Render **/
   return (
     <div className='AdminForm'>
-      <form className="BasicForm" method="post" encType="multipart/form-data">
+      <form
+        className="BasicForm"
+        method="post"
+        encType="multipart/form-data"
+      >
         {$('#FormTemplate').find('.errorlist').map(function (idx) {
           return <ul className='Errorlist' dangerouslySetInnerHTML={{
             __html: $(this).html()

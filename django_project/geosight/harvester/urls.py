@@ -3,7 +3,8 @@ from django.conf.urls import url
 from django.urls import include
 
 from geosight.harvester.api.harvester import (
-    HarvesterLogData, HarvesterListAPI, HarvesterDetailAPI
+    HarvesterLogData, HarvesterListAPI, HarvesterDetailAPI,
+    DataImporterListAPI
 )
 from geosight.harvester.api.harvester_push_api import (
     HarvesterPushIndicatorValues, HarvesterPushIndicatorValuesBatch
@@ -30,7 +31,23 @@ harvester_api = [
         name='harvester-detail-api'
     ),
 ]
+data_importer_api = [
+    url(
+        r'^',
+        HarvesterDetailAPI.as_view(),
+        name='data-importer-detail-api'
+    ),
+]
 api = [
+    url(
+        r'^data-importer/list',
+        DataImporterListAPI.as_view(), name='data-importer-list-api'
+    ),
+    url(
+        r'^data-importer/(?P<uuid>[0-9a-f-]+)/', include(data_importer_api)
+    ),
+
+    # Harvesters
     url(
         r'^list',
         HarvesterListAPI.as_view(), name='harvester-list-api'

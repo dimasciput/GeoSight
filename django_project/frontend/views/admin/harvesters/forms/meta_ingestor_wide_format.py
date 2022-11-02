@@ -27,12 +27,25 @@ class MetaIngestorWideFormatForm(HarvesterFormView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        list_url = reverse('admin-harvester-list-view')
-        return (
-            f'<a href="{list_url}">Harvesters</a> '
-            f'<span>></span> '
-            f'<a>Import data from Excel (WIDE format)</a> '
-        )
+        list_url = reverse('admin-data-importer-list-view')
+        unique_id = self.kwargs.get('uuid', None)
+        if unique_id:
+            detail_view = reverse('data-importer-detail-view', kwargs={
+                'uuid': unique_id
+            })
+            return (
+                f'<a href="{list_url}">Data Importer</a> '
+                f'<span>></span> '
+                f'<a href="{detail_view}">{unique_id}</a> '
+                f'<span>></span> '
+                f'<a>Edit</a> '
+            )
+        else:
+            return (
+                f'<a href="{list_url}">Data Importer</a> '
+                f'<span>></span> '
+                f'<a>{ExcelHarvesterWideFormatHarvester[1]}</a>'
+            )
 
     def get_harvester(self) -> Harvester:
         """Return harvester."""

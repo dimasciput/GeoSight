@@ -1,11 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import $ from "jquery";
 import DatePicker from "react-datepicker";
-
 import Admin, { pageNames } from '../index';
-import { GeorepoUrls } from '../../../utils/georepo'
 import { SaveButton } from "../../../components/Elements/Button";
 import { SelectWithList } from "../../../components/Input/SelectWithList";
+import { GeorepoUrls } from '../../../utils/georepo'
 
 import './style.scss';
 
@@ -27,7 +26,6 @@ export default function Harvesters(
     attributes, setAttributes,
     excludedAttributes = [],
     rightHeader,
-    pageName = pageNames.Harvester,
     children,
   }
 ) {
@@ -263,56 +261,22 @@ export default function Harvesters(
     attr => attr.name === 'indicator'
   )
 
-  /**
-   * Change form action
-   */
-  const changeAction = (saveAs = false) => {
-    const url = window.location.href.split('?')[0]
-    if (saveAs) {
-      $('.BasicForm').attr('action', url + '?save-as=true')
-    } else {
-      $('.BasicForm').attr('action', url)
-    }
-  }
-
-  /** Render **/
   return (
     <form className="BasicForm" method="post" encType="multipart/form-data">
       <Admin
-        pageName={pageName}
+        pageName={pageNames.Harvester}
         rightHeader={
           rightHeader ? rightHeader :
-            <Fragment>
-              {
-                is_harvester && harvester.id ?
-                  <SaveButton
-                    variant="secondary"
-                    text="Save As New"
-                    type="submit"
-                    onClick={() => {
-                      changeAction(true)
-                    }}
-                    disabled={
-                      referenceLayerAttr?.value === undefined ||
-                      adminLevelAttr?.value === undefined ||
-                      indicatorAttr?.value === undefined
-                    }
-                  /> : ""
+            <SaveButton
+              variant="secondary"
+              text="Submit"
+              type="submit"
+              disabled={
+                referenceLayerAttr?.value === undefined ||
+                adminLevelAttr?.value === undefined ||
+                indicatorAttr?.value === undefined
               }
-              <SaveButton
-                variant="secondary"
-                text="Submit"
-                type="submit"
-                onClick={() => {
-                  changeAction(false)
-                }}
-                disabled={
-                  referenceLayerAttr?.value === undefined ||
-                  adminLevelAttr?.value === undefined ||
-                  indicatorAttr?.value === undefined
-                }
-              />
-            </Fragment>
+            />
         }
       >
         <div className='HarvesterForm'>

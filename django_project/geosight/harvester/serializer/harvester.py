@@ -20,10 +20,12 @@ class HarvesterSerializer(serializers.ModelSerializer):
     creator_name = serializers.SerializerMethodField()
     reference_layer = serializers.SerializerMethodField()
     reference_layer_name = serializers.SerializerMethodField()
+    admin_level = serializers.SerializerMethodField()
     indicator = serializers.SerializerMethodField()
     indicator_id = serializers.SerializerMethodField()
     last_run = serializers.SerializerMethodField()
     permission = serializers.SerializerMethodField()
+    is_run = serializers.SerializerMethodField()
 
     def get_name(self, obj: Harvester):
         """Return name of html."""
@@ -53,6 +55,10 @@ class HarvesterSerializer(serializers.ModelSerializer):
         """Return reference_layer name."""
         return obj.reference_layer.name
 
+    def get_admin_level(self, obj: Harvester):
+        """Return Admin Level."""
+        return obj.admin_level
+
     def get_indicator(self, obj: Harvester):
         """Return indicator."""
         return obj.indicator.__str__() if obj.indicator else ''
@@ -67,6 +73,10 @@ class HarvesterSerializer(serializers.ModelSerializer):
             return obj.last_run.strftime("%Y-%m-%d %H:%M:%S")
         else:
             return ''
+
+    def get_is_run(self, obj: Harvester):
+        """Return is run."""
+        return obj.is_run
 
     def get_permission(self, obj: Harvester):
         """Return permission."""

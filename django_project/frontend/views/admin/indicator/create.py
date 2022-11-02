@@ -34,28 +34,44 @@ class IndicatorCreateView(RoleCreatorRequiredMixin, BaseView):
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""
         context = super().get_context_data(**kwargs)
-        rules = []
-        initial = None
-
-        # from_id used for duplication
-        from_id = self.request.GET.get('from')
-        if from_id:
-            try:
-                indicator = Indicator.objects.get(id=from_id)
-                initial = IndicatorForm.model_to_initial(indicator)
-                initial['name'] = None
-                initial['description'] = None
-                rules = indicator.rules_dict()
-            except Indicator.DoesNotExist:
-                pass
-
         context.update(
             {
-                'form': IndicatorForm(initial=initial),
-                'rules': json.dumps(rules)
+                'form': IndicatorForm(),
+                'rules': json.dumps([])
             }
         )
         return context
+
+    def save_rules(self, indicator: Indicator):
+        """Save rules."""
+        request = self.request
+        indicator.indicatorrule_set.all().delete()
+        order = 0
+        for req_key, value in request.POST.dict().items():
+            if 'rule_name_' in req_key:
+                idx = req_key.replace('rule_name_', '')
+                name = request.POST.get(f'rule_name_{idx}', None)
+                rule = request.POST.get(f'rule_rule_{idx}', None)
+                color = request.POST.get(f'rule_color_{idx}', None)
+                outline_color = request.POST.get(
+                    f'rule_outline_color_{idx}', None)
+
+                active = request.POST.get(f'rule_active_{idx}', 'true')
+                active = True if active.lower() == 'true' else False
+
+                if rule and name:
+                    indicator_rule, created = \
+                        IndicatorRule.objects.get_or_create(
+                            indicator=indicator,
+                            name=name
+                        )
+                    indicator_rule.rule = rule
+                    indicator_rule.color = color
+                    indicator_rule.order = order
+                    indicator_rule.outline_color = outline_color
+                    indicator_rule.active = active
+                    indicator_rule.save()
+                    order += 1
 
     def post(self, request, **kwargs):
         """Create indicator."""
@@ -64,30 +80,7 @@ class IndicatorCreateView(RoleCreatorRequiredMixin, BaseView):
             instance = form.instance
             instance.creator = request.user
             instance.save()
-            for req_key, value in request.POST.dict().items():
-                if 'rule_name_' in req_key:
-                    idx = req_key.replace('rule_name_', '')
-                    name = request.POST.get(f'rule_name_{idx}', None)
-                    rule = request.POST.get(f'rule_rule_{idx}', None)
-                    color = request.POST.get(f'rule_color_{idx}', None)
-                    outline_color = request.POST.get(
-                        f'rule_outline_color_{idx}', None)
-
-                    active = request.POST.get(f'rule_active_{idx}', 'true')
-                    active = True if active.lower() == 'true' else False
-
-                    if rule and name:
-                        indicator_rule, created = \
-                            IndicatorRule.objects.get_or_create(
-                                indicator=instance,
-                                name=name
-                            )
-                        indicator_rule.rule = rule
-                        indicator_rule.color = color
-                        indicator_rule.order = idx
-                        indicator_rule.outline_color = outline_color
-                        indicator_rule.active = active
-                        indicator_rule.save()
+            self.save_rules(indicator=instance)
             return redirect(reverse('admin-indicator-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form

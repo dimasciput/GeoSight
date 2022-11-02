@@ -3,6 +3,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import LayersIcon from '@mui/icons-material/Layers';
 import MapIcon from '@mui/icons-material/Map';
+import TableViewIcon from '@mui/icons-material/TableView';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudSyncIcon from '@mui/icons-material/CloudSync';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,6 +24,7 @@ export default function SideNavigation({ pageName }) {
   const basemapList = urls.admin.basemapList; // eslint-disable-line no-undef
   const contextLayerList = urls.admin.contextLayerList; // eslint-disable-line no-undef
   const harvesterList = urls.admin.harvesterList; // eslint-disable-line no-undef
+  const dataImporterList = urls.admin.dataImporterList; // eslint-disable-line no-undef
   const userList = urls.admin.userList; // eslint-disable-line no-undef
   const groupList = urls.admin.groupList; // eslint-disable-line no-undef
   const dataAccess = urls.admin.dataAccess; // eslint-disable-line no-undef
@@ -56,6 +58,11 @@ export default function SideNavigation({ pageName }) {
          className={'SideNavigation-Row ' + (pageName === pageNames.Harvester ? 'active' : '')}>
         <CloudSyncIcon className='SideNavigation-Row-Icon'/>
         <span className='SideNavigation-Row-Name'>Harvesters</span>
+      </a>
+      <a href={dataImporterList}
+         className={'SideNavigation-Row ' + (pageName === pageNames.DataImporter ? 'active' : '')}>
+        <TableViewIcon className='SideNavigation-Row-Icon'/>
+        <span className='SideNavigation-Row-Name'>Data Importer</span>
       </a>
       {
         user.is_admin ? <Fragment>

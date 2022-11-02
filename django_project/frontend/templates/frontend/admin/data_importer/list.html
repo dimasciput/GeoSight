@@ -5,16 +5,17 @@
 {% endblock %}
 
 {% block render_bundle %}
-    {% render_bundle 'AdminHarvesterList' %}
+    {% render_bundle 'AdminDataImporterList' %}
 {% endblock %}
 
 {% block scripts %}
     <script>
       urls.api = {
-        'list': '{% url 'harvester-list-api' %}',
-        'detail': '{% url 'harvester-detail-api' 0 %}',
-        'create': '{{ create_harvester_api  }}',
-        'edit': '{% url 'harvester-detail-view' 0 %}',
+        'list': '{% url 'data-importer-list-api' %}',
+        'detail': '{% url 'data-importer-detail-api' 0 %}',
+        'edit': '{% url 'data-importer-detail-view' 0 %}',
+        'meta_ingestor_wide_format': '{{ meta_ingestor_wide_format }}',
+        'meta_ingestor_long_format': '{{ meta_ingestor_long_format }}',
         'users': '{% url 'user-list-api'%}',
         'groups': '{% url 'group-list-api'%}',
 

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
+import $ from 'jquery';
 
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
@@ -15,7 +16,13 @@ export default function IndicatorForm() {
   const [submitted, setSubmitted] = useState(false);
 
   /** Render **/
-  const submit = () => {
+  const submit = (saveAs = false) => {
+    const url = window.location.href.split('?')[0]
+    if (saveAs) {
+      $('.BasicForm').attr('action', url + '?save-as=true')
+    } else {
+      $('.BasicForm').attr('action', url)
+    }
     setSubmitted(true)
   }
 
@@ -24,12 +31,27 @@ export default function IndicatorForm() {
       className='Indicator'
       pageName={pageNames.Indicators}
       rightHeader={
-        <SaveButton
-          variant="secondary"
-          text="Submit"
-          onClick={submit}
-          disabled={submitted ? true : false}
-        />
+        <Fragment>
+          {
+            indicatorId ?
+              <SaveButton
+                variant="secondary"
+                text="Save As New"
+                onClick={() => {
+                  submit(true)
+                }}
+                disabled={submitted ? true : false}
+              /> : ""
+          }
+          <SaveButton
+            variant="secondary"
+            text="Submit"
+            onClick={() => {
+              submit()
+            }}
+            disabled={submitted ? true : false}
+          />
+        </Fragment>
       }>
 
       <AdminForm isSubmitted={submitted}>

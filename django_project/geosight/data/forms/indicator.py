@@ -47,6 +47,19 @@ class IndicatorForm(forms.ModelForm):
             'instance', 'show_in_context_analysis'
         )
 
+    def clean_name(self):
+        """Return group."""
+        name = self.cleaned_data['name']
+        group = self.data['group']
+        indicators = Indicator.objects.exclude(
+            id=self.instance.id
+        ).filter(name=name, group__name=group)
+        if indicators.count():
+            raise ValidationError(
+                f"The name `{name}` is already exist for category `{group}`."
+            )
+        return name
+
     def clean_group(self):
         """Return group."""
         group = self.cleaned_data['group']

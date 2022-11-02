@@ -31,12 +31,16 @@ class HarvesterDetail(BaseView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        list_url = reverse('admin-harvester-list-view')
         harvester = self.harvester
+        unique_id = harvester.unique_id
+        list_url = reverse('admin-harvester-list-view')
+        detail_view = reverse('harvester-detail-view', kwargs={
+            'uuid': unique_id
+        })
         return (
             f'<a href="{list_url}">Harvesters</a> '
             f'<span>></span> '
-            f'<a>{harvester.harvester_name}</a> '
+            f'<a href="{detail_view}">{unique_id}</a> '
         )
 
     @property

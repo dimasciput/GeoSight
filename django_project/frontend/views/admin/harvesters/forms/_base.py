@@ -6,6 +6,7 @@ from django.http import HttpResponseBadRequest
 from django.shortcuts import reverse, get_object_or_404, redirect
 from django.utils.module_loading import import_string
 
+from core.utils import string_is_true
 from frontend.views._base import BaseView
 from geosight.data.models import Indicator
 from geosight.georepo.models import ReferenceLayer
@@ -58,13 +59,26 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
     def content_title(self):
         """Return content title that used on page title indicator."""
         list_url = reverse('admin-harvester-list-view')
+        unique_id = self.kwargs.get('uuid', None)
         class_name = str(self.harvester_class).split("'")[1]
         harvester = Harvester(harvester_class=class_name)
-        return (
-            f'<a href="{list_url}">Harvesters</a> '
-            f'<span>></span> '
-            f'{harvester.harvester_name}'
-        )
+        if unique_id:
+            detail_view = reverse('harvester-detail-view', kwargs={
+                'uuid': unique_id
+            })
+            return (
+                f'<a href="{list_url}">Harvesters</a> '
+                f'<span>></span> '
+                f'<a href="{detail_view}">{unique_id}</a> '
+                f'<span>></span> '
+                f'<a>Edit</a> '
+            )
+        else:
+            return (
+                f'<a href="{list_url}">Harvesters</a> '
+                f'<span>></span> '
+                f'<a>{harvester.harvester_name}</a>'
+            )
 
     def get_harvester(self) -> Harvester:
         """Return harvester."""
@@ -192,6 +206,7 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
             data['attribute_extra_keys'] = ','.join(
                 request.POST.getlist('attribute_extra_keys')
             )
+            save_as = string_is_true(request.GET.get('save-as', False))
             indicator = data.get('indicator', None)
             if indicator:
                 try:
@@ -201,6 +216,9 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
 
             harvester_class = data['harvester']
             try:
+                if save_as:
+                    raise Harvester.DoesNotExist()
+
                 harvester = self.get_harvester()
                 edit_permission_resource(harvester, self.request.user)
             except Harvester.DoesNotExist:

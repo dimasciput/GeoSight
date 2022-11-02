@@ -1,8 +1,9 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
+import $ from "jquery";
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
-import Harvesters from '../../Harvesters';
 import { fetchJSON } from "../../../../Requests";
+import Harvesters from '../../Harvesters';
 
 // COMPONENTS
 import Filter from "./Filter"
@@ -89,6 +90,18 @@ export default function VectorContextLayerHarvester() {
     }
   }, [contextLayer]);
 
+  /**
+   * Change form action
+   */
+  const changeAction = (saveAs = false) => {
+    const url = window.location.href.split('?')[0]
+    if (saveAs) {
+      $('.BasicForm').attr('action', url + '?save-as=true')
+    } else {
+      $('.BasicForm').attr('action', url)
+    }
+  }
+
   return (
     <Fragment>
       <Harvesters
@@ -100,17 +113,39 @@ export default function VectorContextLayerHarvester() {
           ['aggregation', 'spatial_operator', 'filter']
         }
         rightHeader={
-          <SaveButton
-            disabled={
-              referenceLayerAttr?.value === undefined ||
-              adminLevelAttr?.value === undefined ||
-              indicatorAttr?.value === undefined ||
-              contextLayerIdAttr?.value === undefined
+          <Fragment>
+            {
+              harvester.id ?
+                <SaveButton
+                  variant="secondary"
+                  text="Save As New"
+                  type="submit"
+                  onClick={() => {
+                    changeAction(true)
+                  }}
+                  disabled={
+                    referenceLayerAttr?.value === undefined ||
+                    adminLevelAttr?.value === undefined ||
+                    indicatorAttr?.value === undefined ||
+                    contextLayerIdAttr?.value === undefined
+                  }
+                /> : ""
             }
-            variant="secondary"
-            text="Submit"
-            type="submit"
-          />
+            <SaveButton
+              disabled={
+                referenceLayerAttr?.value === undefined ||
+                adminLevelAttr?.value === undefined ||
+                indicatorAttr?.value === undefined ||
+                contextLayerIdAttr?.value === undefined
+              }
+              variant="secondary"
+              text="Submit"
+              type="submit"
+              onClick={() => {
+                changeAction(false)
+              }}
+            />
+          </Fragment>
         }
       >
         <Fragment>

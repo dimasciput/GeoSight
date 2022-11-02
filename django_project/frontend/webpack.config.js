@@ -35,9 +35,11 @@ let conf = {
 
     // HARVESTERS
     AdminHarvesterList: ['./src/pages/Admin/Harvesters/List'],
+    AdminDataImporterList: ['./src/pages/Admin/DataImporter/List'],
+    DataImporterDetail: ['./src/pages/Admin/DataImporter/Detail'],
     HarvesterDetail: ['./src/pages/Admin/Harvesters/Detail'],
-    MetaIngestorWideFormat: ['./src/pages/Admin/Harvesters/MetaIngestorWideFormat'],
-    MetaIngestorLongFormat: ['./src/pages/Admin/Harvesters/MetaIngestorLongFormat'],
+    MetaIngestorWideFormat: ['./src/pages/Admin/DataImporter/MetaIngestorWideFormat'],
+    MetaIngestorLongFormat: ['./src/pages/Admin/DataImporter/MetaIngestorLongFormat'],
     ExposedAPI: ['./src/pages/Admin/Harvesters/ExposedAPI'],
     HarvesterApiGeography: ['./src/pages/Admin/Harvesters/HarvesterApiGeography'],
     HarvesterApiGeographyAndDate: ['./src/pages/Admin/Harvesters/HarvesterApiGeographyAndDate'],

@@ -7,15 +7,15 @@ import { store } from '../../../../store/admin';
 import Admin, { pageNames } from "../../index";
 import Modal, { ModalHeader } from "../../../../components/Modal";
 import { EditButton } from "../../../../components/Elements/Button";
+import CopyToClipboard from "../../../../components/Elements/CopyToClipboard";
 
 import './style.scss';
-import CopyToClipboard from "../../../../components/Elements/CopyToClipboard";
 
 
 /**
  * MetaIngestor App
  */
-export default function Detail() {
+export default function Detail({ pageName = pageNames.Harvester }) {
   const period = 1000;
   const [open, setOpen] = useState(false);
   const [currentLog, setCurrentLog] = useState(currentLogData);
@@ -40,7 +40,7 @@ export default function Detail() {
 
   return (
     <Admin
-      pageName={pageNames.Harvester}
+      pageName={pageName}
       rightHeader={
         <a href={editUrl}>
           <EditButton

@@ -1,0 +1,15 @@
+/* ==========================================================================
+   Harvester List style
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.AdminContentHeader-Right-Inner {
+  display: flex;
+}
+
+.IngestorList {
+  a {
+    color: $base-black-color !important;
+  }
+}
