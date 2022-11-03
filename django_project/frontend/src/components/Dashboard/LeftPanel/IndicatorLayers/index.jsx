@@ -41,14 +41,8 @@ export function IndicatorLayer(
 
   // --------------------------------------------
   // Check loading and errors
-  let rules = layer.rules
   let errors = []
   let loading = false
-  const indicator = indicators.find(
-    data => layer.indicators[0]?.id === data.id)
-  if (indicator) {
-    rules = indicator.rules
-  }
   layer.indicators.map(indicator => {
     if (!indicatorsData[indicator.id]?.fetched) {
       loading = true
@@ -172,56 +166,6 @@ export function IndicatorLayer(
               </div>
             </td>
         }
-        <td valign="top">
-          {
-            active ? (
-              <Fragment>
-                {
-                  showLegend ?
-                    <div className='toggler' onClick={(e) => {
-                      e.stopPropagation()
-                      showLegendHandler(false)
-                    }}>
-                      <div>▴</div>
-                    </div> :
-                    <div className='toggler' onClick={(e) => {
-                      e.stopPropagation()
-                      showLegendHandler(true)
-                    }}>
-                      <div>▾</div>
-                    </div>
-                }
-              </Fragment>
-            ) : ''
-          }
-        </td>
-      </tr>
-      <tr className={showLegend ? 'legend showLegend' : 'legend'} valign="top">
-        <td></td>
-        <td>
-          {
-            rules ?
-              <div>
-                <table>
-                  <tbody>
-                  {
-                    rules.filter(rule => rule.active).map(rule => (
-                        <tr key={rule.id} className='IndicatorLegendRow'>
-                          <td>
-                            <div className='IndicatorLegendRow-Color'
-                                 style={{ backgroundColor: rule.color }}></div>
-                          </td>
-                          <td>{rule.name}</td>
-                        </tr>
-                      )
-                    )
-                  }
-                  </tbody>
-                </table>
-              </div> : ""
-          }
-        </td>
-        <td></td>
       </tr>
       </tbody>
     </table>

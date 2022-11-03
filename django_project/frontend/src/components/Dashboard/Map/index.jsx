@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import L from 'leaflet';
 import $ from 'jquery';
 import StarIcon from '@mui/icons-material/Star';
-import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 // Library that does not used explicitly
 import Navbar from 'leaflet-navbar';
@@ -115,6 +114,7 @@ export default function Map() {
         layers: [basemapLayerGroup, contextLayerGroup, referenceLayerGroup],
         zoomControl: false,
         maxZoom: maxZoom,
+        attributionControl: false,
         // TODO:
         //  We comment this for now
         // renderer: L.canvas()

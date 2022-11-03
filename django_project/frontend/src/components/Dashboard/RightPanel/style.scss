@@ -58,6 +58,18 @@
       opacity: 0.5;
     }
   }
+
+  .dashboard__right_side__bottom {
+    position: absolute;
+    bottom: 1rem;
+    right: 100%;
+    margin-right: 1rem;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row-reverse;
+    width: 100vw;
+    height: 0;
+  }
 }
 
 .dashboard__right_side__loading {

@@ -1,0 +1,36 @@
+/* ==========================================================================
+   Context layers style
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.MapLegend {
+  padding: 0.5rem;
+  background-color: white;
+  box-shadow: $box-shadow;
+  border-radius: $border-radius;
+  max-width: 300px;
+  max-height: 600px;
+  overflow-y: auto;
+
+  .MapLegendSection {
+    .MapLegendSectionTitle {
+      padding-left: 1rem;
+      color: $secondary-color;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .IndicatorLegendSection {
+    margin-bottom: 0.5rem;
+
+    .IndicatorLegendRow {
+      color: $black;
+      display: inline-block;
+      min-width: 5rem;
+      padding: 3px 5px;
+      margin-right: 1px;
+      margin-bottom: 1px;
+    }
+  }
+}
