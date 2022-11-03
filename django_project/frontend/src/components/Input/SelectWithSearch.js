@@ -51,28 +51,45 @@ export function SelectWithSearch(
 export function MultipleSelectWithSearch(
   { value, options, className, disabled = false, onChangeFn }
 ) {
+  const selectAllText = 'Select all'
+  const allSelected = value.length === options.length
+  const optionsWithSelectAll = [selectAllText].concat(options)
+
   return <Autocomplete
     className={className}
     value={value}
-    options={options}
+    disablePortal={true}
+    options={optionsWithSelectAll}
     disableCloseOnSelect
     getOptionLabel={(option) => option}
-    renderOption={(props, option, { selected }) => (
-      <li {...props}>
+    renderOption={(props, option, { selected }) => {
+      if (option === selectAllText && allSelected) {
+        selected = true
+      }
+      return <li value={option} {...props}>
         <Checkbox
           icon={icon}
+          value={option}
           checkedIcon={checkedIcon}
           style={{ marginRight: 8 }}
           checked={selected}
         />
         {option}
       </li>
-    )}
+    }}
     renderInput={(params) => (
       <TextField {...params} placeholder="Select 1 or any"/>
     )}
-    onChange={(event, values) => {
-      onChangeFn(values);
+    onChange={(e, values) => {
+      if (e.target.getAttribute('value') === selectAllText) {
+        if (!allSelected) {
+          onChangeFn(options);
+        } else {
+          onChangeFn([]);
+        }
+      } else {
+        onChangeFn(values);
+      }
     }}
     disabled={disabled}
     multiple

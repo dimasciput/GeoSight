@@ -381,6 +381,10 @@
 }
 
 .FilterEditModal {
+  .modal--box {
+    overflow: visible;
+  }
+
   .MuiFormControl-root {
     margin-top: 0 !important;
   }
