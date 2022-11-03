@@ -17,6 +17,7 @@ import {
   SaveButton,
   ThemeButton
 } from "../../../../components/Elements/Button";
+import { dictDeepCopy } from "../../../../utils/main";
 
 // Dashboard Form
 import SummaryDashboardForm from './Summary'
@@ -40,7 +41,7 @@ import './style.scss';
  */
 
 let histories = [];
-let isChanged = false;
+let forceChangedDataStr = null;
 
 export function DashboardHistory(
   {
@@ -53,12 +54,11 @@ export function DashboardHistory(
   const { data } = useSelector(state => state.dashboard);
 
   const applyHistory = (targetIdx, page) => {
-    isChanged = true
     const history = histories[targetIdx]
+    const data = history.data
+    forceChangedDataStr = JSON.stringify(data)
     dispatch(
-      Actions.Dashboard.update(
-        JSON.parse(JSON.stringify(history.data))
-      )
+      Actions.Dashboard.update(dictDeepCopy(data))
     )
     setCurrentPage(page)
     setCurrentHistoryIdx(targetIdx)
@@ -75,26 +75,28 @@ export function DashboardHistory(
   }
 
   const reset = () => {
-    isChanged = true
     const history = histories[0]
     applyHistory(0, history.page)
   }
 
   // Add history
   useEffect(() => {
-    if (!isChanged && data.extent) {
-      const lastHistory = histories[currentHistoryIdx];
-      histories = histories.slice(0, currentHistoryIdx + 1);
-      if (!lastHistory || (lastHistory && JSON.stringify(data) !== JSON.stringify(lastHistory.data))) {
-        const newHistory = {
-          page: page,
-          data: JSON.parse(JSON.stringify(data))
+    if (data.extent) {
+      const strData = JSON.stringify(data)
+      if (forceChangedDataStr !== strData) {
+        const lastHistory = histories[currentHistoryIdx];
+        histories = histories.slice(0, currentHistoryIdx + 1);
+        if (!lastHistory || (lastHistory && strData !== JSON.stringify(lastHistory.data))) {
+          const newHistoryIdx = currentHistoryIdx + 1
+          const newHistory = {
+            page: page,
+            data: dictDeepCopy(data)
+          }
+          histories[newHistoryIdx] = newHistory
+          setCurrentHistoryIdx(newHistoryIdx)
         }
-        histories.push(newHistory)
-        setCurrentHistoryIdx(histories.length - 1)
       }
     }
-    isChanged = false
   }, [data]);
 
   const redoDisabled = (

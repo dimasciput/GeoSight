@@ -53,45 +53,48 @@ export function Widget({ idx, data }) {
   const layer = indicators.find((layer) => {
     return layer.id === layer_id;
   })
+
   // Fetch the data if it is using no filter or custom
   useEffect(() => {
-    setLayerData({
-      fetching: true,
-      fetched: false,
-      data: {},
-      error: null
-    })
-    let params = {}
-    if (date_filter_type === 'Custom filter') {
-      if (date_filter_value) {
-        let [minDateFilter, maxDateFilter] = date_filter_value.split(';')
-        params = {
-          'time__gte': minDateFilter,
-        }
-        if (maxDateFilter) {
-          params['time__lte'] = maxDateFilter
+    if (layer) {
+      setLayerData({
+        fetching: true,
+        fetched: false,
+        data: {},
+        error: null
+      })
+      let params = {}
+      if (date_filter_type === 'Custom filter') {
+        if (date_filter_value) {
+          let [minDateFilter, maxDateFilter] = date_filter_value.split(';')
+          params = {
+            'time__gte': minDateFilter,
+          }
+          if (maxDateFilter) {
+            params['time__lte'] = maxDateFilter
+          }
         }
       }
+
+      fetchingData(
+        layer.url, params, {}, function (response, error) {
+          let newState = {
+            fetching: false,
+            fetched: true,
+            receivedAt: Date.now(),
+            data: null,
+            error: null
+          };
+
+          if (error) {
+            newState.error = error;
+          } else {
+            newState.data = response;
+          }
+          setLayerData(newState);
+        }
+      )
     }
-
-    fetchingData(
-      layer.url, params, {}, function (response, error) {
-        let newState = {
-          fetching: false,
-          fetched: true,
-          receivedAt: Date.now(),
-          data: null,
-          error: null
-        };
-
-        if (error) {
-          newState.error = error;
-        } else {
-          newState.data = response;
-        }
-        setLayerData(newState);
-      }
-    )
   }, [data])
 
   const where = returnWhere(filtersData ? filtersData : [])
