@@ -36,6 +36,14 @@ class SitePreferencesAdmin(admin.ModelAdmin):
                 'icon', 'favicon'
             ),
         }),
+        ('Layer Configuration', {
+            'fields': (
+                'indicator_no_data_fill_color',
+                'indicator_no_data_outline_color',
+                'indicator_other_data_fill_color',
+                'indicator_other_data_outline_color'
+            ),
+        }),
     )
     inlines = (SitePreferencesImageInline,)
 

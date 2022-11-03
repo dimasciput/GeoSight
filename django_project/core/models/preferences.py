@@ -90,6 +90,39 @@ class SitePreferences(SingletonModel):
         null=True,
         blank=True
     )
+    # -----------------------------------------------
+    # LAYER RELATED
+    # -----------------------------------------------
+    indicator_no_data_fill_color = models.CharField(
+        max_length=16,
+        default='#D8D8D8',
+        help_text=_(
+            'Fill color for indicator no data.'
+        )
+    )
+
+    indicator_no_data_outline_color = models.CharField(
+        max_length=16,
+        default='#000000',
+        help_text=_(
+            'Outline color for indicator no data.'
+        )
+    )
+    indicator_other_data_fill_color = models.CharField(
+        max_length=16,
+        default='#A6A6A6',
+        help_text=_(
+            'Fill color for indicator other data.'
+        )
+    )
+
+    indicator_other_data_outline_color = models.CharField(
+        max_length=16,
+        default='#000000',
+        help_text=_(
+            'Outline color for indicator other data.'
+        )
+    )
 
     class Meta:  # noqa: D106
         verbose_name_plural = "site preferences"

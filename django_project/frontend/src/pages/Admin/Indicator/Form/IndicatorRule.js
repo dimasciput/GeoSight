@@ -322,7 +322,10 @@ export function IndicatorOtherRule({ rule, idx, onChange }) {
 export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
 
   /** Adding new rule **/
-  const newRule = (theRules, active, defaultValue, defaultName, defaultColor, defaultIdx) => {
+  const newRule = (
+    theRules, active, defaultValue, defaultName,
+    defaultColor, defaultOutlineColor, defaultIdx
+  ) => {
     let idx = defaultIdx ? defaultIdx : Math.max(...theRules.map(rule => {
       return rule.id
     }))
@@ -332,7 +335,7 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
       "name": defaultName ? defaultName : "",
       "rule": defaultValue ? defaultValue : "",
       "color": defaultColor ? defaultColor : "#000000",
-      "outline_color": "#000000",
+      "outline_color": defaultOutlineColor ? defaultOutlineColor : "#000000",
       "active": active,
     }
   }
@@ -348,13 +351,25 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
     })
     const noDataRule = theRules.find(rule => rule.rule === NO_DATA_RULE)
     if (!noDataRule) {
-      newRules.push(newRule(theRules, false, NO_DATA_RULE, NO_DATA_RULE, "#FFFFFF", -2))
+      newRules.push(
+        newRule(
+          theRules, false, NO_DATA_RULE, NO_DATA_RULE,
+          preferences.indicator_no_data_fill_color, preferences.indicator_no_data_outline_color,
+          -2
+        )
+      )
     } else {
       newRules.push(noDataRule)
     }
     const otherDataRule = theRules.find(rule => rule.rule === OTHER_DATA_RULE)
     if (!otherDataRule) {
-      newRules.push(newRule(theRules, false, OTHER_DATA_RULE, OTHER_DATA_RULE, "#FFFFFF", -1))
+      newRules.push(
+        newRule(
+          theRules, false, OTHER_DATA_RULE, OTHER_DATA_RULE,
+          preferences.indicator_other_data_fill_color, preferences.indicator_other_data_outline_color,
+          -1
+        )
+      )
     } else {
       newRules.push(otherDataRule)
     }
