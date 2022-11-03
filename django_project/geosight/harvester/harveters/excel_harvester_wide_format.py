@@ -164,6 +164,8 @@ class ExcelHarvesterWideFormat(BaseHarvester):
             details.append(headers)
             total = len(records[1:])
             for record_idx, record in enumerate(records[1:]):
+                if not record:
+                    continue
                 self._update(
                     f'Processing line {record_idx + column_header}/'
                     f'{total + column_header}'

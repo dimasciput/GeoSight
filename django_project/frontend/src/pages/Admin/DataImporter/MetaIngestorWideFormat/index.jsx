@@ -97,7 +97,7 @@ export default function MetaIngestorWideFormat() {
 
       const headers = array[rowNumber.value - 1] ? array[rowNumber.value - 1] : []
       admCode.options = headers
-      admCode.value = findMostMatched(admCode.options, 'pcode').value
+      admCode.value = admCode.options.find(option => ['dcode', 'pcode'].includes(option.toLowerCase()))
 
       // CHECK THE ATTRIBUTES
       const attributesMatched = []

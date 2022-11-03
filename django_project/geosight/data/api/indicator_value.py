@@ -16,9 +16,11 @@ from geosight.data.serializer.indicator import (
     IndicatorValueBasicSerializer, IndicatorValueSerializer,
     IndicatorValueDetailSerializer
 )
+from geosight.georepo.models import ReferenceLayerIndicator
 from geosight.georepo.request import GeorepoUrl
 from geosight.permission.access import (
-    delete_permission_resource, read_permission_resource
+    delete_permission_resource, read_permission_resource,
+    ResourcePermissionDenied
 )
 
 
@@ -78,7 +80,14 @@ class IndicatorValueDetail(APIView):
         indicator = get_object_or_404(Indicator, pk=pk)
         try:
             indicator_value = indicator.indicatorvalue_set.get(pk=value_id)
-            read_permission_resource(indicator_value, request.user)
+            try:
+                dataset = ReferenceLayerIndicator.objects.get(
+                    indicator=indicator,
+                    reference_layer=indicator_value.reference_layer
+                )
+                read_permission_resource(dataset, request.user)
+            except ReferenceLayerIndicator.DoesNotExist:
+                raise ResourcePermissionDenied
             return Response(
                 IndicatorValueDetailSerializer(indicator_value).data
             )
