@@ -11,12 +11,6 @@
     cursor: pointer !important;
   }
 
-  &.Inactive {
-    .CompareLayerComponentPopup {
-      opacity: 0;
-    }
-  }
-
   &.Active {
     a {
       background-color: $primary-color !important;
@@ -31,7 +25,6 @@
     box-sizing: border-box;
     left: 50%;
     margin-left: -170px;
-    opacity: 1;
     position: absolute;
     top: 42px;
     width: 340px;

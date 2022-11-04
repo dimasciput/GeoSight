@@ -81,7 +81,11 @@ class IndicatorCreateView(RoleCreatorRequiredMixin, BaseView):
             instance.creator = request.user
             instance.save()
             self.save_rules(indicator=instance)
-            return redirect(reverse('admin-indicator-list-view'))
+            return redirect(
+                reverse('admin-indicator-edit-view', kwargs={
+                    'pk': instance.pk
+                })
+            )
         context = self.get_context_data(**kwargs)
         context['form'] = form
         return render(

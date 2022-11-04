@@ -52,7 +52,7 @@ export default function MapLegend() {
             <div className='IndicatorLegendSection'>
               {
                 rules.map(rule => {
-                  const border = `1px solid ${rule.color === '#FFFFFF' ? '#DDDDDD' : rule.color}`
+                  const border = `1px solid ${rule.outline_color === '#FFFFFF' ? '#DDDDDD' : rule.outline_color}`
                   return <div
                     key={rule.name}
                     className='IndicatorLegendRow'

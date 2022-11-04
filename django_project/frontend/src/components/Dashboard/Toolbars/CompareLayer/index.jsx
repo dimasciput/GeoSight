@@ -30,14 +30,18 @@ export default function CompareLayer() {
             dispatch(Actions.MapMode.changeCompareMode())
           }}/>
         </PluginChild>
-        <div className={'CompareLayerComponentPopup'}>
-          <div className={'Title'}>Compare mode</div>
-          <div>Outline indicator : {outlineIndicatorName}</div>
-          <div>
-            Inner indicator : {innerIndicatorName ? innerIndicatorName :
-            <i>Select second indicator.</i>}
-          </div>
-        </div>
+        {
+          compareMode ?
+            <div className={'CompareLayerComponentPopup'}>
+              <div className={'Title'}>Compare mode</div>
+              <div>Outline indicator : {outlineIndicatorName}</div>
+              <div>
+                Inner indicator : {innerIndicatorName ? innerIndicatorName :
+                <i>Select second indicator.</i>}
+              </div>
+            </div>
+            : ""
+        }
       </div>
     </Fragment>
   )

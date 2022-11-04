@@ -73,7 +73,14 @@ class IndicatorEditView(IndicatorCreateView):
         if form.is_valid():
             indicator = form.save()
             self.save_rules(indicator=indicator)
-            return redirect(reverse('admin-indicator-list-view'))
+            if save_as:
+                return redirect(
+                    reverse('admin-indicator-edit-view', kwargs={
+                        'pk': indicator.pk
+                    })
+                )
+            else:
+                return redirect(reverse('admin-indicator-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form
         return render(request, self.template_name, context)
