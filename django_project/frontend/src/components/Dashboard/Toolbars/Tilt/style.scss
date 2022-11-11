@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Tilt control
+   ========================================================================== */
+
+@import '../../../../app/variables';
+
+.TiltControl {
+  margin-left: -10px !important;
+
+  a {
+    position: relative;
+    width: 60px !important;
+    padding-left: 10px !important;
+    padding-top: 1px !important;
+    font-weight: 500;
+
+    .TiltBase {
+      position: absolute;
+      bottom: 7px;
+      left: 40px;
+      width: 12px;
+      border: 1px solid $primary-color;
+    }
+
+    .TiltDegreeLine {
+      position: absolute;
+      bottom: 7px;
+      left: 40px;
+      width: 12px;
+      transform-origin: bottom left;
+      border: 1px solid $primary-color;
+    }
+
+    .TiltDegree {
+      &::after {
+        content: '°';
+      }
+    }
+  }
+}

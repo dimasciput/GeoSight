@@ -20,7 +20,8 @@ import {
   CompareLayer,
   DownloaderData,
   Measurement,
-  MovementHistories
+  MovementHistories,
+  TiltControl
 } from '../Toolbars'
 
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -103,6 +104,7 @@ export default function MapLibre() {
     {/* TOOLBARS */}
     <div className='Toolbar'>
       <MovementHistories map={map}/>
+      <TiltControl map={map}/>
       <Measurement map={map}/>
       <Plugin>
         <CustomPopover
