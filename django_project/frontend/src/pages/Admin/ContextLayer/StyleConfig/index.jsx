@@ -74,14 +74,16 @@ export default function StyleConfig({ data, setData }) {
                   setTab('FIELDS')
                 }}
                 className={tab === 'FIELDS' ? 'Selected' : ""}
-              >FIELDS & LABELS
+              >
+                FIELDS & LABELS
               </div>
               <div
                 onClick={() => {
                   setTab('STYLES')
                 }}
                 className={tab === 'STYLES' ? 'Selected' : ""}
-              >STYLES
+              >
+                STYLES
               </div>
             </Fragment> : ""
         }
@@ -98,7 +100,11 @@ export default function StyleConfig({ data, setData }) {
                       dangerouslySetInnerHTML={{ __html: legend }}></div> : ""
                 }
               </div>
-              <MapConfig layerInput={layer}/>
+              <MapConfig data={data} layerInput={{
+                layer: layer,
+                layer_type: data.layer_type,
+                render: true
+              }}/>
             </div> : ""
         }
         {

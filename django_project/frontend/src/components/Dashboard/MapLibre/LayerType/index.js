@@ -1,0 +1,104 @@
+import { Marker } from "maplibre-gl";
+import { jsonToUrlParams, stringToUrlAndParams } from "../../../../utils/main";
+import { addPopup, addPopupEl, hasLayer, hasSource } from "../utils";
+
+export { default as arcGisLayer } from "./ArcGis";
+
+const BEFORE_LAYER = 'gl-draw-polygon-fill-inactive.cold'
+
+/**
+ * Symbol layers as marker
+ * This is to prevent CORS error
+ */
+export function symbolLayers(map, id, geojson, popupRenderFn) {
+  const markers = []
+  geojson.features.map(feature => {
+    const icon = feature.properties.icon;
+    if (icon && feature.geometry.type === 'Point') {
+      var el = document.createElement('div');
+      el.classList.add("IconMarker");
+      el.style.backgroundImage = `url(${icon})`;
+
+      // create the popup
+      var marker = new Marker(el, {
+        anchor: 'bottom',
+        offset: [10, 30]
+      }).setLngLat(feature.geometry.coordinates).addTo(map);
+      addPopupEl(
+        map, marker.getElement(),
+        feature.geometry.coordinates, feature.properties, popupRenderFn
+      )
+      markers.push(marker)
+    }
+  });
+  return markers
+}
+
+/***
+ * Render geojson layer
+ */
+export function geojsonLayer(map, id, geojson, popupFeature) {
+  const idFill = id + '-fill'
+  if (typeof map.getSource(id) === 'undefined') {
+    map.addSource(id, {
+      'type': 'geojson',
+      'data': geojson
+    });
+  }
+  if (!hasLayer(map, idFill)) {
+    map.addLayer(
+      {
+        'id': idFill,
+        'type': 'fill',
+        'source': id,
+        'paint': {
+          'fill-color': '#ff7800',
+          'fill-opacity': 1
+        },
+        'filter': ['==', '$type', 'Polygon']
+      },
+      BEFORE_LAYER
+    );
+    addPopup(map, idFill, popupFeature)
+  }
+  return symbolLayers(map, id, geojson, popupFeature)
+}
+
+/***
+ * Render geojson layer
+ */
+export function rasterTileLayer(map, id, data) {
+  const parameters = Object.assign({}, {}, data.parameters)
+  parameters['type'] = `raster`;
+  parameters['maxZoom'] = maxZoom;
+  parameters['maxNativeZoom'] = 19;
+  if (!parameters['tileSize']) {
+    parameters['tileSize'] = 256;
+  }
+  const [url, params] = stringToUrlAndParams(data.url)
+  const parameter = jsonToUrlParams(Object.assign({}, {
+    SERVICE: 'WMS',
+    VERSION: '1.1.1',
+    REQUEST: 'GetMap',
+    FORMAT: 'image/png',
+    TRANSPARENT: true,
+    SRS: 'EPSG:3857',
+    WIDTH: 512,
+    HEIGHT: 512,
+    bbox: '{bbox-epsg-3857}',
+  }, data.parameters, params))
+  parameters['tiles'] = [[url, parameter].join('?')];
+  if (!hasSource(map, id)) {
+    map.addSource(id, parameters);
+  }
+  if (!hasLayer(map, id)) {
+    map.addLayer(
+      {
+        ...parameters,
+        id: id,
+        source: id,
+      },
+      BEFORE_LAYER
+    );
+  }
+}

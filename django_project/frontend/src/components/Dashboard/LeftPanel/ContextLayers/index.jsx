@@ -65,7 +65,10 @@ function ContextLayerInput({ data, styles, data_fields }) {
     if (checked) {
       if (layer) {
         dispatch(
-          Actions.Map.addContextLayer(id, layer)
+          Actions.Map.addContextLayer(id, {
+            layer: layer,
+            layer_type: data.layer_type
+          })
         );
       }
     } else {

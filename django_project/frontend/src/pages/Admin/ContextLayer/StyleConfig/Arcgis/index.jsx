@@ -3,7 +3,7 @@
    ========================================================================== */
 
 import React, { Fragment, useEffect } from 'react';
-import parseArcRESTStyle from "../../../../../utils/esri/leaflet-esri-style";
+import parseArcRESTStyle from "../../../../../utils/esri/esri-style";
 
 import PointInput from './PointInput'
 import PolygonInput from './PolygonInput'
@@ -61,9 +61,8 @@ export default function ArcgisConfig({ originalData, setData, ArcgisData }) {
   const data = JSON.parse(JSON.stringify(originalData))
 
   useEffect(() => {
-    if (data && ArcgisData?.data && ArcgisData?.data?.renderer) {
+    if (data && ArcgisData?.data && ArcgisData?.data?.drawingInfo?.renderer) {
       const style = parseArcRESTStyle(ArcgisData.data)
-
       if (!data?.data_fields || data.data_fields.length === 0) {
         data.data_fields = ArcgisData?.data?.fields
       }

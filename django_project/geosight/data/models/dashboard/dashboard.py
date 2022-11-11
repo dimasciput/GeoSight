@@ -141,6 +141,9 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
         modelQuery.exclude(id__in=ids).delete()
 
         for idx, data in enumerate(indicatorLayers):
+            if not data['indicators']:
+                continue
+
             try:
                 model = modelQuery.get(
                     id=data.get('id', 0)

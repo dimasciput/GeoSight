@@ -14,8 +14,7 @@ class ReferenceLayer(models.Model):
 
     identifier = models.CharField(
         max_length=256,
-        help_text=_("Reference layer identifier."),
-        unique=True
+        help_text=_("Reference layer identifier.")
     )
 
     name = models.CharField(

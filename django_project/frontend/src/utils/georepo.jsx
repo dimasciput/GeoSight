@@ -49,7 +49,7 @@ export const fetchFeatureList = async function (url, useCache = true) {
   let data = []
   const _fetchGeojson = async function (page = 1) {
     try {
-      const response = await fetchJSON(url + '?page=' + page, {}, useCache);
+      const response = await fetchJSON(url + '?cache=false&page=' + page, {}, useCache);
       if (response.results) {
         data = data.concat(response.results)
         if (response.results.length) {

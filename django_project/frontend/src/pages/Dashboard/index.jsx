@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Actions } from '../../store/dashboard';
 import { useDispatch, useSelector } from 'react-redux';
 import LeftPanel from '../../components/Dashboard/LeftPanel'
-import Map from '../../components/Dashboard/Map'
+import MapLibre from '../../components/Dashboard/MapLibre'
 import RightPanel from '../../components/Dashboard/RightPanel'
 import BottomPanel from '../../components/Dashboard/BottomPanel'
 
@@ -25,7 +25,7 @@ export default function Dashboard({ children }) {
       {Object.keys(data).length > 0 ?
         <Fragment>
           <LeftPanel setLeftExpanded={setLeftExpanded}/>
-          <Map/>
+          <MapLibre/>
           <RightPanel/>
           <BottomPanel/>
         </Fragment> :

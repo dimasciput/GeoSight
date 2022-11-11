@@ -3,9 +3,8 @@
    ========================================================================== */
 
 import React from 'react';
-import L from "leaflet";
 
-import EsriLeafletLayer from "../../../../utils/esri/leaflet-esri-layer";
+import EsriData from "../../../../utils/esri/esri-data";
 import { dictDeepCopy, featurePopupContent } from "../../../../utils/main";
 import { Actions } from "../../../../store/dashboard";
 import { fetchingData } from "../../../../Requests";
@@ -19,7 +18,7 @@ export function RasterTileLayer(
   }
   layerData.parameters['maxNativeZoom'] = 19;
   layerData.parameters['maxZoom'] = maxZoom;
-  layerFn(L.tileLayer.wms(layerData.url, layerData.parameters))
+  layerFn(layerData)
 }
 
 /** Arcgis layer **/
@@ -29,21 +28,21 @@ export function ArcgisLayer(
   const options = {
     token: layerData.token
   };
-  const argisLayer = new EsriLeafletLayer(
+  const esriData = new EsriData(
     layerData.name, layerData.url,
     layerData.parameters, options,
     layerData.styles, onEachFeature
   );
-  argisLayer.load().then(output => {
+  esriData.load().then(output => {
     if (output.layer) {
       layerFn(output.layer);
-      const legend = argisLayer.getLegend();
+      const legend = esriData.getLegend();
       legendFn(legend);
     } else {
       errorFn(output.error);
     }
   });
-  return argisLayer
+  return esriData
 }
 
 /** Geojson layer **/
@@ -52,31 +51,7 @@ export function GeojsonLayer(
 ) {
   fetchingData(
     layerData.url, layerData.params, {}, (data) => {
-      const layer = L.geoJson(data, {
-        style: function (feature) {
-          switch (feature.geometry.type) {
-            default:
-              return {
-                "color": "#ff7800",
-                "weight": 1,
-                "opacity": 1
-              }
-          }
-        },
-        onEachFeature: onEachFeature,
-        pointToLayer: function (feature, latlng) {
-          var icon = L.icon({
-            iconSize: [25, 30],
-            iconAnchor: [10, 30],
-            popupAnchor: [2, -31],
-            iconUrl: feature.properties.icon
-          });
-          return L.marker(
-            latlng, { icon: icon }
-          );
-        }
-      });
-      layerFn(layer);
+      layerFn(data);
     }
   )
 }

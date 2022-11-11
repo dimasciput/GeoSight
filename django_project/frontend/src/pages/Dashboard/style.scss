@@ -20,10 +20,10 @@ html, body {
 }
 
 .page {
-
   main {
-    height: 100%;
+    flex-grow: 1;
     position: relative;
+    min-height: 0;
     width: 100%;
 
     @include media(small-down) {

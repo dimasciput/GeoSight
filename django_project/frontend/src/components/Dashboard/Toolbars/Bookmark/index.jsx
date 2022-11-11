@@ -31,7 +31,7 @@ export default function Bookmark() {
     contextLayers,
     extent
   } = useSelector(state => state.map)
-
+  console.log(basemapLayer)
   const data = () => {
     return {
       name: name,

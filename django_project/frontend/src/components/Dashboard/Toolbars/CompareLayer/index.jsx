@@ -5,7 +5,7 @@
 import React, { Fragment } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import CompareIcon from '@mui/icons-material/Compare';
-import { PluginChild } from "../../Map/Plugin";
+import { PluginChild } from "../../MapLibre/Plugin";
 import { Actions } from '../../../../store/dashboard/index'
 
 import './style.scss';
@@ -30,18 +30,6 @@ export default function CompareLayer() {
             dispatch(Actions.MapMode.changeCompareMode())
           }}/>
         </PluginChild>
-        {
-          compareMode ?
-            <div className={'CompareLayerComponentPopup'}>
-              <div className={'Title'}>Compare mode</div>
-              <div>Outline indicator : {outlineIndicatorName}</div>
-              <div>
-                Inner indicator : {innerIndicatorName ? innerIndicatorName :
-                <i>Select second indicator.</i>}
-              </div>
-            </div>
-            : ""
-        }
       </div>
     </Fragment>
   )

@@ -3,13 +3,11 @@
    ========================================================================== */
 
 import React from 'react';
-import L from 'leaflet';
-import { featureLayer } from 'esri-leaflet';
-import parseArcRESTStyle from './leaflet-esri-style'
 import { fetchJSON } from '../../Requests'
-import { hexToRGB, jsonToUrlParams } from '../../utils/main'
+import { hexToRGB, jsonToUrlParams } from '../main'
+import parseArcRESTStyle from './esri-style'
 
-export default class EsriLeafletLayer {
+export default class EsriData {
   constructor(name, url, params, options, style, onEachFeature) {
     const urls = url.split('?')
     if (urls[1]) {
@@ -63,7 +61,7 @@ export default class EsriLeafletLayer {
     /**
      * Fetch the drawing info from the service before we can load features
      * ESRI Alpha is scaled up tp 255 - use maxTrans ceiling
-     * Return Leaflet layer
+     * Return esri data
      */
     const that = this;
     const urls = this.url.split('?')
@@ -88,7 +86,7 @@ export default class EsriLeafletLayer {
         }
         this.data = data;
         return {
-          layer: that.toLeafletLayer(data),
+          layer: this,
           error: null
         }
       })
@@ -100,148 +98,11 @@ export default class EsriLeafletLayer {
       })
   }
 
-  overrideStyle(style) {
-    if (this.defaultStyle) {
-      return this.defaultStyle
-    } else {
-      return style
-    }
-  }
-
-  /**
-   * get leaflet layer
-   */
-  toLeafletLayer(data) {
-    this.style = parseArcRESTStyle(data);
-    const self = this;
-    const style = this.overrideStyle(this.style);
-    const params = this.params ? JSON.parse(JSON.stringify(this.params)) : {};
-    params.url = this.url;
-    if (this.token) {
-      params.token = this.token;
-    }
-    switch (style.geometryType) {
-      // This is for polygon
-      case "esriGeometryPolygon":
-      case "esriGeometryPolyline": {
-        params.style = function (geojson) {
-          const value = geojson['properties'][style.fieldName];
-          let leafletStyle = null;
-          switch (style.classificationValueMethod) {
-            case "classMaxValue":
-              style.classifications.forEach(function (index, classification) {
-                if (value <= classification.classMaxValue) {
-                  leafletStyle = classification.style;
-                  return false;
-                }
-              });
-              if (!leafletStyle) {
-                leafletStyle = style.classifications[style.classifications.length - 1].style;
-              }
-              break
-            case "classExactValue":
-              const classification = style.classifications.find(
-                classification => ("" + value) === ("" + classification.value)
-              );
-              if (classification) {
-                leafletStyle = classification.style;
-              }
-              break
-            case "noClassification":
-              leafletStyle = style.style;
-              break
-          }
-
-          if (leafletStyle) {
-            if (!leafletStyle.style.color) {
-              leafletStyle.style.color = '#000000'
-              leafletStyle.style.weight = 1
-            }
-            return leafletStyle.style;
-          }
-        }
-
-        params['onEachFeature'] = self.onEachFeature;
-        return featureLayer(params);
-      }
-
-      // This is for point
-      case 'esriGeometryPoint': {
-        params.pointToLayer = function (geojson, latlng) {
-          const value = geojson['properties'][style.fieldName];
-          let leafletStyle = null;
-
-          switch (style.classificationValueMethod) {
-            case "classMaxValue":
-              style.classifications.forEach(function (classification, index) {
-                if (value <= classification.classMaxValue) {
-                  leafletStyle = classification.style;
-                  return false;
-                }
-              });
-              if (!leafletStyle) {
-                leafletStyle = style.classifications[style.classifications.length - 1].style;
-              }
-              break
-            case "classExactValue":
-              style.classifications.forEach(function (classification, index) {
-                if ('' + value === '' + classification.value) {
-                  leafletStyle = classification.style;
-                  return false;
-                }
-              });
-              break
-            case "noClassification":
-              leafletStyle = style.style;
-              break
-          }
-
-          if (leafletStyle) {
-            switch (leafletStyle.type) {
-              case 'circle':
-                return L.circleMarker(
-                  latlng, leafletStyle.style
-                );
-              case 'square': {
-                const radius = leafletStyle.style.radius * 2;
-                const color = leafletStyle.style.color
-                const fillColor = leafletStyle.style.fillColor
-                const weight = leafletStyle.style.weight
-                var icon = L.divIcon({
-                  html: `<div style="background-color: ${fillColor}; border: ${weight}px solid ${color}"></div>`,
-                  className: 'LeafletSquareIcon',
-                  iconSize: [radius, radius]
-                });
-                return L.marker(latlng, {
-                  icon: icon
-                });
-              }
-              case 'icon': {
-                const icon = L.icon(leafletStyle.style);
-                return L.marker(
-                  latlng, {
-                    icon: icon
-                  }
-                );
-              }
-
-            }
-          }
-        };
-
-        params['onEachFeature'] = self.onEachFeature;
-        return featureLayer(params);
-      }
-    }
-    return null;
-  };
-
   /**
    * Add Legend
    */
-
   getLegend() {
-    const style = this.overrideStyle(this.style);
+    const style = this.defaultStyle ? this.defaultStyle : parseArcRESTStyle(this.data);
     if (!style) {
       return null
     }

@@ -3,19 +3,18 @@
    ========================================================================== */
 
 import React, { Fragment, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import L from 'leaflet';
+import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from '@mui/material';
 
 import { Actions } from '../../../../store/dashboard'
+import { jsonToUrlParams, stringToUrlAndParams } from "../../../../utils/main";
 
 /**
  * Basemaps selector.
- * @param {list} data Basemap list.
- * @param {int} defaultBasemapLayer Default basemap.
  */
-export default function Basemaps({ data }) {
+export default function Basemaps() {
   const dispatch = useDispatch();
+  const { basemapsLayers: data } = useSelector(state => state.dashboard.data);
   const [selected, setSelected] = useState(null);
   const onSelected = (id) => {
     setSelected(id);
@@ -47,19 +46,32 @@ export default function Basemaps({ data }) {
       let layer = null;
       if (selectedBasemapData) {
         const parameters = Object.assign({}, {}, selectedBasemapData.parameters)
-        parameters['maxNativeZoom'] = 19;
+        parameters['id'] = selectedBasemapData.id;
+        parameters['type'] = `raster`;
+        parameters['tiles'] = [selectedBasemapData.url];
         parameters['maxZoom'] = maxZoom;
+        parameters['maxNativeZoom'] = 19;
+        if (!parameters['tileSize']) {
+          parameters['tileSize'] = 256;
+        }
         if (selectedBasemapData.type === 'WMS') {
           parameters['transparent'] = true;
           parameters['zIndex'] = 1;
-          layer = L.tileLayer.wms(
-            selectedBasemapData.url, parameters);
-        } else {
-          layer = L.tileLayer(selectedBasemapData.url, parameters);
+          const [url, params] = stringToUrlAndParams(selectedBasemapData.url)
+          const parameter = jsonToUrlParams(Object.assign({}, {
+            SERVICE: 'WMS',
+            VERSION: '1.1.1',
+            REQUEST: 'GetMap',
+            FORMAT: 'image/png',
+            TRANSPARENT: true,
+            SRS: 'EPSG:3857',
+            WIDTH: 1024,
+            HEIGHT: 1024,
+            bbox: '{bbox-epsg-3857}'
+          }, params))
+          parameters['tiles'] = [[url, parameter].join('?')];
         }
-      }
-      if (layer) {
-        layer.id = selected
+        layer = parameters;
       }
       dispatch(
         Actions.Map.changeBasemap(layer)

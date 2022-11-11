@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Checkbox from '@mui/material/Checkbox';
 
 import { fetchGeojson } from "../../../../utils/georepo";
-import { PluginChild } from "../../Map/Plugin";
+import { PluginChild } from "../../MapLibre/Plugin";
 import CustomPopover from "../../../CustomPopover";
 import { ThemeButton } from "../../../Elements/Button";
 import { dictDeepCopy, jsonToXlsx } from "../../../../utils/main";

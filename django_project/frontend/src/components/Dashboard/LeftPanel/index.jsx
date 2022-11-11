@@ -21,9 +21,6 @@ import './style.scss';
  * Left panel.
  */
 export default function LeftPanel({ setLeftExpanded }) {
-  const {
-    basemapsLayers
-  } = useSelector(state => state.dashboard.data);
   const [state, setState] = useState(LEFT);
   const [tab, setTab] = useState('LAYERS');
 
@@ -89,7 +86,7 @@ export default function LeftPanel({ setLeftExpanded }) {
       </div>
       <div className='dashboard__left_side__bottom'>
         <div className='dashboard__left_side__basemaps'>
-          <Basemaps data={basemapsLayers}/>
+          <Basemaps />
         </div>
         <ReferenceLayerSection/>
         <MapInfo/>

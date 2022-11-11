@@ -160,6 +160,26 @@ export function urlParams(url) {
   }
 }
 
+/*** Return url params */
+export function stringToUrlAndParams(url) {
+  if (!url) {
+    url = window.location.href
+  }
+  const urls = url.split('?')
+
+  if (urls[1]) {
+    const parameters = urls[1].split('&')
+    const paramDict = {}
+    parameters.map(param => {
+      const splitParam = param.split('=')
+      paramDict[splitParam[0]] = splitParam.slice(1).join('=')
+    })
+    return [urls[0], paramDict]
+  } else {
+    return [urls[0], {}]
+  }
+}
+
 // ----------------------------------------------------------------------
 // LEAFLET POPUP
 // ----------------------------------------------------------------------
@@ -211,7 +231,10 @@ export function featurePopupContentPropertiesTable(title, properties, className)
  * @param {object} properties Properties that will be rendered
  */
 export function featurePopupContent(title, properties, className) {
-  return featurePopupContentHeader(title, properties) + featurePopupContentPropertiesTable(title, properties, className)
+  return "<div class='maplibregl-popup-content-wrapper'>" +
+    featurePopupContentHeader(title, properties) +
+    featurePopupContentPropertiesTable(title, properties, className) +
+    "</div>" + '<div class="maplibregl-popup-tip mapboxgl-popup-tip"></div>'
 }
 
 /**

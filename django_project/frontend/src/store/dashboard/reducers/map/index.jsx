@@ -34,9 +34,11 @@ export default function mapReducer(state = mapInitialState, action) {
       }
       case MAP_ADD_CONTEXTLAYERS: {
         const contextLayers = Object.assign({}, state.contextLayers);
+        const { layer, layer_type } = action.payload
         contextLayers[action.id] = {
-          'render': true,
-          'layer': action.payload
+          render: true,
+          layer: layer,
+          layer_type: layer_type
         }
         return {
           ...state,

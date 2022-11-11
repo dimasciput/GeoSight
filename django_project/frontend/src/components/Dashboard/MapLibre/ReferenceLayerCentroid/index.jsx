@@ -4,16 +4,20 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
-import L from "leaflet";
+import maplibregl from "maplibre-gl";
 import Chart from 'chart.js/auto';
+import { returnWhere } from "../../../../utils/queryExtraction";
 import { featurePopupContent } from "../../../../utils/main";
+import { addPopupEl } from "../utils";
 
 import './style.scss';
+
+let centroidMarker = []
 
 /**
  * GeometryCenter.
  */
-export default function ReferenceLayerCentroid({ map, pane }) {
+export default function ReferenceLayerCentroid({ map }) {
   const {
     indicators,
     indicatorLayers
@@ -24,83 +28,80 @@ export default function ReferenceLayerCentroid({ map, pane }) {
   const indicatorsData = useSelector(state => state.indicatorsData);
   const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
   const selectedAdminLevel = useSelector(state => state.selectedAdminLevel)
+  const filtersData = useSelector(state => state.filtersData);
 
-  const [layer, setLayer] = useState(null);
   const [charts, setCharts] = useState({});
+  const where = returnWhere(filtersData ? filtersData : [])
 
   /** Create layer on load **/
-  useEffect(() => {
-    const layer = L.geoJson(null, {
-      pointToLayer: function (feature, latlng) {
-        const properties = feature.properties
-        const code = properties.code
-        const size = properties.style.size + 'px'
-        var icon = L.divIcon({
-          html: `<canvas id="${code}-chart" width="${properties.style.size}" height="${properties.style.size}" style="display: block; box-sizing: border-box; height: ${size}; width: ${size};"></canvas>`,
-          className: 'LeafletPiechartIcon',
-          iconSize: [
-            parseFloat(properties.style.size), parseFloat(properties.style.size)
-          ]
-        });
+  const renderCentroid = (features) => {
+    features.map(feature => {
+      const properties = feature.properties
+      const code = properties.code
+      const size = properties.style.size;
+      var el = document.createElement('div');
+      const popup = new maplibregl.Popup({
+        closeOnClick: false,
+        closeButton: false
+      }).setHTML(`<canvas id="${code}-chart" width="${size}" height="${size}" style="display: block; box-sizing: border-box; height: ${size}px; width: ${size}px;"></canvas>`)
+      popup.addClassName('ChartPopup')
+      const marker = new maplibregl.Marker(el)
+        .setLngLat(feature.geometry.coordinates)
+        .setPopup(popup)
+        .addTo(map)
+        .togglePopup();
+      centroidMarker.push(marker)
 
-        // Create charts
-        const { labels, data, colors, options } = properties.chartData
-        setTimeout(function () {
-          const ctx = document.getElementById(`${code}-chart`).getContext('2d');
-          if (charts[code]) {
-            charts[code].clear();
-          }
-          const chart = new Chart(ctx, {
-            type: properties.style.chartType ? properties.style.chartType.toLowerCase() : 'pie',
-            data: {
-              labels: labels,
-              datasets: [{
-                data: data,
-                backgroundColor: colors,
-                borderWidth: 1,
-                barPercentage: 1.0,
-                categoryPercentage: 1.0
-              }]
-            },
-            options: options
-          });
-          charts[code] = chart
-        }, 100);
-
-        return L.marker(latlng, {
-          icon: icon
+      // Create charts
+      const { labels, data, colors, options } = properties.chartData
+      setTimeout(function () {
+        const el = document.getElementById(`${code}-chart`)
+        const ctx = el.getContext('2d');
+        if (charts[code]) {
+          charts[code].clear();
+        }
+        const chart = new Chart(ctx, {
+          type: properties.style.chartType ? properties.style.chartType.toLowerCase() : 'pie',
+          data: {
+            labels: labels,
+            datasets: [{
+              data: data,
+              backgroundColor: colors,
+              borderWidth: 1,
+              barPercentage: 1.0,
+              categoryPercentage: 1.0
+            }]
+          },
+          options: options
         });
-      },
-      onEachFeature: function (feature, layer) {
-        const properties = JSON.parse(JSON.stringify(feature.properties))
-        const maxValue = properties.maxValue
-        const cleanProperties = {}
-        properties.data.map(data => {
-          cleanProperties[data.name] = `
+        charts[code] = chart
+        setCharts({ ...charts })
+
+        // Popup for marker
+        addPopupEl(map, el, feature.geometry.coordinates, properties, properties => {
+            const markerProperties = JSON.parse(JSON.stringify(properties))
+            const maxValue = properties.maxValue
+            const cleanProperties = {}
+            markerProperties.data.map(data => {
+              cleanProperties[data.name] = `
             <div class="PopupMultiDataTable">
               <div class="PopupMultiDataTableGraph" style="background-color: ${data.color}; width: ${(data.value / maxValue) * 100}%"></div>
               <div class="PopupMultiDataTableValue">${data.value}</div>
             </div>`
-        })
-        const name = properties['name']
-        cleanProperties['code'] = properties['code']
-        cleanProperties['label'] = properties['label']
-        cleanProperties['type'] = properties['type']
-        layer.bindPopup(
-          featurePopupContent(name, cleanProperties, 'PopupMultiData')
-        );
-        layer.on('mouseover', function (e) {
-          this.openPopup();
-        });
-        layer.on('mouseout', function (e) {
-          this.closePopup();
-        });
-      }
+            })
+            const name = markerProperties['name']
+            cleanProperties['code'] = markerProperties['code']
+            cleanProperties['label'] = markerProperties['label']
+            cleanProperties['type'] = markerProperties['type']
+            return featurePopupContent(name, cleanProperties, 'PopupMultiData')
+          },
+          {
+            'bottom': [0, -1 * size],
+          }
+        )
+      })
     })
-    layer.options.pane = pane
-    layer.addTo(map)
-    setLayer(layer)
-  }, []);
+  }
 
   /** Chart data generator **/
   const chartData = (indicators, style) => {
@@ -146,12 +147,12 @@ export default function ReferenceLayerCentroid({ map, pane }) {
 
   // When level changed
   useEffect(() => {
-    if (layer && geometries && filteredGeometries) {
-      layer.clearLayers()
+    if (geometries && filteredGeometries) {
+      centroidMarker.map(marker => marker.remove())
+      centroidMarker = []
 
       // When indicator show
       if (indicatorShow) {
-
         // Create data
         if (selectedIndicatorLayer?.indicators?.length >= 2) {
           const indicatorsByGeom = {}
@@ -177,7 +178,11 @@ export default function ReferenceLayerCentroid({ map, pane }) {
           const features = []
           const geometriesData = geometries[selectedAdminLevel.level]
           if (geometriesData) {
-            filteredGeometries.map(geom => {
+            let theGeometries = Object.keys(geometriesData)
+            if (where) {
+              theGeometries = filteredGeometries
+            }
+            theGeometries.map(geom => {
               const geometry = geometriesData[geom]
               if (geometry && indicatorsByGeom[geometry.code]) {
                 const properties = Object.assign({}, geometry, {
@@ -208,7 +213,7 @@ export default function ReferenceLayerCentroid({ map, pane }) {
                     "properties": properties,
                     "geometry": {
                       "type": "Point",
-                      "coordinates": geometry.centroid.replace('POINT(', '').replace(')', '').split(' ').map(coord => parseFloat(coord))
+                      "coordinates": geometry.centroid.replace('POINT (', '').replace(')', '').split(' ').map(coord => parseFloat(coord))
                     }
                   })
                 }
@@ -230,10 +235,7 @@ export default function ReferenceLayerCentroid({ map, pane }) {
                 })
             }
           }
-          layer.addData({
-            "type": "FeatureCollection",
-            "features": features
-          });
+          renderCentroid(features)
         }
       }
     }

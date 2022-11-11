@@ -91,8 +91,12 @@ class DashboardSerializer(serializers.ModelSerializer):
 
     def get_indicatorLayers(self, obj: Dashboard):
         """Return indicatorLayers."""
+        dashboard_indicator_layers = []
+        for indicator_layer in obj.dashboardindicatorlayer_set.all():
+            if indicator_layer.dashboardindicatorlayerindicator_set.count():
+                dashboard_indicator_layers.append(indicator_layer)
         return DashboardIndicatorLayerSerializer(
-            obj.dashboardindicatorlayer_set.all(), many=True,
+            dashboard_indicator_layers, many=True,
             context={'user': self.context.get('user', None)}
         ).data
 

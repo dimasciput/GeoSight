@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 
 import { Actions } from '../../../../store/dashboard'
-import ReferenceLayer from '../../Map/ReferenceLayer'
 import { fetchFeatureList } from "../../../../utils/georepo";
 
 import './style.scss';
@@ -48,6 +47,7 @@ export default function ReferenceLayerSection() {
                 geometryDataDict[code] = {
                   label: geom.name,
                   name: geom.name,
+                  centroid: geom.centroid,
                   code: code
                 }
               })
@@ -100,6 +100,5 @@ export default function ReferenceLayerSection() {
         </div>
       ) : ""
     }
-    <ReferenceLayer/>
   </div>
 }

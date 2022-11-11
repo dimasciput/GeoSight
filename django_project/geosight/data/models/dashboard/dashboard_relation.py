@@ -97,7 +97,7 @@ class DashboardIndicatorLayer(DashboardRelation):
 
         layer_indicator = self.dashboardindicatorlayerindicator_set.first()
         indicator = layer_indicator.indicator if layer_indicator else None
-        return indicator.name
+        return indicator.name if indicator else ""
 
     @property
     def desc(self):
@@ -110,7 +110,7 @@ class DashboardIndicatorLayer(DashboardRelation):
 
         layer_indicator = self.dashboardindicatorlayerindicator_set.first()
         indicator = layer_indicator.indicator if layer_indicator else None
-        return indicator.description
+        return indicator.description if indicator else ""
 
     @property
     def last_update(self):
