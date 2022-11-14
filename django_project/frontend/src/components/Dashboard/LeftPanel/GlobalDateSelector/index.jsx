@@ -388,11 +388,11 @@ export default function GlobalDateSelector() {
           </div>
           {/* MINI ICON */}
           <div className='GlobalDateSelectionIconOuterWrapper'>
-            <div className='GlobalDateSelectionIconWrapper'>
+            <div className='GlobalDateSelectionIconWrapper' onClick={() => {
+              setOpen(!open)
+            }}>
               <div className='Separator'></div>
-              <div className='GlobalDateSelectionIcon' onClick={() => {
-                setOpen(!open)
-              }}>
+              <div className='GlobalDateSelectionIcon'>
                 {open ? <KeyboardDoubleArrowDownIcon/> :
                   <KeyboardDoubleArrowUpIcon/>}
                 <AccessTimeIcon/>

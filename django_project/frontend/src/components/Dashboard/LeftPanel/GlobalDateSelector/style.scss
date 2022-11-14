@@ -5,6 +5,8 @@
 @import '../../../../app/variables';
 
 .GlobalDateSelection {
+  position: relative;
+
   .GlobalAdvancedFilter {
     display: flex;
     border-bottom: 1px solid $secondary-color;
@@ -35,28 +37,21 @@
   }
 
   .GlobalDateSelectionIconOuterWrapper {
-    position: relative;
-    width: 100%;
-
     .GlobalDateSelectionIconWrapper {
-      position: absolute;
-      bottom: 1rem;
-      width: 100%;
-      margin-bottom: 34px;
-      height: 0;
       display: flex;
+      border-top-right-radius: $border-radius;
+      border-bottom-right-radius: $border-radius;
+      background-color: rgb(255, 255, 255);
+      cursor: pointer;
 
       .Separator {
         flex-grow: 1;
       }
 
       .GlobalDateSelectionIcon {
-        padding: 6px 0.5rem;
-        height: 22px;
-        cursor: pointer;
-        border-radius: $border-radius;
-        box-shadow: $box-shadow;
-        background-color: rgb(255, 255, 255);
+        padding: 9px 0.5rem;
+        box-sizing: border-box;
+        height: 40px;
         color: $secondary-color;
         display: flex;
 
@@ -64,18 +59,11 @@
           width: 20px;
           height: 20px;
         }
-
-        &:hover {
-          opacity: $base-hovered-opacity;
-        }
       }
     }
   }
 
   .GlobalDateSelectionOuterWrapper {
-    position: relative;
-    width: 100%;
-
     .GlobalDateSelectionWrapperInterval {
       width: 220px;
       padding-left: 1rem;
@@ -123,12 +111,11 @@
     .GlobalDateSelectionWrapper {
       position: absolute;
       transition: bottom 0.3s;
-      bottom: -270px;
-      left: 50%;
+      bottom: -290px;
+      left: 0;
       height: 270px;
       width: 600px;
-      margin-left: -300px;
-      padding: 1rem 1rem;
+      padding: 1rem;
 
       box-shadow: $box-shadow;
       background-color: rgb(255, 255, 255);
@@ -139,10 +126,6 @@
       .AccessFilterIcon {
         margin-top: 7px;
         cursor: pointer;
-
-        &:hover {
-          opacity: $base-hovered-opacity;
-        }
       }
 
       .GlobalDateSelectionSliderWrapper {
@@ -197,7 +180,7 @@
 .GlobalDateSelection {
   &.Open {
     .GlobalDateSelectionWrapper {
-      bottom: 3.5rem;
+      bottom: 120%;
     }
   }
 }

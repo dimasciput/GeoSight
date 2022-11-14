@@ -1,5 +1,4 @@
 import React from 'react';
-import GlobalDateSelector from "./GlobalDateSelector";
 
 import './style.scss';
 
@@ -8,6 +7,5 @@ import './style.scss';
  */
 export default function BottomPanel() {
   return <section className={'DashboardBottomPanel'}>
-    <GlobalDateSelector/>
   </section>
 }

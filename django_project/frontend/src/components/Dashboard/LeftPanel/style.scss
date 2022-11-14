@@ -99,6 +99,13 @@
     align-items: flex-end;
     width: 100vw;
     height: 0;
+
+    .Disclaimer {
+      height: 40px;
+      margin-left: 1rem;
+      width: 440px;
+      font-size: 0.8rem;
+    }
   }
 
   .left-right-toggle-button {

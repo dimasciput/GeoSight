@@ -3,10 +3,9 @@
    ========================================================================== */
 
 import React, { useState } from 'react';
-import { useSelector } from "react-redux";
 
 import LeftRightToggleButton, { LEFT, RIGHT } from '../../ToggleButton'
-import MapInfo from './MapInfo'
+import GlobalDateSelector from './GlobalDateSelector'
 import Basemaps from './Basemaps'
 import ProjectOverviewSection from './ProjectOverview'
 import ContextLayersAccordion from './ContextLayers'
@@ -89,7 +88,10 @@ export default function LeftPanel({ setLeftExpanded }) {
           <Basemaps />
         </div>
         <ReferenceLayerSection/>
-        <MapInfo/>
+        <GlobalDateSelector/>
+        <div className='Disclaimer'>
+          The boundaries and names shown and the designations used on this map do not imply official endorsement or acceptance by the United Nations.
+        </div>
       </div>
     </section>
   )
