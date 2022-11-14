@@ -95,14 +95,16 @@
     bottom: 5px;
     left: 0;
     margin-left: 1rem;
-    display: flex;
-    align-items: flex-end;
-    width: 100vw;
-    height: 0;
+
+    .dashboard__left_side__bottom_inner {
+      display: flex;
+      align-items: flex-end;
+      width: 100vw;
+      height: 0;
+    }
 
     .Disclaimer {
-      height: 40px;
-      margin-left: 1rem;
+      margin-top: 0.5rem;
       width: 440px;
       font-size: 0.8rem;
     }

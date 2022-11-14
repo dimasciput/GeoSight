@@ -84,13 +84,17 @@ export default function LeftPanel({ setLeftExpanded }) {
         </div>
       </div>
       <div className='dashboard__left_side__bottom'>
-        <div className='dashboard__left_side__basemaps'>
-          <Basemaps />
+        <div className='dashboard__left_side__bottom_inner'>
+          <div className='dashboard__left_side__basemaps'>
+            <Basemaps/>
+          </div>
+          <ReferenceLayerSection/>
+          <GlobalDateSelector/>
         </div>
-        <ReferenceLayerSection/>
-        <GlobalDateSelector/>
         <div className='Disclaimer'>
-          The boundaries and names shown and the designations used on this map do not imply official endorsement or acceptance by the United Nations.
+          The boundaries and names shown and the designations used on this map
+          do not imply official endorsement or acceptance by the United
+          Nations.
         </div>
       </div>
     </section>
