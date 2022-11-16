@@ -100,7 +100,7 @@ export default function IndicatorList() {
           <GridActionsCellItem
             className='TextButton'
             icon={
-              <a href={urls.api.values.replace('/0', `/${params.id}`)}>
+              <a href={urls.api.dataBrowser + '?indicators=' + params.id}>
                 <div
                   className='MuiButton-Div MuiButtonBase-root MuiButton-secondary ThemeButton'>
                   <DataUsageIcon/> Value List

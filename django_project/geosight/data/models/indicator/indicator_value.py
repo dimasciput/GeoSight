@@ -40,6 +40,34 @@ class IndicatorValue(models.Model):
         unique_together = ('indicator', 'date', 'geom_identifier')
         ordering = ('-date',)
 
+    def permissions(self, user):
+        """Return permission of user."""
+        from geosight.permission.models.resource.dataset import (
+            ReferenceLayerIndicatorPermission, ReferenceLayerIndicator
+        )
+        if user.profile.is_admin:
+            return {
+                'list': True, 'read': True, 'edit': True, 'share': True,
+                'delete': True
+            }
+        if self.indicator.creator == user:
+            return {
+                'list': True, 'read': True, 'edit': True, 'share': True,
+                'delete': True
+            }
+        try:
+            obj = ReferenceLayerIndicator.objects.get(
+                reference_layer=self.reference_layer,
+                indicator=self.indicator,
+            )
+            permission = ReferenceLayerIndicatorPermission.objects.get(obj=obj)
+            return permission.all_permission(user)
+        except (
+                ReferenceLayerIndicatorPermission.DoesNotExist,
+                ReferenceLayerIndicator.DoesNotExist
+        ):
+            pass
+
 
 class IndicatorExtraValue(models.Model):
     """Additional data for Indicator value data."""

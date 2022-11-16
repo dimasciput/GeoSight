@@ -13,6 +13,7 @@ export const pageNames = {
   ContextLayer: 'Context Layer',
   Users: 'Users',
   Groups: 'Groups',
+  Dataset: 'Data Browser',
   DataAccess: 'Data Access',
 }
 /**

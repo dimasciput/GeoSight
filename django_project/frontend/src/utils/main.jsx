@@ -75,6 +75,17 @@ export function delay(millis) {
   });
 }
 
+/**
+ * Delete from array.
+ */
+export function deleteFromArray(item, array) {
+  const index = array.indexOf(item);
+  if (index > -1) {
+    array.splice(index, 1);
+  }
+  return array
+}
+
 
 /**
  * Return number with commas
@@ -159,6 +170,18 @@ export function urlParams(url) {
     return {}
   }
 }
+
+/** Split params and parse to int **/
+export const splitParams = (param) => {
+  return param ? param.split(',').map(obj => {
+    try {
+      return parseInt(obj)
+    } catch (err) {
+      return obj
+    }
+  }) : []
+}
+
 
 /*** Return url params */
 export function stringToUrlAndParams(url) {

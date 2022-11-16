@@ -5,10 +5,15 @@
 @import '../../../../app/variables';
 
 .DataAccessAdmin {
+  display: flex;
   padding: 1rem !important;
+  flex-grow: 1;
+  flex-direction: column;
 
   .DataAccessAdminTable {
     border: 1px solid $primary-color;
+    flex-grow: 1;
+    height: unset !important;
   }
 
   .Loading {

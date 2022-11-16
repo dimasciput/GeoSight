@@ -18,6 +18,7 @@ from geosight.data.api.dashboard_bookmark import (
     DashboardBookmarkCreateAPI,
     DashboardBookmarkDetailAPI
 )
+from geosight.data.api.dataset import DatasetApiList
 from geosight.data.api.download_file import (
     DownloadSharepointFile,
     DownloadBackupsFile
@@ -141,9 +142,18 @@ context_layer_api = [
     ),
 ]
 # ------------------------------------------------------
+# DATASET API
+dataset_api = [
+    url(
+        r'^list',
+        DatasetApiList.as_view(), name='dataset-list-api'
+    ),
+]
+# ------------------------------------------------------
 api = [
     url(r'^dashboard/', include(dashboard_api)),
     url(r'^basemap/', include(basemap_api)),
+    url(r'^dataset/', include(dataset_api)),
     url(r'^indicator/', include(indicator_api)),
     url(r'^context-layer/', include(context_layer_api)),
     url(r'^permission/', include('geosight.permission.urls')),

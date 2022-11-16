@@ -132,7 +132,11 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 )
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'core.exceptions.exception_handler'
+    'EXCEPTION_HANDLER': 'core.exceptions.exception_handler',
+    'DEFAULT_PAGINATION_CLASS': (
+        'rest_framework.pagination.LimitOffsetPagination'
+    ),
+    'PAGE_SIZE': 100
 }
 LOGIN_URL = '/login/'
 SITE_ID = 1

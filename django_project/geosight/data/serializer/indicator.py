@@ -1,4 +1,5 @@
 """Indicator Serializer."""
+
 from django.shortcuts import reverse
 from rest_framework import serializers
 
@@ -104,12 +105,17 @@ class IndicatorValueSerializer(serializers.ModelSerializer):
     """Serializer for IndicatorValue."""
 
     reference_layer = serializers.SerializerMethodField()
+    reference_layer_name = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     indicator = serializers.SerializerMethodField()
 
     def get_reference_layer(self, obj: IndicatorValue):
         """Return reference layer."""
         return obj.reference_layer.identifier
+
+    def get_reference_layer_name(self, obj: IndicatorValue):
+        """Return reference layer name."""
+        return obj.reference_layer.name
 
     def get_name(self, obj: IndicatorValue):
         """Return reference layer."""
@@ -118,6 +124,40 @@ class IndicatorValueSerializer(serializers.ModelSerializer):
     def get_indicator(self, obj: IndicatorValue):
         """Return indicator name."""
         return obj.indicator.__str__()
+
+    class Meta:  # noqa: D106
+        model = IndicatorValue
+        fields = '__all__'
+
+
+class IndicatorValueWithPermissionSerializer(serializers.ModelSerializer):
+    """Serializer for IndicatorValue."""
+
+    reference_layer = serializers.SerializerMethodField()
+    reference_layer_name = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    indicator = serializers.SerializerMethodField()
+    permission = serializers.SerializerMethodField()
+
+    def get_reference_layer(self, obj: IndicatorValue):
+        """Return reference layer."""
+        return obj.reference_layer.identifier
+
+    def get_reference_layer_name(self, obj: IndicatorValue):
+        """Return reference layer name."""
+        return obj.reference_layer.name
+
+    def get_name(self, obj: IndicatorValue):
+        """Return reference layer."""
+        return obj.reference_layer.name
+
+    def get_indicator(self, obj: IndicatorValue):
+        """Return indicator name."""
+        return obj.indicator.__str__()
+
+    def get_permission(self, obj: IndicatorValue):
+        """Return indicator name."""
+        return obj.permissions(self.context.get('user', None))
 
     class Meta:  # noqa: D106
         model = IndicatorValue

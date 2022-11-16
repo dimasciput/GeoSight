@@ -27,6 +27,7 @@ export default function SideNavigation({ pageName }) {
   const dataImporterList = urls.admin.dataImporterList; // eslint-disable-line no-undef
   const userList = urls.admin.userList; // eslint-disable-line no-undef
   const groupList = urls.admin.groupList; // eslint-disable-line no-undef
+  const dataset = urls.admin.dataset; // eslint-disable-line no-undef
   const dataAccess = urls.admin.dataAccess; // eslint-disable-line no-undef
   return (
     <div className='SideNavigation'>
@@ -76,6 +77,15 @@ export default function SideNavigation({ pageName }) {
             <GroupsIcon className='SideNavigation-Row-Icon'/>
             <span className='SideNavigation-Row-Name'>Groups</span>
           </a>
+        </Fragment> : ""
+      }
+      <a href={dataset}
+         className={'SideNavigation-Row ' + (pageName === pageNames.Dataset ? 'active' : '')}>
+        <StorageIcon className='SideNavigation-Row-Icon'/>
+        <span className='SideNavigation-Row-Name'>Dataset</span>
+      </a>
+      {
+        user.is_admin ? <Fragment>
           <a href={dataAccess}
              className={'SideNavigation-Row ' + (pageName === pageNames.DataAccess ? 'active' : '')}>
             <StorageIcon className='SideNavigation-Row-Icon'/>

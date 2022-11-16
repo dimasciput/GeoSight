@@ -7,14 +7,17 @@ import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import ListItemText from '@mui/material/ListItemText';
-import Checkbox from '@mui/material/Checkbox';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import Popover from "@mui/material/Popover";
+import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
 
 import { render } from '../../../../app';
+import {
+  DatasetFilterSelector,
+  GroupFilterSelector,
+  IndicatorFilterSelector,
+  SelectFilter,
+  UserFilterSelector
+} from "../../ModalSelector/ModalFilterSelector";
 import { store } from '../../../../store/admin';
 import Admin, { pageNames } from '../../index';
 import {
@@ -25,23 +28,18 @@ import {
   ThemeButton
 } from "../../../../components/Elements/Button";
 import { fetchJSON } from "../../../../Requests";
-import { dictDeepCopy, urlParams } from "../../../../utils/main";
-import {
-  DatasetSelector,
-  GroupSelector,
-  UserSelector
-} from "../../ModalSelector";
-import { IconTextField } from "../../../../components/Elements/Input";
-
-import './style.scss';
-import IndicatorSelector from "../../ModalSelector/Indicator";
-import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
+import { dictDeepCopy, splitParams, urlParams } from "../../../../utils/main";
 import Modal, {
   ModalContent,
   ModalFooter,
   ModalHeader
 } from "../../../../components/Modal";
 
+import './style.scss';
+
+/***
+ * Add new data
+ */
 export function AddData(
   {
     tab, permissions, open, setOpen, data, updateData
@@ -70,19 +68,14 @@ export function AddData(
     <ModalContent>
       <FormControl className='BasicForm'>
         <label className="form-label">Indicators</label>
-        <ModalFilter
-          filterType={IndicatorTab}
-          placeholder={'Select indicator(s)'}
+        <IndicatorFilterSelector
           data={indicators}
           setData={setIndicators}
-          returnObject={true}
-        />
+          returnObject={true}/>
       </FormControl>
       <FormControl className='BasicForm'>
         <label className="form-label">Dataset</label>
-        <ModalFilter
-          filterType={DatasetTab}
-          placeholder={'Select dataset(s)'}
+        <DatasetFilterSelector
           data={datasets}
           setData={setDatasets}
           returnObject={true}
@@ -90,13 +83,15 @@ export function AddData(
       </FormControl>
       <FormControl className='BasicForm'>
         <label className="form-label">{tab}</label>
-        <ModalFilter
-          filterType={tab}
-          placeholder={'Select ' + tab + '(s)'}
-          data={objects}
-          setData={setObjects}
-          returnObject={true}
-        />
+        {
+          tab === UserTab ?
+            <UserFilterSelector data={objects}
+                                setData={setObjects}
+                                returnObject={true}/>
+            : <GroupFilterSelector data={objects}
+                                   setData={setObjects}
+                                   returnObject={true}/>
+        }
       </FormControl>
       <FormControl className='BasicForm'>
         <label className="form-label">Permission</label>
@@ -135,6 +130,9 @@ export function AddData(
                       dataFound.permission = permission
                     } else {
                       maxId += 1
+                      console.log(indicator)
+                      console.log(dataset)
+                      console.log(object)
                       data.push({
                         'id': maxId + 1,
                         'dataset_id': dataset.id,
@@ -179,92 +177,6 @@ export function AddData(
     </ModalFooter>
   </Modal>
 }
-
-/**
- * SelectFilter component
- */
-export function SelectFilter({ title, data, setData, options }) {
-  const handleChange = (evt) => {
-    setData(evt.target.value);
-  };
-  return <FormControl>
-    <InputLabel>{title}</InputLabel>
-    <Select
-      multiple
-      value={data}
-      onChange={handleChange}
-      IconComponent={FilterAltIcon}
-      input={<OutlinedInput label={title}/>}
-      renderValue={(selected) => selected.length + ' selected'}
-    >
-      {options.map((option) => (
-        <MenuItem key={option[0]} value={option[0]}>
-          <Checkbox checked={data.indexOf(option[0]) > -1}/>
-          <ListItemText primary={option[1]}/>
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-}
-
-/**
- * Filter component
- * @param {str} filterType Filter type.
- * @param {str} placeholder Placeholder of input.
- * @param {array} data Selected data.
- * @param {function} setData When the value changed.
- * @param {Boolean} returnObject Is data returned whole object.
- */
-export function ModalFilter(
-  { filterType, placeholder, data, setData, returnObject }
-) {
-  const [open, setOpen] = useState(false)
-
-  const updateData = (changedData) => {
-    setData(changedData.map(row => returnObject ? row : row.id))
-  }
-  return <FormControl className='FilterControl'>
-    <IconTextField
-      iconEnd={<FilterAltIcon/>}
-      onClick={() => setOpen(true)}
-      value={data.length ? data.length + ' selected' : placeholder}
-      inputProps={
-        { readOnly: true, }
-      }
-    />
-    {
-      filterType === IndicatorTab ?
-        <IndicatorSelector
-          open={open}
-          setOpen={setOpen}
-          selectedData={data}
-          selectedDataChanged={updateData}
-        /> :
-        filterType === UserTab ?
-          <UserSelector
-            open={open}
-            setOpen={setOpen}
-            selectedData={data}
-            selectedDataChanged={updateData}
-          /> :
-          filterType === GroupTab ?
-            <GroupSelector
-              open={open}
-              setOpen={setOpen}
-              selectedData={data}
-              selectedDataChanged={updateData}
-            /> :
-            filterType === DatasetTab ?
-              <DatasetSelector
-                open={open}
-                setOpen={setOpen}
-                selectedData={data}
-                selectedDataChanged={updateData}
-              /> : ""
-    }
-  </FormControl>
-}
-
 
 /**
  * Update permission modal
@@ -344,17 +256,6 @@ export function AccessData(
       selectionModel={selectionModel}
     />
   </div>
-}
-
-/** Split params and parse to int **/
-const splitParams = (param) => {
-  return param ? param.split(',').map(obj => {
-    try {
-      return parseInt(obj)
-    } catch (err) {
-      return obj
-    }
-  }) : []
 }
 
 const UserTab = 'users'
@@ -711,14 +612,10 @@ export default function DataAccessAdmin() {
       <div className='AdminList DataAccessAdmin'>
         {/* FILTERS */}
         <div className='DataAccessAdminFilters'>
-          <ModalFilter
-            filterType={IndicatorTab}
-            placeholder={'Filter by Indicator(s)'}
+          <IndicatorFilterSelector
             data={filterByIndicators}
             setData={setFilterByIndicator}/>
-          <ModalFilter
-            filterType={DatasetTab}
-            placeholder={'Filter by Dataset(s)'}
+          <DatasetFilterSelector
             data={filterByDatasets}
             setData={setFilterByDataset}/>
           <SelectFilter
@@ -727,19 +624,13 @@ export default function DataAccessAdmin() {
             options={data ? data.permission_choices : []}/>
           {
             tab === UserTab ? (
-              <ModalFilter
-                filterType={UserTab}
-                placeholder={'Filter by User(s)'}
+              <UserFilterSelector
                 data={filterByUsers}
-                setData={setFilterByUsers}
-              />
+                setData={setFilterByUsers}/>
             ) : tab === GroupTab ? (
-              <ModalFilter
-                filterType={GroupTab}
-                placeholder={'Filter by Group(s)'}
+              <GroupFilterSelector
                 data={filterByGroups}
-                setData={setFilterByGroups}
-              />
+                setData={setFilterByGroups}/>
             ) : ""
           }
         </div>
@@ -828,21 +719,19 @@ export default function DataAccessAdmin() {
               </Fragment> : ""
           }
         </div>
-        <div>
-          {
-            !tableData ?
-              <div className='DataAccessAdminTable Loading'>
-                <CircularProgress/>
-              </div> : (
-                <AccessData
-                  rows={filteredTableData[tab]} columns={COLUMNS[tab]}
-                  selected={[UserTab, GroupTab].includes(tab)}
-                  selectionModel={selectionModel}
-                  setSelectionModel={setSelectionModel}
-                />
-              )
-          }
-        </div>
+        {
+          !tableData ?
+            <div className='DataAccessAdminTable Loading'>
+              <CircularProgress/>
+            </div> : (
+              <AccessData
+                rows={filteredTableData[tab]} columns={COLUMNS[tab]}
+                selected={[UserTab, GroupTab].includes(tab)}
+                selectionModel={selectionModel}
+                setSelectionModel={setSelectionModel}
+              />
+            )
+        }
       </div>
     </Admin>
   );

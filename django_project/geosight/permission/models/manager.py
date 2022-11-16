@@ -62,7 +62,7 @@ class PermissionManager(models.Manager):
         return obj
 
     def list(self, user: User):
-        """Get list of user."""
+        """Get list resources by user."""
         if user:
             try:
                 if user.profile.is_admin:
@@ -76,7 +76,11 @@ class PermissionManager(models.Manager):
                     if obj.permission.has_list_perm(user):
                         obj_ids.append(obj.id)
                 except Exception:
-                    pass
+                    try:
+                        if obj.has_list_perm(user):
+                            obj_ids.append(obj.id)
+                    except Exception:
+                        pass
             return self.filter(id__in=obj_ids)
         else:
             return self.none()

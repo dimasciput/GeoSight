@@ -185,6 +185,12 @@ def permission_model_factory(
                 if user == self.resource_creator:
                     return PERMISSIONS.OWNER.level
 
+                try:
+                    if user == self.obj.creator:
+                        return PERMISSIONS.OWNER.level
+                except AttributeError:
+                    pass
+
             user_level = -1
 
             # Get from public permission

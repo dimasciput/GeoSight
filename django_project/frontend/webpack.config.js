@@ -26,6 +26,7 @@ let conf = {
     AdminUserForm: ['./src/pages/Admin/User/Form'],
     AdminGroupList: ['./src/pages/Admin/Group/List'],
     AdminGroupForm: ['./src/pages/Admin/Group/Form'],
+    AdminDataset: ['./src/pages/Admin/Dataset'],
     AdminDatasetDataAccess: ['./src/pages/Admin/Dataset/DataAccess'],
 
     // INDICATOR MANAGEMENT

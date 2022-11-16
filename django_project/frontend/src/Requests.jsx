@@ -53,7 +53,7 @@ export async function fetchJSON(url, options, useCache = true) {
         }
       }
       if (response.status >= 400) {
-        const err = new Error(json.message);
+        const err = new Error(json.message ? json.message : json.detail);
         err.data = json;
         throw err;
       }
