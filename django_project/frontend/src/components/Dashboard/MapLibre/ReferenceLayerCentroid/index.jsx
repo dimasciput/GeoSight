@@ -39,11 +39,24 @@ export default function ReferenceLayerCentroid({ map }) {
       const properties = feature.properties
       const code = properties.code
       const size = properties.style.size;
+      const { labels, data, colors, options } = properties.chartData
+
+      // Check if there is 1 data, render it
+      let rendered = false
+      data.map(rowData => {
+        if (rowData) {
+          rendered = true
+        }
+      })
+      if (!rendered) {
+        return
+      }
+
       var el = document.createElement('div');
       const popup = new maplibregl.Popup({
         closeOnClick: false,
         closeButton: false
-      }).setHTML(`<canvas id="${code}-chart" width="${size}" height="${size}" style="display: block; box-sizing: border-box; height: ${size}px; width: ${size}px;"></canvas>`)
+      }).setHTML(`<div style="display: block; box-sizing: border-box; height: ${size}px; width: ${size}px;"><canvas id="${code}-chart" width="${size}" height="${size}" data-size="${size}"></div>`)
       popup.addClassName('ChartPopup')
       const marker = new maplibregl.Marker(el)
         .setLngLat(feature.geometry.coordinates)
@@ -53,7 +66,6 @@ export default function ReferenceLayerCentroid({ map }) {
       centroidMarker.push(marker)
 
       // Create charts
-      const { labels, data, colors, options } = properties.chartData
       setTimeout(function () {
         const el = document.getElementById(`${code}-chart`)
         const ctx = el.getContext('2d');
