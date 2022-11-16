@@ -2,7 +2,7 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from geosight.permission.models import PermissionDetail, PERMISSIONS_LENGTH
@@ -98,3 +98,18 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     """When user saved."""
     instance.profile.save()
+
+
+@receiver(pre_save, sender=Profile)
+def post_profile_saved(sender, instance, **kwargs):
+    """When profile saved, check if it's already profile on it.
+
+    If yes, user that profile.
+    """
+    if not instance.id:
+        try:
+            profile = Profile.objects.get(user=instance.user)
+            instance.id = profile.id
+            instance.pk = profile.pk
+        except Profile.DoesNotExist:
+            pass
