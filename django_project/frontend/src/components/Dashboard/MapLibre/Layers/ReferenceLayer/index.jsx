@@ -76,7 +76,7 @@ export default function ReferenceLayer({ map }) {
     }
   }, [
     indicatorsData, currentIndicatorLayer,
-    currentIndicatorSecondLayer, compareMode, indicatorShow,
+    currentIndicatorSecondLayer, compareMode,
     layerCreated
   ]);
 
@@ -105,6 +105,25 @@ export default function ReferenceLayer({ map }) {
     createLayer()
   }, [map]);
 
+  // Rerender when map changed.
+  useEffect(() => {
+    if (map) {
+      if (indicatorShow) {
+        createLayer()
+      } else {
+        removeAllLayers()
+      }
+    }
+  }, [indicatorShow]);
+
+  /**
+   * Remove all layer
+   */
+  const removeAllLayers = () => {
+    removeLayer(map, FILL_LAYER_ID)
+    removeLayer(map, OUTLINE_LAYER_ID)
+    removeSource(map, REFERENCE_LAYER_ID)
+  }
   /***
    * CREATE LAYER
    */
@@ -123,9 +142,7 @@ export default function ReferenceLayer({ map }) {
         ...referenceLayer,
         type: 'vector',
       }
-      removeLayer(map, FILL_LAYER_ID)
-      removeLayer(map, OUTLINE_LAYER_ID)
-      removeSource(map, REFERENCE_LAYER_ID)
+      removeAllLayers()
       map.addSource(REFERENCE_LAYER_ID, source);
 
       // Fill layer
@@ -304,7 +321,7 @@ export default function ReferenceLayer({ map }) {
           )
           cases.push(color)
         }
-        if (indicatorShow && cases.length) {
+        if (cases.length) {
           const paintFilters = ["case"].concat(cases).concat(noDataStyle.color)
           map.setPaintProperty(FILL_LAYER_ID, 'fill-color', paintFilters);
         } else {

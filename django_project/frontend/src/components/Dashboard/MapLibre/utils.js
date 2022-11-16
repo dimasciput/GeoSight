@@ -83,24 +83,47 @@ const updateCursorOnLeave = (map) => {
  */
 let popup = null
 export const addPopup = (map, id, popupRenderFn) => {
+  map.off('mouseenter', id);
   map.on('mouseenter', id, function (e) {
     updateCursorOnHovered(map)
   });
 
+  map.off('mouseleave', id);
   map.on('mouseleave', id, function () {
     updateCursorOnLeave(map)
   });
 
+  map.off('click', id);
   map.on('click', id, function (e) {
     if (!map.measurementMode) {
-      const popupHtml = popupRenderFn(e.features[0].properties)
-      if (popup) {
-        popup.remove()
+
+      // Check the id that is the most top
+      let clickedId = null
+      let clickedIdIdx = null
+
+      // Return clicked features
+      // Check the most top
+      // show the popup
+      const ids = map.getStyle().layers.map(layer => layer.id)
+      var pointFeatures = map.queryRenderedFeatures(e.point);
+      pointFeatures.map(feature => {
+        const idx = ids.indexOf(feature.layer.id)
+        if (!(idx < clickedIdIdx)) {
+          clickedId = feature.layer.id
+          clickedIdIdx = idx
+        }
+      })
+
+      if (id === clickedId) {
+        const popupHtml = popupRenderFn(e.features[0].properties)
+        if (popup) {
+          popup.remove()
+        }
+        popup = new maplibregl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(popupHtml)
+          .addTo(map);
       }
-      popup = new maplibregl.Popup()
-        .setLngLat(e.lngLat)
-        .setHTML(popupHtml)
-        .addTo(map);
     }
   });
 }

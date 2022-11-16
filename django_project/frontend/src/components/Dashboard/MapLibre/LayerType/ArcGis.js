@@ -1,6 +1,6 @@
 import FeatureService from 'mapbox-gl-arcgis-featureserver'
 import parseArcRESTStyle from "../../../../utils/esri/esri-style";
-import { addPopup, hasLayer, loadImageToMap } from "../utils";
+import { addPopup, hasLayer, hasSource, loadImageToMap } from "../utils";
 
 const BEFORE_LAYER = 'gl-draw-polygon-fill-inactive.cold'
 
@@ -239,9 +239,6 @@ function ArcGisStyle(map, id, layer) {
             } else if (cases.length) {
               paint = ["case"].concat(cases).concat(defaultValue)
             }
-            console.log(layerId)
-            console.log(paintProperty)
-            console.log(paint)
             map.setPaintProperty(layerId, paintProperty, paint);
             if (paintProperty === 'circle-stroke-color') {
               map.setPaintProperty(layerId, 'circle-stroke-width', 1);
@@ -259,7 +256,7 @@ function ArcGisStyle(map, id, layer) {
  */
 export default function arcGisLayer(map, id, data, popupFeatureFn) {
   // Create the source
-  if (typeof map.getSource(id) === 'undefined') {
+  if (!hasSource(map, id)) {
     const params = Object.assign({}, data.params, {
       url: data.url,
       token: data.token,

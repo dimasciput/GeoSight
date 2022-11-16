@@ -39,7 +39,7 @@ export function symbolLayers(map, id, geojson, popupRenderFn) {
  */
 export function geojsonLayer(map, id, geojson, popupFeature) {
   const idFill = id + '-fill'
-  if (typeof map.getSource(id) === 'undefined') {
+  if (!hasSource(map, id)) {
     map.addSource(id, {
       'type': 'geojson',
       'data': geojson
@@ -53,7 +53,7 @@ export function geojsonLayer(map, id, geojson, popupFeature) {
         'source': id,
         'paint': {
           'fill-color': '#ff7800',
-          'fill-opacity': 1
+          'fill-opacity': 0.6
         },
         'filter': ['==', '$type', 'Polygon']
       },

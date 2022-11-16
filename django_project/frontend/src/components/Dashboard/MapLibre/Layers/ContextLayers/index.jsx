@@ -12,16 +12,12 @@ const ID = `context-layer`
 const markersContextLayers = {}
 
 /**
- * Remove layer
+ * Remove source and layer
  */
 function removeLayers(map, id) {
   const layers = map.getStyle().layers.filter(layer => layer.id.includes(id))
   layers.map(layer => {
     removeLayer(map, layer.id)
-  })
-  const sources = Object.keys(map.getStyle().sources).filter(source => source.includes(id))
-  sources.map(source => {
-    removeSource(map, source)
   })
   // Remove marker
   markersContextLayers[id]?.map(marker => {
@@ -29,6 +25,18 @@ function removeLayers(map, id) {
   })
   markersContextLayers[id] = []
 }
+
+/**
+ * Remove source and layer
+ */
+function removeSourceAndLayers(map, id) {
+  removeLayers(map, id)
+  const sources = Object.keys(map.getStyle().sources).filter(source => source.includes(id))
+  sources.map(source => {
+    removeSource(map, source)
+  })
+}
+
 
 /*** For popup **/
 const popupFeature = (featureProperties, name, fields, defaultField) => {
@@ -97,13 +105,18 @@ export function contextLayerRendering(id, contextLayerData, contextLayer, map) {
  * ReferenceLayer selector.
  */
 export function ContextLayer({ contextLayerData, map }) {
+  const { contextLayersShow } = useSelector(state => state.map);
   const contextLayer = useSelector(state => state.map?.contextLayers[contextLayerData.id]);
   const id = ID + '-' + contextLayerData.id
 
   /** CONTEXT LAYER CHANGED */
   useEffect(() => {
-    contextLayerRendering(id, contextLayerData, contextLayer, map)
-  }, [map, contextLayer]);
+    if (contextLayersShow) {
+      contextLayerRendering(id, contextLayerData, contextLayer, map)
+    } else {
+      removeLayers(map, id)
+    }
+  }, [map, contextLayer, contextLayersShow]);
   return ""
 }
 
