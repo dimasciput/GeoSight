@@ -51,13 +51,29 @@ export default function Measurement({ map }) {
           }
         }
       )
-      map.addControl(draw, 'top-left')
       setDraw(draw)
       addPopup(map, 'gl-draw-polygon-fill-static.cold', properties => {
         return 'test'
       })
     }
   }, [map]);
+
+  /**
+   * Start changed
+   */
+  useEffect(() => {
+    if (map && draw) {
+      if (start) {
+        map.addControl(draw, 'top-left')
+        onStart()
+      } else {
+        map.removeControl(draw)
+        setSelected([])
+        onStop(true)
+        map.boxZoom.enable();
+      }
+    }
+  }, [start]);
 
   /**
    * Draw Created
@@ -88,19 +104,19 @@ export default function Measurement({ map }) {
    * On Start Measurement
    */
   const onStart = () => {
+    setStartDraw(true)
     draw.changeMode(draw.modes.DRAW_POLYGON)
     map.measurementMode = true
-    setStart(true)
-    setStartDraw(true)
   }
 
   /**
    * On Stop Measurement
    */
-  const onStop = () => {
-    draw.changeMode(draw.modes.SIMPLE_SELECT)
+  const onStop = (close) => {
+    if (!close) {
+      draw.changeMode(draw.modes.SIMPLE_SELECT)
+    }
     map.measurementMode = false
-    setStart(false)
   }
 
   const Information = () => {
@@ -139,11 +155,7 @@ export default function Measurement({ map }) {
       active={start}
       onClick={() => {
         if (map && draw) {
-          if (!map.measurementMode) {
-            onStart()
-          } else if (map.measurementMode) {
-            onStop()
-          }
+          setStart(!start)
         }
       }}>
       <SquareFootIcon/>
@@ -173,7 +185,9 @@ export default function Measurement({ map }) {
             </div>
           </div>
           <div className='MeasurementComponentFooter'>
-            <ThemeButton onClick={onStop}>
+            <ThemeButton onClick={() => {
+              onStop()
+            }}>
               <CancelIcon/> Cancel
             </ThemeButton>
             <ThemeButton onClick={() => {
