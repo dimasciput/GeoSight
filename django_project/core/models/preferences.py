@@ -20,6 +20,13 @@ class SitePreferences(SingletonModel):
         max_length=512,
         default=''
     )
+    disclaimer = models.TextField(
+        default=(
+            'The boundaries and names shown and the designations used on '
+            'this map do not imply official endorsement or acceptance by '
+            'the United Nations.'
+        )
+    )
     # -----------------------------------------------
     # GEOREPO
     # -----------------------------------------------

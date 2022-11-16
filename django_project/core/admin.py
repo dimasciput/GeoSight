@@ -23,7 +23,7 @@ class SitePreferencesAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('site_title',)
+            'fields': ('site_title', 'disclaimer')
         }),
         ('GeoRepo', {
             'fields': ('georepo_url', 'georepo_api_key'),

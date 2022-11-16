@@ -91,11 +91,7 @@ export default function LeftPanel({ setLeftExpanded }) {
           <ReferenceLayerSection/>
           <GlobalDateSelector/>
         </div>
-        <div className='Disclaimer'>
-          The boundaries and names shown and the designations used on this map
-          do not imply official endorsement or acceptance by the United
-          Nations.
-        </div>
+        <div className='Disclaimer'>{preferences.disclaimer}</div>
       </div>
     </section>
   )
