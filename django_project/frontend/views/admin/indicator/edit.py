@@ -72,6 +72,10 @@ class IndicatorEditView(IndicatorCreateView):
             )
         if form.is_valid():
             indicator = form.save()
+            if save_as and not indicator.creator:
+                indicator.creator = request.user
+                indicator.save()
+
             self.save_rules(indicator=indicator)
             if save_as:
                 return redirect(

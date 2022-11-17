@@ -37,7 +37,8 @@ class IndicatorValueRejectedError(Exception):
 class IndicatorGroup(AbstractTerm):
     """The group of indicator."""
 
-    pass
+    class Meta:  # noqa: D106
+        ordering = ('name',)
 
 
 class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
