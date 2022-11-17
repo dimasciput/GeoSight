@@ -52,9 +52,6 @@ export default function Measurement({ map }) {
         }
       )
       setDraw(draw)
-      addPopup(map, 'gl-draw-polygon-fill-static.cold', properties => {
-        return 'test'
-      })
     }
   }, [map]);
 

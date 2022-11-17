@@ -66,20 +66,12 @@ export default function GroupForm() {
         {
           usersGroup ?
             <div className='UserTable'>
+              <input type={"text"} name='users' className='UserInput'
+                     value={usersGroup.map(user => user.id).join(',')}/>
               <DataGrid
                 rows={usersGroup}
                 columns={[
                   { field: 'id', headerName: 'id', hide: true },
-                  {
-                    field: 'value',
-                    headerName: 'Value',
-                    renderCell: (params) => {
-                      return <input
-                        type={"text"}
-                        name={"user-" + params.row.id}
-                        value={params.row.id}/>
-                    }
-                  },
                   { field: 'username', headerName: 'Username', flex: 1 },
                   { field: 'email', headerName: 'Email', flex: 1 },
                   { field: 'name', headerName: 'Name', flex: 1 },

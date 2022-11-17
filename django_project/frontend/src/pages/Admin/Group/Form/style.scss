@@ -16,19 +16,11 @@
 }
 
 .UserTable {
-  .MuiDataGrid-columnHeader:first-child {
-    width: 0 !important;
-    min-width: 0 !important;
-    display: none !important;
-  }
-
-  .MuiDataGrid-row {
-    .MuiDataGrid-cell:first-child {
-      display: none;
-    }
-  }
-
   .ModalDataSelectorSelected {
+    display: none;
+  }
+
+  .UserInput {
     display: none;
   }
 }

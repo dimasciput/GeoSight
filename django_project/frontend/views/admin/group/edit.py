@@ -64,15 +64,17 @@ class GroupEditView(RoleSuperAdminRequiredMixin, BaseView):
             instance=group
         )
         if form.is_valid():
-            users = []
-            for key, value in request.POST.items():
-                if 'user-' in key:
-                    users.append(User.objects.get(id=value))
             group = form.save()
             for user in group.user_set.all():
                 user.groups.remove(group)
-            for user in users:
-                user.groups.add(group)
+
+            # Add user to group
+            for _id in request.POST.get('users', '').split(','):
+                try:
+                    user = User.objects.get(id=_id)
+                    user.groups.add(group)
+                except (ValueError, User.DoesNotExist):
+                    pass
             return redirect(reverse('admin-group-list-view'))
         context = self.get_context_data(**kwargs)
         context['form'] = form
