@@ -87,7 +87,9 @@ class DatasetApiList(ListAPIView):
                 raise SuspiciousOperation(f'Can not query param {param}')
             except ValidationError as e:
                 raise SuspiciousOperation(e)
-        return query.order_by('indicator', 'reference_layer', '-date')
+        return query.order_by(
+            'indicator', 'reference_layer', '-date', 'geom_identifier'
+        )
 
     def post(self, request):
         """Delete data."""

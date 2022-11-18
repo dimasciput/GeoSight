@@ -49,7 +49,7 @@ export default function ModalSelector(
     rows = rows.filter(row => {
       let found = false
       fields.map(field => {
-        if (row[field].toLowerCase().includes(search)) {
+        if (row[field]?.toLowerCase().includes(search)) {
           found = true;
         }
       })

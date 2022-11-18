@@ -196,7 +196,7 @@ class ExcelHarvesterLongFormat(BaseHarvester):
                     value = record[column_name_value]
                 except IndexError:
                     value = None
-                if not value:
+                if value is None or value == '':
                     continue
                 try:
                     value = float(value)

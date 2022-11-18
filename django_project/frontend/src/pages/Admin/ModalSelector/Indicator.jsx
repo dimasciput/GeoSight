@@ -5,6 +5,7 @@ import './style.scss';
 const columns = [
   { field: 'id', headerName: 'id', hide: true },
   { field: 'name', headerName: 'Name', flex: 1 },
+  { field: 'shortcode', headerName: 'Code', flex: 1 },
   { field: 'description', headerName: 'Description', flex: 1 },
   { field: 'category', headerName: 'Category', flex: 1 },
 ]
