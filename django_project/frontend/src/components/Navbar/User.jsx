@@ -48,24 +48,13 @@ export default function User() {
           }}
           TransitionComponent={Fade}
         >
-          {
-            is_contributor ? (
-              <MenuItem className='MenuItem-Header'>
-                <a href={dashboardUrl}>Admin</a>
-              </MenuItem>
-            ) : ''
-          }
+          <MenuItem className='MenuItem-Header Description'>
+            Logged as : {username}
+          </MenuItem>
           {
             is_staff ? (
               <MenuItem className='MenuItem-Header'>
                 <a href={adminUrl}>Django Admin</a>
-              </MenuItem>
-            ) : ''
-          }
-          {
-            is_staff ? (
-              <MenuItem className='MenuItem-Header'>
-                <a href={backupsUrl}>Backups</a>
               </MenuItem>
             ) : ''
           }

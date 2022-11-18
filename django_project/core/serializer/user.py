@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     is_staff = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     role = serializers.SerializerMethodField()
     is_contributor = serializers.SerializerMethodField()
     is_creator = serializers.SerializerMethodField()
@@ -22,6 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
     def get_name(self, obj: User):
         """Return is staff."""
         return obj.get_full_name() if obj.get_full_name() else obj.username
+
+    def get_full_name(self, obj: User):
+        """Return full name."""
+        return obj.get_full_name()
 
     def get_role(self, obj: User):
         """Return role."""
@@ -44,5 +49,5 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name',
             'is_staff', 'name', 'email', 'role',
-            'is_contributor', 'is_creator', 'is_admin'
+            'is_contributor', 'is_creator', 'is_admin', 'full_name'
         )

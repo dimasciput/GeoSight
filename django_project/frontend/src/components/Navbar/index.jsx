@@ -5,9 +5,9 @@
 import React from 'react';
 import $ from 'jquery';
 import i18n from "i18next";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 
 import User from './User'
-import Links from './Links'
 
 import './style.scss';
 
@@ -16,6 +16,7 @@ import './style.scss';
  * **/
 export default function NavBar() {
   const { icon, site_title } = preferences;
+  const { username, full_name, is_staff, is_contributor } = user;
 
   // Set width of logo
   // Not working using css on firefox
@@ -45,14 +46,25 @@ export default function NavBar() {
               </a>
             </button>
           </li>
-          {headerTitle ?
-            <li className='NavHeaderRight HeaderTitle'>{headerTitle}</li> : ''
+          {
+            headerTitle ?
+              <li
+                className='NavHeaderRight HeaderTitle'>{headerTitle}</li> : ''
           }
-
-          <li className='NavHeaderRight First'>
-            <Links/>
-          </li>
-          <li className='NavHeaderRight'>
+          {
+            is_contributor ? (
+              <li className='NavHeaderRight First'>
+                <div>
+                  <button type="button">
+                    <a href={urls.admin.dashboardList}
+                       className='NavHeader-Options'
+                       title={"Admin Panel"}><ManageAccountsIcon/></a>
+                  </button>
+                </div>
+              </li>
+            ) : ''
+          }
+          <li className={'NavHeaderRight ' + (!is_contributor ? 'First' : "")}>
             <User/>
           </li>
         </ul>
