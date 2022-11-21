@@ -191,7 +191,7 @@ export default function ReferenceLayer({ map }) {
       whereStr = JSON.stringify(where)
     }
     if (isReady()) {
-      if (whereStr && filteredGeometries && filteredGeometries.length) {
+      if (whereStr && filteredGeometries) {
         map.setFilter(FILL_LAYER_ID, ['in', 'code'].concat(filteredGeometries));
         map.setFilter(OUTLINE_LAYER_ID, ['in', 'code'].concat(filteredGeometries));
       } else {

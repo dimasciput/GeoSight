@@ -11,7 +11,7 @@ export default function filteredGeometriesReducer(state = initialState, action) 
     switch (action.type) {
       case FILTERED_GEOMETRIES_ACTION_TYPE_UPDATE: {
         if (action.payload) {
-          return [...action.payload]
+          return [...action.payload.filter(geom => geom !== undefined)]
         } else {
           return null
         }

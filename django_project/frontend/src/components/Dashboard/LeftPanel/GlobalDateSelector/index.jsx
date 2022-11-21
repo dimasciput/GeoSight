@@ -25,6 +25,7 @@ export const INTERVALS = {
   MONTHLY: 'Monthly',
   YEARLY: 'Yearly'
 }
+
 /**
  * Indicator data.
  */
@@ -37,6 +38,7 @@ export default function GlobalDateSelector() {
 
   const [open, setOpen] = useState(false)
   const [datesByIndicators, setDatesByIndicators] = useState({})
+  const [todayDate, setTodayDate] = useState(new Date().toISOString())
   const [dates, setDates] = useState([])
 
   const [isInFilter, setIsInFilter] = useState(false)
@@ -71,7 +73,7 @@ export default function GlobalDateSelector() {
   const updateDatesTime = () => {
     if (!isInFilter) {
       const min = null
-      const max = dates[dates.length - 1]
+      const max = todayDate
       const newSelectedGlobalStr = JSON.stringify({
         min: min,
         max: max

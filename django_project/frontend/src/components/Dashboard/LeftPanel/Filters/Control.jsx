@@ -36,6 +36,7 @@ import FilterValueInput from './ValueInput'
 import './style.scss'
 
 const Switcher = styled(Switch)(({ theme }) => ({}));
+const expandedByFilterField = {}
 
 export function OperatorSwitcher({ ...props }) {
   return <FormControlLabel
@@ -227,20 +228,16 @@ export function FilterControl(
    ** -------------------------------------------------- **/
   const FilterInput = ({ where, upperWhere }) => {
     const [expanded, setExpanded] = useState(
-      where.expanded ? where.expanded : false
-    )
-    const [active, setActive] = useState(
-      where.active ? where.active : false
+      expandedByFilterField[where.field] && where.active ? expandedByFilterField[where.field] : false
     )
     const [open, setOpen] = useState(false)
 
     const updateExpanded = () => {
-      where.expanded = !expanded
       setExpanded(!expanded)
+      expandedByFilterField[where.field] = !expanded
     }
     const updateActive = () => {
-      where.active = !active
-      setActive(!active)
+      where.active = !where.active
       updateFilter()
     }
     const update = (newWhere) => {
@@ -259,14 +256,6 @@ export function FilterControl(
       return indicatorField.id === field
     })[0]
     const fieldName = indicator?.name
-    let isDifferentLevel = true
-    if (indicator?.reporting_levels && Object.keys(selectedAdminLevel)) {
-      const reportingLevel = indicator?.reporting_levels
-      isDifferentLevel = !reportingLevel.includes(
-        selectedAdminLevel?.level
-      )
-    }
-    let differentLevel = !editMode && isDifferentLevel
 
     /**
      * Return filter input
@@ -310,17 +299,13 @@ export function FilterControl(
         <div
           className='FilterExpressionName'
           onClick={(event) => {
-            updateActive(!active)
-            if (!active) {
-              setExpanded(true)
-            } else {
-              setExpanded(false)
-            }
+            updateActive(!where.active)
+            updateExpanded()
             event.stopPropagation()
           }}>
           <Switch
             size="small"
-            checked={active}
+            checked={where.active}
             onChange={() => {
             }}
           />
@@ -408,6 +393,7 @@ export default function FilterSection() {
   const ableToModify = filtersAllowModify || editMode;
   const referenceLayerData = useSelector(state => state.referenceLayerData)
   const indicatorsData = useSelector(state => state.indicatorsData)
+  const selectedAdminLevel = useSelector(state => state.selectedAdminLevel)
   const geometries = useSelector(state => state.geometries);
   const dispatcher = useDispatch();
 
@@ -415,7 +401,6 @@ export default function FilterSection() {
 
   // Set older filters
   const prevState = useRef();
-
   /** Filter data **/
   const filter = (currentFilter) => {
     if (!allDataIsReady(indicatorsData)) {
@@ -423,7 +408,7 @@ export default function FilterSection() {
     }
     let dataList = [];
     if (levels) {
-      levels.map(level => {
+      levels.filter(level => level.level === selectedAdminLevel.level).map(level => {
         if (geometries[level.level]) {
           const data = []
           for (const [key, geomData] of Object.entries(geometries[level.level])) {
@@ -460,9 +445,9 @@ export default function FilterSection() {
     }
 
     const currentFilterStr = JSON.stringify(currentFilter)
-    if (prevState.current !== currentFilterStr) {
+    if (prevState.current !== currentFilterStr || prevState.level !== selectedAdminLevel.level) {
       const filteredGeometries = filteredGeoms(
-        dataList, currentFilter
+        dataList, currentFilter, selectedAdminLevel.level
       )
       if (filteredGeometries) {
         dispatcher(
@@ -473,6 +458,7 @@ export default function FilterSection() {
         Actions.FiltersData.update(currentFilter)
       );
       prevState.current = currentFilterStr
+      prevState.level = selectedAdminLevel.level
     }
   }
 
@@ -482,7 +468,7 @@ export default function FilterSection() {
       referenceLayerData[referenceLayer.identifier].data.levels) {
       filter(filters)
     }
-  }, [filters, indicatorsData, geometries]);
+  }, [filters, indicatorsData, geometries, selectedAdminLevel]);
 
   // get indicator fields
   let indicatorFields = []

@@ -268,32 +268,19 @@ export function queryingFromDictionary(indicators, dictionary, ignoreActive) {
     }
     indicatorsPerLevel[group].push(indicator)
   })
-  let data = []
+  let data = {}
   for (const [key, indicators] of Object.entries(indicatorsPerLevel)) {
     let {
       query,
       dataList
     } = queryFromDictionary(indicators, dictionary, ignoreActive)
     try {
-      data = data.concat(alasql(query, dataList))
+      data[key] = alasql(query, dataList)
     } catch (err) {
       if (dataList[0]) {
-        data = data.concat(dataList[0])
+        data[key] = dataList[0]
       }
     }
   }
   return data
-  // -----------------------------------------------------------------------
-
-  // TODO
-  //  This will be restored after the aggregation
-  // let {
-  //   query,
-  //   dataList
-  // } = queryFromDictionary(indicators, dictionary, ignoreActive)
-  // try {
-  //   return alasql(query, dataList)
-  // } catch (err) {
-  //   return dataList[0]
-  // }
 }

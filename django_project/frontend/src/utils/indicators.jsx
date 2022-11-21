@@ -43,14 +43,14 @@ export function cleanLayerData(
   }
 }
 
-export function filteredGeoms(indicators, query) {
+export function filteredGeoms(indicators, query, level) {
   if (query) {
     let data = queryingFromDictionary(indicators, query)
-    if (data) {
-      return data.filter(data => {
-        return data
-      }).map((data) => {
-        return data.geometry_code
+    if (data[level]) {
+      return data[level].filter(row => {
+        return row
+      }).map(row => {
+        return row.geometry_code
       })
     }
   }
