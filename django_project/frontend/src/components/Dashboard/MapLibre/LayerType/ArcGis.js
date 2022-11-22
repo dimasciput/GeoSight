@@ -256,6 +256,9 @@ function ArcGisStyle(map, id, layer) {
  */
 export default function arcGisLayer(map, id, data, popupFeatureFn) {
   // Create the source
+  if (!data.url) {
+    return
+  }
   if (!hasSource(map, id)) {
     const params = Object.assign({}, data.params, {
       url: data.url,
