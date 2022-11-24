@@ -5,18 +5,24 @@ from django.contrib.gis.db import models
 from django.shortcuts import reverse
 
 from core.models.general import AbstractTerm, AbstractSource, AbstractEditData
+from geosight.data.models.code import CodeList
 from geosight.permission.models.manager import PermissionManager
 
 
-# AGGREGATION BEHAVIOURS
-class AggregationBehaviour(object):
-    """A quick couple variable for AggregationBehaviour."""
+# INDICATOR TYPE
+class IndicatorType(object):
+    """Indicator type for the indicator based on value."""
 
-    ALL_REQUIRED = 'All geography required in current time window'
-    USE_AVAILABLE = (
-        'Use all available populated geography in current time window'
-    )
-    USE_MOST_RECENT = 'Most recent for each geography'
+    INTEGER = 'Integer'
+    FLOAT = 'Float'
+    STRING = 'String'
+
+
+IndicatorTypeChoices = (
+    (IndicatorType.INTEGER, IndicatorType.INTEGER),
+    (IndicatorType.FLOAT, IndicatorType.FLOAT),
+    (IndicatorType.STRING, 'Category'),
+)
 
 
 # AGGREGATION METHOD
@@ -80,6 +86,24 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
              'Aggregate data by sum of all data in the levels'),
         )
     )
+
+    # Value control
+    type = models.CharField(
+        max_length=256,
+        default=IndicatorType.FLOAT,
+        choices=IndicatorTypeChoices
+    )
+    min_value = models.FloatField(
+        null=True, blank=True
+    )
+    max_value = models.FloatField(
+        null=True, blank=True
+    )
+    codelist = models.ForeignKey(
+        CodeList, null=True, blank=True,
+        on_delete=models.SET_NULL
+    )
+
     objects = models.Manager()
     permissions = PermissionManager()
 
@@ -136,7 +160,7 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
 
     def save_value(
             self,
-            date: date, geom_identifier: str, value: float,
+            date: date, geom_identifier: str, value: any,
             reference_layer=None, admin_level: int = None, extras: dict = None
     ):
         """Save new value for the indicator."""
@@ -144,6 +168,53 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
             IndicatorValue, IndicatorExtraValue
         )
         from geosight.georepo.models import ReferenceLayer
+
+        # Validate data
+        if self.type == IndicatorType.INTEGER:
+            try:
+                if isinstance(value, str):
+                    value = int(value)
+                elif not isinstance(value, int):
+                    raise ValueError
+
+                if self.min_value is not None:
+                    if value < self.min_value:
+                        raise IndicatorValueRejectedError(
+                            f'Value is less than {self.min_value}'
+                        )
+                if self.max_value is not None:
+                    if value > self.max_value:
+                        raise IndicatorValueRejectedError(
+                            f'Value is more than {self.max_value}'
+                        )
+            except ValueError:
+                raise IndicatorValueRejectedError('Value is not integer')
+        elif self.type == IndicatorType.FLOAT:
+            try:
+                value = float(value)
+                if self.min_value is not None:
+                    if value < self.min_value:
+                        raise IndicatorValueRejectedError(
+                            f'Value is less than {self.min_value}'
+                        )
+                if self.max_value is not None:
+                    if value > self.max_value:
+                        raise IndicatorValueRejectedError(
+                            f'Value is more than {self.max_value}')
+            except ValueError:
+                raise IndicatorValueRejectedError('Value is not float')
+        elif self.type == IndicatorType.STRING:
+            if isinstance(value, str):
+                if self.codelist:
+                    codes = self.codelist.codes
+                    if codes and value not in codes:
+                        raise IndicatorValueRejectedError(
+                            f'Value is not in {codes}'
+                        )
+            else:
+                raise IndicatorValueRejectedError('Value is not string')
+
+        # Save data
         if reference_layer and isinstance(reference_layer, str):
             reference_layer, created = ReferenceLayer.objects.get_or_create(
                 identifier=reference_layer
@@ -153,12 +224,14 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
             date=date,
             geom_identifier=geom_identifier,
             defaults={
-                'value': value,
                 'reference_layer': reference_layer,
                 'admin_level': admin_level
             }
         )
-        indicator_value.value = value
+        if self.type == IndicatorType.STRING:
+            indicator_value.value_str = value
+        else:
+            indicator_value.value = value
         indicator_value.save()
 
         if extras:
@@ -246,7 +319,7 @@ class Indicator(AbstractTerm, AbstractSource, AbstractEditData):
                 })
             value = self.serialize(
                 geometry_code=indicator_value.geom_identifier,
-                value=indicator_value.value,
+                value=indicator_value.val,
                 attributes=attributes,
                 date=indicator_value.date,
             )

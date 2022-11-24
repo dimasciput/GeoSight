@@ -6,7 +6,7 @@ from django.conf import settings
 from django.db import transaction
 
 from geosight.data.models import (
-    Indicator, IndicatorValue, IndicatorExtraValue
+    Indicator, IndicatorExtraValue
 )
 from geosight.harvester.harveters._base import BaseHarvester, HarvestingError
 from geosight.harvester.sharepoint import Sharepoint
@@ -247,23 +247,10 @@ class SharepointHarvester(BaseHarvester):
 
                     if administration_code and date_time and type(
                             value) == float:
-                        indicator_value, created = \
-                            IndicatorValue.objects.get_or_create(
-                                indicator=indicator,
-                                date=date_time,
-                                geom_identifier=administration_code,
-                                defaults={
-                                    'value': value,
-                                    'reference_layer': reference_layer,
-                                    'admin_level': admin_level
-                                }
-                            )
-                        if not created:
-                            indicator_value.value = value
-                            indicator_value.reference_layer = reference_layer
-                            indicator_value.admin_level = admin_level
-
-                        indicator_value.save()
+                        indicator_value = indicator.save_value(
+                            date_time, administration_code, value,
+                            reference_layer, admin_level
+                        )
                         for key, value in extra_data.items():
                             try:
                                 IndicatorExtraValue.objects.get_or_create(

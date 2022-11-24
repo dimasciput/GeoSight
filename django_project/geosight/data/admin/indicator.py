@@ -38,10 +38,10 @@ class IndicatorRuleInline(admin.TabularInline):
 class IndicatorAdmin(admin.ModelAdmin):
     """Indicator admin."""
 
-    list_display = ('name', 'group', 'creator')
+    list_display = ('name', 'group', 'creator', 'type', 'created_at')
     list_filter = ('group',)
+    list_editable = ('creator', 'group', 'type')
     inlines = (IndicatorRuleInline,)
-    list_editable = ('creator', 'group')
 
 
 class IndicatorGroupAdmin(admin.ModelAdmin):

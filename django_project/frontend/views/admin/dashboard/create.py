@@ -1,4 +1,6 @@
 """Dashboard Create View."""
+import json
+
 from django.db import transaction
 from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect, reverse
@@ -6,7 +8,9 @@ from django.shortcuts import redirect, reverse
 from frontend.views.dashboard._base import BaseDashboardView
 from geosight.data.api.dashboard import CREATE_SLUG
 from geosight.data.forms.dashboard import DashboardForm
+from geosight.data.models.code import CodeList
 from geosight.data.models.dashboard import Dashboard
+from geosight.data.serializer.code import CodeListSerializer
 from geosight.permission.access import RoleCreatorRequiredMixin
 
 
@@ -35,6 +39,9 @@ class DashboardCreateView(RoleCreatorRequiredMixin, BaseDashboardView):
         """Return context data."""
         context = super().get_context_data(**kwargs)
         context['dashboard'] = {'id': CREATE_SLUG}
+        context['codelists'] = json.dumps(
+            CodeListSerializer(CodeList.objects.all(), many=True).data
+        )
         return context
 
     def post(self, request, **kwargs):

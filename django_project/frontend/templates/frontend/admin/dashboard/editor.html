@@ -30,5 +30,8 @@
         'users': '{% url 'user-list-api'%}',
         'groups': '{% url 'group-list-api'%}',
       }
+
+      // Format code choices
+      const codelists = {{ codelists|safe }}
     </script>
 {% endblock %}

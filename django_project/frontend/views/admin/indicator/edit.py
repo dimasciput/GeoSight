@@ -25,9 +25,7 @@ class IndicatorEditView(IndicatorCreateView):
     @property
     def content_title(self):
         """Return content title that used on page title indicator."""
-        indicator = get_object_or_404(
-            Indicator, id=self.kwargs.get('pk', '')
-        )
+        indicator = self.indicator
         list_url = reverse('admin-indicator-list-view')
         edit_url = reverse('admin-indicator-edit-view', args=[indicator.id])
         return (
@@ -36,24 +34,17 @@ class IndicatorEditView(IndicatorCreateView):
             f'<a href="{edit_url}">{indicator.__str__()}</a> '
         )
 
+    @property
+    def indicator(self):
+        """Return indicator."""
+        return get_object_or_404(
+            Indicator, id=self.kwargs.get('pk', '')
+        )
+
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""
         context = super().get_context_data(**kwargs)
-        indicator = get_object_or_404(
-            Indicator, id=self.kwargs.get('pk', '')
-        )
-        edit_permission_resource(indicator, self.request.user)
-
-        rules = indicator.rules_dict()
-        context.update(
-            {
-                'form': IndicatorForm(
-                    initial=IndicatorForm.model_to_initial(indicator)
-                ),
-                'rules': json.dumps(rules),
-                'indicator_id': indicator.id
-            }
-        )
+        edit_permission_resource(self.indicator, self.request.user)
         return context
 
     def post(self, request, **kwargs):
@@ -86,5 +77,8 @@ class IndicatorEditView(IndicatorCreateView):
             else:
                 return redirect(reverse('admin-indicator-list-view'))
         context = self.get_context_data(**kwargs)
+        form.indicator_data = json.dumps(
+            IndicatorForm.model_to_initial(form.instance)
+        )
         context['form'] = form
         return render(request, self.template_name, context)

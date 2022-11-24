@@ -1,12 +1,16 @@
 """Dashboard Edit View."""
 
+import json
+
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse
 
 from frontend.views.dashboard._base import BaseDashboardView
 from geosight.data.forms.dashboard import DashboardForm
+from geosight.data.models.code import CodeList
 from geosight.data.models.dashboard import Dashboard
+from geosight.data.serializer.code import CodeListSerializer
 from geosight.permission.access import edit_permission_resource
 
 
@@ -50,6 +54,9 @@ class DashboardEditView(BaseDashboardView):
         )
         edit_permission_resource(dashboard, self.request.user)
         context['dashboard'] = {'id': dashboard.slug}
+        context['codelists'] = json.dumps(
+            CodeListSerializer(CodeList.objects.all(), many=True).data
+        )
         return context
 
     def post(self, request, slug, **kwargs):

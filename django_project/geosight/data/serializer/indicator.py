@@ -45,7 +45,7 @@ class IndicatorSerializer(serializers.ModelSerializer):
             'id', 'name', 'category', 'shortcode', 'source', 'description',
             'url',
             'reporting_level', 'reporting_levels',
-            'rules', 'last_update', 'permission'
+            'rules', 'last_update', 'permission', 'type'
         )
 
 
@@ -108,6 +108,7 @@ class IndicatorValueSerializer(serializers.ModelSerializer):
     reference_layer_name = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     indicator = serializers.SerializerMethodField()
+    value = serializers.SerializerMethodField()
 
     def get_reference_layer(self, obj: IndicatorValue):
         """Return reference layer."""
@@ -124,36 +125,20 @@ class IndicatorValueSerializer(serializers.ModelSerializer):
     def get_indicator(self, obj: IndicatorValue):
         """Return indicator name."""
         return obj.indicator.__str__()
+
+    def get_value(self, obj: IndicatorValue):
+        """Return value of indicator."""
+        return obj.val
 
     class Meta:  # noqa: D106
         model = IndicatorValue
-        fields = '__all__'
+        exclude = ('value_str',)
 
 
-class IndicatorValueWithPermissionSerializer(serializers.ModelSerializer):
+class IndicatorValueWithPermissionSerializer(IndicatorValueSerializer):
     """Serializer for IndicatorValue."""
 
-    reference_layer = serializers.SerializerMethodField()
-    reference_layer_name = serializers.SerializerMethodField()
-    name = serializers.SerializerMethodField()
-    indicator = serializers.SerializerMethodField()
     permission = serializers.SerializerMethodField()
-
-    def get_reference_layer(self, obj: IndicatorValue):
-        """Return reference layer."""
-        return obj.reference_layer.identifier
-
-    def get_reference_layer_name(self, obj: IndicatorValue):
-        """Return reference layer name."""
-        return obj.reference_layer.name
-
-    def get_name(self, obj: IndicatorValue):
-        """Return reference layer."""
-        return obj.reference_layer.name
-
-    def get_indicator(self, obj: IndicatorValue):
-        """Return indicator name."""
-        return obj.indicator.__str__()
 
     def get_permission(self, obj: IndicatorValue):
         """Return indicator name."""
@@ -161,7 +146,7 @@ class IndicatorValueWithPermissionSerializer(serializers.ModelSerializer):
 
     class Meta:  # noqa: D106
         model = IndicatorValue
-        fields = '__all__'
+        exclude = ('value_str',)
 
 
 class IndicatorValueDetailSerializer(IndicatorValueSerializer):

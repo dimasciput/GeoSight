@@ -59,7 +59,7 @@ export default function IndicatorStyle({ indicator }) {
           </div>
           <IndicatorRules
             indicatorRules={JSON.parse(JSON.stringify(indicatorRules))}
-            onRulesChanged={onRulesChanged}/>
+            onRulesChanged={onRulesChanged} indicatorData={indicator}/>
         </div>
       </Modal>
       <ThemeButton className='IndicatorStyleButton' onClick={() => {

@@ -5,9 +5,22 @@
 {% block render_bundle %}
     {% render_bundle 'AdminIndicatorForm' %}
 {% endblock %}
+{% block pre_scripts %}
+    <script>
+      document.querySelector('p[data-field-name="type"]').remove()
+      document.querySelector('p[data-field-name="min_value"]').remove()
+      document.querySelector('p[data-field-name="max_value"]').remove()
+      document.querySelector('p[data-field-name="codelist"]').remove()
+    </script>
+{% endblock %}
 {% block scripts %}
     <script>
-      const indicatorId = `{{ indicator_id|safe }}`;
-      const indicatorRules = JSON.parse(`{{ rules|safe }}`);
+      const indicator = JSON.parse(`{{ form.indicator_data|safe }}`);
+      const indicatorId = indicator.id;
+      const indicatorRules = {{ rules|safe }}
+      const types = {{ types|safe }}
+
+      // Format code choices
+      const codelists = {{ codelists|safe }}
     </script>
 {% endblock %}

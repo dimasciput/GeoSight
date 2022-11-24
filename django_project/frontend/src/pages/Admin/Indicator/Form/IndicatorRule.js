@@ -22,6 +22,7 @@ import { AddButton } from "../../../../components/Elements/Button";
 import { arrayMove } from "../../../../utils/Array";
 
 import './style.scss';
+import Select from "react-select";
 
 /**
  * Indicator Rule
@@ -29,8 +30,11 @@ import './style.scss';
  * @param {int} idx Index.
  * @param {Function} onDelete OnDelete.
  * @param {Function} onChange OnChange.
+ * @param {dict} indicatorData Type.
  */
-export function IndicatorRule({ rule, idx, onDelete, onChange }) {
+export function IndicatorRule(
+  { rule, idx, onDelete, onChange, indicatorData }
+) {
   const ruleNameName = 'rule_name_' + idx;
   const ruleNameRule = 'rule_rule_' + idx;
   const ruleNameColor = 'rule_color_' + idx;
@@ -45,7 +49,7 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
   const [color, setColor] = useState(rule.color);
   const [outlineColor, setOutlineColor] = useState(rule.outline_color);
 
-
+  const [includes, setIncludes] = useState('');
   const [equal, setEqual] = useState('');
   const [min, setMin] = useState('');
   const [max, setMax] = useState('');
@@ -62,13 +66,16 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
   // Return rule value
   useEffect(() => {
     setCurrentRule(null)
-    const value = rule.rule.replaceAll(' ', '');
-    const values = value.split('and');
+    const value = rule.rule.replaceAll(' ', '')
+    const values = value.split('and')
     let equal = ''
+    let includes = ''
     let min = ''
     let max = ''
     values.forEach(currentValue => {
-      if (value.indexOf("==") >= 0) {
+      if (value.indexOf("includes") >= 0) {
+        includes = JSON.parse(value.replaceAll('.includes("x")', ''))
+      } else if (value.indexOf("==") >= 0) {
         if (value.split('==')[0] === 'x') {
           equal = value.split('==')[1]
         } else {
@@ -97,6 +104,7 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
     setEqual(equal)
     setMax(max)
     setMin(min)
+    setIncludes(includes)
   }, [rule])
 
   // Construct rule
@@ -114,17 +122,33 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
           values.push('x<=' + max)
         }
         newRule = values.join(' and ');
+      } else if (includes.length) {
+        newRule = JSON.stringify(includes) + '.includes("x")'
       }
       setRuleValue(newRule);
     }
-  }, [currentRule, equal, min, max])
+  }, [currentRule, equal, min, max, includes])
 
+  // For code choices
+  let codesChoices = codelists.find(code => code.id === indicatorData.codelist)
+  if (codesChoices) {
+    codesChoices = codesChoices.codes.map(code => {
+      return {
+        label: code,
+        value: code
+      }
+    })
+  } else {
+    codesChoices = []
+  }
   return (
     <Fragment>
       <td>
-        <RemoveCircleIcon
-          className='MuiButtonLike RemoveButton' onClick={deleteRow}
-        />
+        <div className='RemoveSection'>
+          <RemoveCircleIcon
+            className='MuiButtonLike RemoveButton' onClick={deleteRow}
+          />
+        </div>
       </td>
       <td>
         <input type="text" name={ruleNameName} value={name}
@@ -134,59 +158,87 @@ export function IndicatorRule({ rule, idx, onDelete, onChange }) {
                }}/>
       </td>
       <td>
-        <div className='RuleSectionCell'>
-          <input type="text" className="IndicatorRuleValue"
-                 name={ruleNameRule}
-                 value={ruleValue}
-                 onChange={(evt) => {
-                   setRuleValue(evt.target.value)
-                 }}/>
-          <div className="RuleSection">
-            <div className="RuleSectionSymbol">value</div>
-            <div className="RuleSectionSymbol">=</div>
-            <div>
-              <input
-                type="number" spellCheck="false"
-                value={equal}
-                disabled={!!(min !== '' || max !== '')}
-                onChange={(evt) => {
-                  setEqual(evt.target.value)
-                  setMin('')
-                  setMax('')
-                }}
-              />
+        {
+          indicatorData.type === 'String' ? (
+              <div className={'RuleSectionCell ' + indicatorData.type}>
+                <input
+                  type="text" className="IndicatorRuleValue"
+                  name={ruleNameRule}
+                  value={ruleValue}
+                  onChange={(evt) => {
+                    setRuleValue(evt.target.value)
+                  }}/>
+                <div className="RuleSection">
+                  <div className="RuleSectionSymbol">value</div>
+                  <div className="RuleSectionSymbol">in</div>
+                  <Select
+                    menuPlacement={"top"}
+                    className='RuleSectionSelection'
+                    options={codesChoices}
+                    isMulti
+                    value={codesChoices.filter(code => includes.includes(code.value))}
+                    onChange={evt => {
+                      const newCodes = evt.map(row => row.value)
+                      setIncludes(newCodes)
+                    }}
+                  />
+                </div>
+              </div>
+            ) :
+            <div className='RuleSectionCell'>
+              <input type="text" className="IndicatorRuleValue"
+                     name={ruleNameRule}
+                     value={ruleValue}
+                     onChange={(evt) => {
+                       setRuleValue(evt.target.value)
+                     }}/>
+              <div className="RuleSection">
+                <div className="RuleSectionSymbol">value</div>
+                <div className="RuleSectionSymbol">=</div>
+                <div>
+                  <input
+                    type="number" spellCheck="false"
+                    value={equal}
+                    disabled={!!(min !== '' || max !== '')}
+                    onChange={(evt) => {
+                      setEqual(evt.target.value)
+                      setMin('')
+                      setMax('')
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="RuleSection OrSection">
+                <div className="RuleSectionSymbol">or</div>
+              </div>
+              <div className="RuleSection">
+                <div>
+                  <input
+                    type="number" spellCheck="false" className="RuleSectionMin"
+                    step="any" value={min}
+                    disabled={equal !== ''}
+                    onChange={(evt) => {
+                      setMin(evt.target.value)
+                      setEqual('')
+                    }}/>
+                </div>
+                <div
+                  className="RuleSectionSymbol RuleSectionSymbolLeft">{'<'}</div>
+                <div className="RuleSectionSymbol">value</div>
+                <div className="RuleSectionSymbol">{'<='}</div>
+                <div>
+                  <input
+                    type="number" spellCheck="false" className="RuleSectionMax"
+                    step="any" value={max}
+                    disabled={equal !== ''}
+                    onChange={(evt) => {
+                      setMax(evt.target.value)
+                      setEqual('')
+                    }}/>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="RuleSection OrSection">
-            <div className="RuleSectionSymbol">or</div>
-          </div>
-          <div className="RuleSection">
-            <div>
-              <input
-                type="number" spellCheck="false" className="RuleSectionMin"
-                step="any" value={min}
-                disabled={equal !== ''}
-                onChange={(evt) => {
-                  setMin(evt.target.value)
-                  setEqual('')
-                }}/>
-            </div>
-            <div
-              className="RuleSectionSymbol RuleSectionSymbolLeft">{'<'}</div>
-            <div className="RuleSectionSymbol">value</div>
-            <div className="RuleSectionSymbol">{'<='}</div>
-            <div>
-              <input
-                type="number" spellCheck="false" className="RuleSectionMax"
-                step="any" value={max}
-                disabled={equal !== ''}
-                onChange={(evt) => {
-                  setMax(evt.target.value)
-                  setEqual('')
-                }}/>
-            </div>
-          </div>
-        </div>
+        }
       </td>
       <td>
         <div className='ColorConfig'>
@@ -318,8 +370,11 @@ export function IndicatorOtherRule({ rule, idx, onChange }) {
  * Indicator Rules
  * @param {Array} indicatorRules Indicator rules.
  * @param {Function} onRulesChanged OnChange.
+ * @param {dict} indicatorData Indicator data.
  */
-export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
+export default function IndicatorRules(
+  { indicatorRules, onRulesChanged, indicatorData }
+) {
 
   /** Adding new rule **/
   const newRule = (
@@ -537,6 +592,7 @@ export default function IndicatorRules({ indicatorRules, onRulesChanged }) {
                 key={rule.id} rule={rule} idx={idx}
                 onDelete={onDelete}
                 onChange={onChange}
+                indicatorData={indicatorData}
               /></SortableItem> : ""
 
           })

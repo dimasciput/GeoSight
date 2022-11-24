@@ -6,12 +6,15 @@ from datetime import datetime
 from django.core.exceptions import (
     FieldError, ValidationError, SuspiciousOperation
 )
+from django.http import HttpResponseBadRequest
 from django.db.models import Q
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from core.pagination import Pagination
-from geosight.data.models.indicator import IndicatorValue
+from geosight.data.models.indicator import (
+    IndicatorValue, IndicatorValueRejectedError
+)
 from geosight.data.serializer.indicator import (
     IndicatorValueWithPermissionSerializer
 )
@@ -98,10 +101,16 @@ class DatasetApiList(ListAPIView):
             try:
                 value = IndicatorValue.objects.get(id=row['id'])
                 if value.permissions(request.user)['edit']:
+                    value.indicator.save_value(
+                        value.date, value.geom_identifier, row['value'],
+                        value.reference_layer, value.admin_level
+                    )
                     value.value = float(row['value'])
                     value.save()
             except (IndicatorValue.DoesNotExist, ValueError):
                 pass
+            except IndicatorValueRejectedError as e:
+                return HttpResponseBadRequest(f'{e}')
         return Response('OK')
 
     def delete(self, request):

@@ -6,7 +6,7 @@ from django.db import transaction
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
 
-from geosight.data.models import Indicator, IndicatorValue
+from geosight.data.models import Indicator, IndicatorValueRejectedError
 from geosight.harvester.harveters._base import BaseHarvester, HarvestingError
 
 
@@ -198,35 +198,23 @@ class ExcelHarvesterLongFormat(BaseHarvester):
                     value = None
                 if value is None or value == '':
                     continue
-                try:
-                    value = float(value)
-                except ValueError:
-                    detail[column_name_value] += (
-                        f'{error_separator}Value is not float'
-                    )
 
                 # If no error, save the data
                 if error_separator not in json.dumps(detail):
                     try:
-                        indicator_value, created = \
-                            IndicatorValue.objects.get_or_create(
-                                indicator=Indicator.objects.get(
-                                    shortcode=indicator_shortcode
-                                ),
-                                date=date_data,
-                                geom_identifier=administrative_code,
-                                defaults={
-                                    'value': value,
-                                    'reference_layer': reference_layer,
-                                    'admin_level': admin_level
-                                }
-                            )
-                        indicator_value.value = value
-                        indicator_value.save()
+                        indicator = Indicator.objects.get(
+                            shortcode=indicator_shortcode
+                        )
+                        indicator.save_value(
+                            date_data, administrative_code, value,
+                            reference_layer, admin_level
+                        )
                     except Indicator.DoesNotExist:
                         detail[column_name_indicator_shortcode] += (
                             f'{error_separator}Indicator does not exist'
                         )
+                    except IndicatorValueRejectedError as e:
+                        detail[column_name_value] += f'{error_separator}{e}'
 
                 # check if error separator is in detail
                 if error_separator in json.dumps(detail):

@@ -8,9 +8,12 @@ import {
   MultipleSelectWithSearch,
   SelectWithSearch,
 } from "../../../Input/SelectWithSearch";
-import { IS_NOT_NULL, IS_NULL } from "../../../../utils/queryExtraction"
-import Moment from "moment";
-import DatePicker from "react-datepicker";
+import {
+  IS_LIKE,
+  IS_NOT_LIKE,
+  IS_NOT_NULL,
+  IS_NULL
+} from "../../../../utils/queryExtraction"
 
 /***
  * Filter Value Input
@@ -51,12 +54,10 @@ export default function FilterValueInput(
   }, [value]);
 
   const needsValue = ![IS_NULL, IS_NOT_NULL].includes(operator)
-  const isDate = field.split('.')[1] === 'date'
-
   return <Fragment>
     {
       needsValue ?
-        operator === 'IN' ?
+        ['IN', 'NOT IN'].includes(operator) ?
           (
             indicator ? <MultipleSelectWithSearch
               value={value} onChangeFn={onChange}
@@ -65,88 +66,60 @@ export default function FilterValueInput(
               disabled={disabled}/> : ''
           ) :
           (
-            operator === '=' && indicator && isNaN(indicator.data[0]) ?
-              !isDate ?
-                <SelectWithSearch
-                  value={value} onChangeFn={onChange}
-                  options={indicator.data} className='FilterInput'
-                  disabled={disabled}
-                /> :
-                <div
-                  className="FilterDatePickerInput MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary">
-                  <DatePicker
-                    dateFormat="yyyy-MM-dd"
-                    selected={value ? new Date(value) : ""}
-                    onChange={date => {
-                      onChange(Moment(date).format('YYYY-MM-DD'))
-                    }}
-                  />
-                </div>
+            ['=', '<>'].includes(operator) ?
+              (
+                indicator ?
+                  <SelectWithSearch
+                    value={value} onChangeFn={onChange}
+                    options={indicator.data} className='FilterInput'
+                    disabled={disabled}
+                  /> : ''
+              )
               :
               (
-                ['<', '<=', '>', '>='].includes(operator) && isDate ?
-                  <div
-                    className="FilterDatePickerInput MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary">
-                    <DatePicker
-                      dateFormat="yyyy-MM-dd"
-                      selected={value ? new Date(value) : ""}
-                      onChange={date => {
-                        onChange(Moment(date).format('YYYY-MM-DD'))
-                      }}
-                    />
-                  </div> :
-                  ['<', '<=', '>', '>='].includes(operator) && (min === null || max === null) ?
-                    isDate ?
-                      <div
-                        className="FilterDatePickerInput MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-colorPrimary">
-                        <DatePicker
-                          dateFormat="yyyy-MM-dd"
-                          selected={value ? new Date(value) : ""}
-                          onChange={date => {
-                            onChange(Moment(date).format('YYYY-MM-DD'))
-                          }}
-                        />
-                      </div> :
-                      <Input
-                        className='FilterInput'
-                        type="text"
-                        placeholder="Value"
-                        value={value}
-                        onChange={(event) => {
-                          onChange(event.target.value);
-                        }}
-                        disabled={disabled}
-                      /> : (
-                      <div className='MuiInputSliderWithInput'>
-                        <div className='MuiInputSlider'>
-                          <Slider
-                            value={initValue === '' ? 0 : parseFloat(initValue)}
-                            step={max >= 5 ? 1 : max <= 1 ? 0.01 : 0.1}
-                            min={min ? min : 0}
-                            max={max ? max : 0}
-                            onChange={(event) => {
-                              setInitValue(event.target.value);
-                            }}
-                            track={['>', '>='].includes(operator) ? "inverted" : false}
-                            onChangeCommitted={(e) => onChange(initValue)}
-                            disabled={disabled}
-                          />
-                        </div>
-                        <Input
-                          value={initValue}
-                          size="small"
+                [
+                  '<', '<=', '>', '>=', IS_LIKE, IS_NOT_LIKE
+                ].includes(operator) && (min === null || max === null) ?
+                  <Input
+                    className='FilterInput'
+                    type="text"
+                    placeholder="Value"
+                    value={value}
+                    onChange={(event) => {
+                      onChange(event.target.value);
+                    }}
+                    disabled={disabled}
+                  /> : (
+                    <div className='MuiInputSliderWithInput'>
+                      <div className='MuiInputSlider'>
+                        <Slider
+                          value={initValue === '' ? 0 : parseFloat(initValue)}
+                          step={max >= 5 ? 1 : max <= 1 ? 0.01 : 0.1}
+                          min={min ? min : 0}
+                          max={max ? max : 0}
                           onChange={(event) => {
-                            onChange(event.target.value);
+                            setInitValue(event.target.value);
                           }}
-                          inputProps={{
-                            min: min,
-                            max: max,
-                            type: 'number',
-                          }}
+                          track={['>', '>='].includes(operator) ? "inverted" : false}
+                          onChangeCommitted={(e) => onChange(initValue)}
                           disabled={disabled}
                         />
                       </div>
-                    )
+                      <Input
+                        value={initValue}
+                        size="small"
+                        onChange={(event) => {
+                          onChange(event.target.value);
+                        }}
+                        inputProps={{
+                          min: min,
+                          max: max,
+                          type: 'number',
+                        }}
+                        disabled={disabled}
+                      />
+                    </div>
+                  )
               )
           )
         : ""

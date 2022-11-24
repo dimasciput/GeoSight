@@ -8,9 +8,6 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from geosight.data.models import IndicatorValue
-from geosight.data.models.indicator.indicator import (
-    IndicatorValueRejectedError
-)
 from geosight.harvester.models import Harvester, HarvesterLog, LogStatus
 
 User = get_user_model()
@@ -155,14 +152,11 @@ class BaseHarvester(ABC):
             self.log.save()
 
     def save_indicator_data(
-            self, value: str, date: datetime.date, geometry: str
+            self, value: any, date: datetime.date, geometry: str
     ) -> IndicatorValue:
         """Save new indicator data of the indicator."""
-        try:
-            return self.harvester.indicator.save_value(
-                date, geometry, float(value),
-                reference_layer=self.harvester.reference_layer,
-                admin_level=self.harvester.admin_level
-            )
-        except (IndicatorValueRejectedError, ValueError):
-            return None
+        return self.harvester.indicator.save_value(
+            date, geometry, value,
+            reference_layer=self.harvester.reference_layer,
+            admin_level=self.harvester.admin_level
+        )

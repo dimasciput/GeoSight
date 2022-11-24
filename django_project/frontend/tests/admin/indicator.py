@@ -7,7 +7,9 @@ from django.test.testcases import TestCase
 from django.urls import reverse
 
 from frontend.tests.admin._base import BaseViewTest
-from geosight.data.models.indicator import Indicator, AggregationMethod
+from geosight.data.models.indicator import (
+    Indicator, IndicatorType, AggregationMethod
+)
 from geosight.georepo.models.reference_layer import (
     ReferenceLayer, ReferenceLayerIndicator
 )
@@ -26,7 +28,8 @@ class IndicatorAdminViewTest(BaseViewTest, TestCase):
         'name': 'name',
         'group': 'group',
         'aggregation_method': AggregationMethod.SUM,
-        'shortcode': 'SHORT'
+        'shortcode': 'SHORT',
+        'type': IndicatorType.FLOAT
     }
 
     def create_resource(self, user):

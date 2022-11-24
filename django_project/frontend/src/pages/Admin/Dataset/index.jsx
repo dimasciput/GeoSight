@@ -337,7 +337,8 @@ export default function DatasetAdmin() {
                         setUpdatedData([])
                         loadData();
                       },
-                      error: function () {
+                      error: function (error) {
+                        alert(error.responseText)
                         setIsApplying(false)
                       },
                       beforeSend: beforeAjaxSend

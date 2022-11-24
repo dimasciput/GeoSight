@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, FormControl, Input, InputLabel } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
-import { OPERATOR } from "../../../../utils/queryExtraction";
+import {
+  IS_IN,
+  IS_NOT_IN,
+  NUMBER_OPERATORS,
+  STRING_OPERATORS
+} from "../../../../utils/queryExtraction";
 import Modal, { ModalContent, ModalHeader } from "../../../Modal";
 import { SelectPlaceholder } from "../../../Input";
 import FilterValueInput from './ValueInput'
@@ -19,9 +24,9 @@ export default function FilterEditorModal(
 ) {
   /** Update value based on operator **/
   const updateValue = (value) => {
-    if (operator === 'IN' && !Array.isArray(value)) {
+    if ([IS_IN, IS_NOT_IN].includes(operator) && !Array.isArray(value)) {
       return value ? [value] : []
-    } else if (operator !== 'IN' && Array.isArray(value)) {
+    } else if (![IS_IN, IS_NOT_IN].includes(operator) && Array.isArray(value)) {
       return value[0] ? value[0] : ''
     }
     return value
@@ -60,7 +65,7 @@ export default function FilterEditorModal(
   const indicator = fields.filter((fieldData) => {
     return fieldData.id === field
   })[0]
-
+  const OPERATOR = indicator?.type === 'String' ? STRING_OPERATORS : NUMBER_OPERATORS
   return <div
     onClick={(event) => {
       event.stopPropagation()

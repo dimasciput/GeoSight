@@ -37,7 +37,151 @@ class UsingExposedAPITest(BaseHarvesterTest):
         )
         self.assertEquals(response.status_code, 400)
 
-    def test_push_data_with(self):
+    def test_push_data_indicator_integer(self):
+        """Test Push data."""
+        harvester = HarvesterF(
+            indicator=self.indicator_1,
+            harvester_class=UsingExposedAPI[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
+        )
+        token = harvester.harvesterattribute_set.get(name='token').value
+        url = harvester.harvesterattribute_set.get(name='API URL').value
+
+        client = Client()
+        today = datetime.datetime.today().date()
+        response = client.post(
+            url, data={
+                "geometry_code": "A",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 1
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(self.indicator_1.indicatorvalue_set.last().val, 1)
+        response = client.post(
+            url, data={
+                "geometry_code": "B",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 1.1
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.content, b'Value is not integer')
+        response = client.post(
+            url, data={
+                "geometry_code": "C",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 'A'
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.content, b'Value is not integer')
+
+    def test_push_data_indicator_float(self):
+        """Test Push data."""
+        harvester = HarvesterF(
+            indicator=self.indicator_2,
+            harvester_class=UsingExposedAPI[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
+        )
+        token = harvester.harvesterattribute_set.get(name='token').value
+        url = harvester.harvesterattribute_set.get(name='API URL').value
+
+        client = Client()
+        today = datetime.datetime.today().date()
+        response = client.post(
+            url, data={
+                "geometry_code": "A",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 1.1
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(self.indicator_2.indicatorvalue_set.last().val, 1.1)
+        response = client.post(
+            url, data={
+                "geometry_code": "B",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 1
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(
+            self.indicator_2.indicatorvalue_set.filter(
+                geom_identifier='B').first().val, 1
+        )
+        response = client.post(
+            url, data={
+                "geometry_code": "C",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 'A'
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.content, b'Value is not float')
+
+    def test_push_data_indicator_string(self):
+        """Test Push data."""
+        harvester = HarvesterF(
+            indicator=self.indicator_3,
+            harvester_class=UsingExposedAPI[0],
+            reference_layer=self.reference_layer,
+            admin_level=self.admin_level
+        )
+        token = harvester.harvesterattribute_set.get(name='token').value
+        url = harvester.harvesterattribute_set.get(name='API URL').value
+
+        client = Client()
+        today = datetime.datetime.today().date()
+        response = client.post(
+            url, data={
+                "geometry_code": "A",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 'A'
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(self.indicator_3.indicatorvalue_set.last().val, 'A')
+        response = client.post(
+            url, data={
+                "geometry_code": "B",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 1
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.content, b'Value is not string')
+        response = client.post(
+            url, data={
+                "geometry_code": "C",
+                "date": today.strftime("%Y-%m-%d"),
+                "value": 1.1
+            },
+            content_type='application/json',
+            **{'HTTP_AUTHORIZATION': f'Bearer {token}'}
+        )
+        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.content, b'Value is not string')
+
+    def test_push_data_with_token(self):
         """Test Push data."""
         client = Client()
         today = datetime.datetime.today().date()

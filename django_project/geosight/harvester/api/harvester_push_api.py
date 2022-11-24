@@ -37,10 +37,6 @@ class HarvesterPushIndicatorValues(APIView):
             except ValueError:
                 return HttpResponseBadRequest(
                     'Date format should be YYYY-MM-DD')
-            try:
-                value = float(data['value'])
-            except ValueError:
-                return HttpResponseBadRequest('Value need to be number')
 
             # extra data needs to be dictionary
             extra_data = data.get('extra_data', None)
@@ -63,7 +59,7 @@ class HarvesterPushIndicatorValues(APIView):
             except IndicatorValue.DoesNotExist:
                 pass
             indicator_value = indicator.save_value(
-                date, geometry_code, value,
+                date, geometry_code, data['value'],
                 reference_layer=harvester.reference_layer,
                 admin_level=harvester.admin_level,
                 extras=extra_data,

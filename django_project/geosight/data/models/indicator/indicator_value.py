@@ -2,7 +2,7 @@
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from geosight.data.models.indicator.indicator import Indicator
+from geosight.data.models.indicator.indicator import Indicator, IndicatorType
 from geosight.georepo.models import ReferenceLayer
 
 
@@ -16,7 +16,12 @@ class IndicatorValue(models.Model):
         _('Date'),
         help_text=_('The date of the value harvested.')
     )
-    value = models.FloatField()
+    value = models.FloatField(
+        null=True, blank=True
+    )
+    value_str = models.CharField(
+        max_length=256, null=True, blank=True
+    )
 
     # -------------------------------------------------------
     # Grouping by geometries
@@ -39,6 +44,13 @@ class IndicatorValue(models.Model):
     class Meta:  # noqa: D106
         unique_together = ('indicator', 'date', 'geom_identifier')
         ordering = ('-date',)
+
+    @property
+    def val(self):
+        """Return val of value based on int or string."""
+        if self.indicator.type == IndicatorType.STRING:
+            return self.value_str
+        return self.value
 
     def permissions(self, user):
         """Return permission of user."""

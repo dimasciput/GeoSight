@@ -25,6 +25,7 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
 
     indicator = None
     harvester_class = None
+    redirect_url_name = 'harvester-detail-view'
 
     @staticmethod
     def get_url_create_name(harvester_class):
@@ -284,7 +285,7 @@ class HarvesterFormView(RoleCreatorRequiredMixin, BaseView, ABC):
             self.after_post(harvester)
             return redirect(
                 reverse(
-                    'harvester-detail-view', args=[
+                    self.redirect_url_name, args=[
                         str(harvester.unique_id)
                     ]
                 )

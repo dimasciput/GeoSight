@@ -3,8 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 
-from geosight.data.models.indicator import (
-    Indicator, IndicatorGroup, )
+from geosight.data.models.indicator import Indicator, IndicatorGroup
 
 
 class IndicatorForm(forms.ModelForm):
@@ -81,11 +80,26 @@ class IndicatorForm(forms.ModelForm):
         except Indicator.DoesNotExist:
             return shortcode
 
+    def clean_min_value(self):
+        """Return max_value."""
+        min_value = self.cleaned_data['min_value']
+        return min_value
+
+    def clean_max_value(self):
+        """Return max_value."""
+        min_value = self.cleaned_data['min_value']
+        max_value = self.cleaned_data['max_value']
+        if min_value is not None and max_value is not None:
+            if min_value > max_value:
+                raise ValidationError("Max value is less than min value")
+        return max_value
+
     @staticmethod
     def model_to_initial(indicator: Indicator):
         """Return model data as json."""
         from geosight.data.models.indicator import IndicatorGroup
         initial = model_to_dict(indicator)
+        del initial['created_at']
         try:
             initial['group'] = IndicatorGroup.objects.get(
                 id=initial['group']

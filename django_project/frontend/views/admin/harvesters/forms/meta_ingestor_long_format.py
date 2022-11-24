@@ -6,9 +6,10 @@ from geosight.harvester.harveters.excel_harvester_long_format import (
     ExcelHarvesterLongFormat
 )
 from geosight.harvester.models.harvester import (
-    Harvester,
     ExcelHarvesterLongFormatHarvester, ExcelHarvesterWideFormatHarvester
 )
+from geosight.harvester.models.harvester import Harvester
+from geosight.harvester.models.harvester_log import HarvesterLog, LogStatus
 from geosight.harvester.tasks import run_harvester
 from ._base import HarvesterFormView
 
@@ -18,6 +19,7 @@ class MetaIngestorLongFormatForm(HarvesterFormView):
 
     harvester_class = ExcelHarvesterLongFormat
     template_name = 'frontend/admin/harvesters/meta_ingestor_long_format.html'
+    redirect_url_name = 'data-importer-detail-view'
 
     @property
     def page_title(self):
@@ -80,5 +82,9 @@ class MetaIngestorLongFormatForm(HarvesterFormView):
     def after_post(self, harvester: Harvester):
         """For calling after post success."""
         harvester.creator = self.request.user
+        HarvesterLog.objects.get_or_create(
+            harvester=harvester,
+            status=LogStatus.START
+        )
         harvester.save()
         run_harvester.delay(harvester.pk)

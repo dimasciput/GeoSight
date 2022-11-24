@@ -54,6 +54,8 @@
 {% endblock %}
 <script type="text/javascript"
         src="{% static 'libs/fuzzysort.js' %}"></script>
+{% block pre_scripts %}
+{% endblock %}
 <script>
   const maxZoom = 24;
   {% if request.user.is_authenticated %}

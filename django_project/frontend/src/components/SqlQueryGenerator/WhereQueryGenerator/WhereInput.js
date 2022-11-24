@@ -8,6 +8,7 @@ import {
   IS_IN,
   IS_NOT_NULL,
   IS_NULL,
+  IS_NOT_IN,
   OPERATOR
 } from "../../../utils/queryExtraction";
 import { Input } from "@mui/material";
@@ -82,7 +83,7 @@ export default function WhereInput(
         className={'WhereConfigurationOperatorValue'}
         value={value ? value : ""}
         onChange={(evt) => {
-          if (operator === IS_IN) {
+          if ([IS_IN, IS_NOT_IN].includes(operator)) {
             where.value = evt.target.value.split(',')
           } else {
             where.value = evt.target.value
@@ -125,7 +126,7 @@ export default function WhereInput(
         if (value === OPERATOR_WITH_INTERVAL) {
           where.operator = '>'
           where.value = "now() - interval '1 days'"
-        } else if (value === IS_IN) {
+        } else if ([IS_IN, IS_NOT_IN].includes(value)) {
           where.operator = value
           where.value = [where.value]
         } else {

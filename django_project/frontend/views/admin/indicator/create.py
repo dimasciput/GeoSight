@@ -6,7 +6,11 @@ from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
 from geosight.data.forms.indicator import IndicatorForm
-from geosight.data.models.indicator import Indicator, IndicatorRule
+from geosight.data.models.code import CodeList
+from geosight.data.models.indicator import (
+    Indicator, IndicatorRule, IndicatorTypeChoices
+)
+from geosight.data.serializer.code import CodeListSerializer
 from geosight.permission.access import RoleCreatorRequiredMixin
 
 
@@ -31,13 +35,27 @@ class IndicatorCreateView(RoleCreatorRequiredMixin, BaseView):
             f'<a href="{create_url}">Create</a> '
         )
 
+    @property
+    def indicator(self) -> Indicator:
+        """Return indicator."""
+        return Indicator()
+
     def get_context_data(self, **kwargs) -> dict:
         """Return context data."""
         context = super().get_context_data(**kwargs)
+        indicator = self.indicator
+        initial = IndicatorForm.model_to_initial(indicator)
+        form = IndicatorForm(initial=initial)
+        form.indicator_data = json.dumps(initial)
         context.update(
             {
-                'form': IndicatorForm(),
-                'rules': json.dumps([])
+                'form': form,
+                'indicator_id': indicator.id,
+                'types': json.dumps(IndicatorTypeChoices),
+                'rules': json.dumps(indicator.rules_dict()),
+                'codelists': json.dumps(
+                    CodeListSerializer(CodeList.objects.all(), many=True).data
+                )
             }
         )
         return context
@@ -87,6 +105,9 @@ class IndicatorCreateView(RoleCreatorRequiredMixin, BaseView):
                 })
             )
         context = self.get_context_data(**kwargs)
+        form.indicator_data = json.dumps(
+            IndicatorForm.model_to_initial(form.instance)
+        )
         context['form'] = form
         return render(
             request,

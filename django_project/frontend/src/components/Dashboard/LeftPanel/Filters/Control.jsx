@@ -478,26 +478,28 @@ export default function FilterSection() {
         ['code', 'name'].map(key => {
           const id = `geometry_${level.level}.${key}`
           indicatorFields.push({
-            'id': id,
-            'name': `${key}`,
-            'group': `Admin - ${level.level_name}`,
-            'data': [...new Set(
+            id: id,
+            name: `${key}`,
+            group: `Admin - ${level.level_name}`,
+            data: [...new Set(
               Object.keys(geometries[level.level]).map(geom => {
                 return geometries[level.level][geom][key]
               })
             )],
-            'reporting_levels': [level.level]
+            reporting_levels: [level.level],
+            type: 'String'
           })
         })
       } else {
         ['code', 'name'].map(key => {
           const id = `geometry_${level.level}.${key}`
           indicatorFields.push({
-            'id': id,
-            'name': `${key}`,
-            'group': `Admin - ${level.level_name}`,
-            'data': ['loading'],
-            'reporting_levels': [level.level]
+            id: id,
+            name: `${key}`,
+            group: `Admin - ${level.level_name}`,
+            data: ['loading'],
+            reporting_levels: [level.level],
+            type: 'String'
           })
         })
       }
@@ -518,17 +520,18 @@ export default function FilterSection() {
             return
           }
           indicatorFields.push({
-            'id': id,
-            'name': `${key}`,
-            'group': indicator.name,
-            'data': [...new Set(
+            id: id,
+            name: `${key}`,
+            group: indicator.name,
+            data: [...new Set(
               data.map(data => {
                 return data[key]
               }).filter(data => {
                 return data
               }))
             ],
-            'reporting_levels': indicatorData?.reporting_levels
+            reporting_levels: indicatorData?.reporting_levels,
+            type: key === 'value' ? indicator?.type : 'String'
           })
         })
       }
@@ -541,11 +544,12 @@ export default function FilterSection() {
           return
         }
         indicatorFields.push({
-          'id': id,
-          'name': `${key}`,
-          'group': indicator.name,
-          'data': ['loading'],
-          'reporting_levels': indicatorData?.reporting_levels
+          id: id,
+          name: `${key}`,
+          group: indicator.name,
+          data: ['loading'],
+          reporting_levels: indicatorData?.reporting_levels,
+          type: key === 'value' ? indicator?.type : 'String'
         })
       })
     }

@@ -14,16 +14,32 @@ export const TYPE = {
 export const IS_NULL = 'IS NULL'
 export const IS_NOT_NULL = 'IS NOT NULL'
 export const IS_IN = 'IN'
-export const OPERATOR = {
-  'IN': 'is any of',
-  '=': 'is equal',
-  '>': 'is more than',
-  '>=': 'is more and equal',
-  '<': 'is less than',
-  '<=': 'is less and equal',
+export const IS_NOT_IN = 'NOT IN'
+export const IS_LIKE = 'LIKE'
+export const IS_NOT_LIKE = 'NOT LIKE'
+export const OPERATORS = {
+  'IN': 'in',
+  'NOT IN': 'not in',
+  '=': 'equals',
+  '<>': 'not equals',
   'IS NULL': 'is null',
   'IS NOT NULL': 'is not null',
 }
+export const NUMBER_OPERATORS = Object.assign({}, OPERATORS, {
+  '>': 'more than',
+  '>=': 'equal or above',
+  '<': 'less than',
+  '<=': 'equal or below',
+});
+
+
+export const STRING_OPERATORS = Object.assign({}, OPERATORS, {
+  'LIKE': 'like',
+  'NOT LIKE': 'not like',
+});
+
+export const OPERATOR = Object.assign({}, NUMBER_OPERATORS, STRING_OPERATORS);
+
 
 /** OPERATOR BETWEEN WHERE */
 export const WHERE_OPERATOR = {
@@ -195,7 +211,7 @@ export function returnDataToExpression(field, operator, value) {
 
   }
 
-  if (operator === 'IN') {
+  if ([IS_IN, IS_NOT_IN].includes(operator)) {
     if (value) {
       cleanValue = value.map(val => (isNaN(val) ? `'${val}'` : val)).join(',')
     }
@@ -204,6 +220,8 @@ export function returnDataToExpression(field, operator, value) {
     } else {
       cleanValue = `('')`
     }
+  } else if ([IS_LIKE, IS_NOT_LIKE].includes(operator)) {
+    return `${field} ${cleanOperator} '%${value}%'`
   } else if ([IS_NULL, IS_NOT_NULL].includes(operator)) {
     return `${field} ${cleanOperator}`
   }

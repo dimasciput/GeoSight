@@ -26,6 +26,12 @@
     }
   }
 
+  .RemoveSection, .DragDropItem-Drag {
+    svg {
+      margin-top: 0.5rem;
+    }
+  }
+
   .RuleTable-Help {
     color: gray;
     border-top: none !important;
@@ -49,6 +55,7 @@
   tbody {
     td {
       padding: 0.5rem 1rem 0.5rem 0;
+      vertical-align: top;
     }
 
     .RemoveButton {
@@ -63,6 +70,12 @@
     .RuleSectionCell {
       display: flex;
 
+      &.String {
+        .RuleSection {
+          width: 100%;
+        }
+      }
+
       input {
         width: 100px;
       }
@@ -72,8 +85,7 @@
       background: $base-almost-white-color;
       border: 1px solid $base-almost-gray-color;
       display: flex;
-      height: 2.8rem;
-      overflow: hidden;
+      min-height: 2.8rem;
       border-radius: $border-radius;
 
       input {
@@ -93,6 +105,15 @@
 
       .RuleSectionSymbolLeft {
         border-left: 1px solid #ccc;
+      }
+
+      .RuleSectionSelection {
+        flex-grow: 1;
+
+        & > div {
+          min-height: 100%;
+          border: none;
+        }
       }
     }
 
