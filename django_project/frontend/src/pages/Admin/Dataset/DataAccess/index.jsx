@@ -55,6 +55,7 @@ export function AddData(
     setDatasets([])
     setObjects([])
   }, [open])
+
   return <Modal
     className='PermissionFormModal PermissionDatasetAddData'
     open={open}

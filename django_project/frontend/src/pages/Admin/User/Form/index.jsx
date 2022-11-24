@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import $ from "jquery";
 
 import { render } from '../../../../app';
 import { store } from '../../../../store/admin';
@@ -20,6 +21,22 @@ export default function UserForm() {
     setSubmitted(true)
   }
 
+  // If role is super admin, show the is_staff
+  useEffect(() => {
+    $('input[name="role"]').change(function () {
+      roleOnChange($(this).val())
+    })
+    $('input[name="role"]').trigger('change')
+  }, [])
+
+  const roleOnChange = (value) => {
+    if (value === 'Super Admin') {
+      $('input[name="is_staff"]').closest('.BasicFormSection').show()
+    } else {
+      $('input[name="is_staff"]').closest('.BasicFormSection').hide()
+    }
+  }
+
   return (
     <Admin
       pageName={pageNames.Users}
@@ -32,7 +49,9 @@ export default function UserForm() {
         />
       }>
 
-      <AdminForm isSubmitted={submitted}/>
+      <AdminForm isSubmitted={submitted} onChanges={{
+        'role': roleOnChange
+      }}/>
     </Admin>
   );
 }

@@ -15,6 +15,8 @@ import { fetchingData } from "../../../../Requests";
 import { Actions } from '../../../../store/dashboard/index'
 import { SaveButton, ThemeButton } from "../../../Elements/Button";
 import Modal, { ModalContent, ModalFooter, ModalHeader } from "../../../Modal";
+import CustomPopover from "../../../CustomPopover";
+import { PluginChild } from "../../MapLibre/Plugin";
 
 import './style.scss';
 
@@ -31,7 +33,6 @@ export default function Bookmark() {
     contextLayers,
     extent
   } = useSelector(state => state.map)
-  console.log(basemapLayer)
   const data = () => {
     return {
       name: name,
@@ -149,13 +150,27 @@ export default function Bookmark() {
       beforeSend: beforeAjaxSend
     });
   }
-
   const bookmarkSave = bookmarks ? bookmarks.find(
     row => row.id === saveBookmarkID) : null
 
+  if (!dashboardData.id) {
+    return ""
+  }
   return (
-    <Fragment>
-      {/* LIST OF BOOKMARKS */}
+    <CustomPopover
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      Button={
+        <PluginChild title={'Bookmark'}>
+          <StarIcon/>
+        </PluginChild>
+      }>{/* LIST OF BOOKMARKS */}
       <div className='BookmarkComponent'>
         <div className='Header'>
 
@@ -288,6 +303,6 @@ export default function Bookmark() {
             disabled={!name || !basemapLayer || !extent || !selectedIndicatorLayer}/>
         </ModalFooter>
       </Modal>
-    </Fragment>
+    </CustomPopover>
   )
 }

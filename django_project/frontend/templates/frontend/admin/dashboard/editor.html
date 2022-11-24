@@ -1,12 +1,11 @@
 {% extends 'frontend/admin/base.html' %}
 {% load render_bundle from webpack_loader %}
+{% load static %}
 {% block style %}
-    <link rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-          integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-          crossorigin=""/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+    <script type="text/javascript"
+            src="{% static 'libs/xlsx/0.17.5/jszip.js' %}"></script>
+    <script type="text/javascript"
+            src="{% static 'libs/xlsx/0.17.5/xlsx.js' %}"></script>
 {% endblock %}
 {% block render_bundle %}
     {% render_bundle 'DashboardForm' %}
@@ -15,6 +14,12 @@
     <script>
       {# specified url for dashboard #}
       urls.dashboardData = '{% url 'dashboard-data-api' slug=dashboard.id %}'
+
+      {# specified url for dashboard #}
+      urls.dashboardData = '{% url 'dashboard-data-api' slug=dashboard.id %}'
+      urls.bookmarkCreate = '{% url 'dashboard-bookmarks-create' slug=dashboard.id %}'
+      urls.bookmarkList = '{% url 'dashboard-bookmarks' slug=dashboard.id %}'
+      urls.bookmarkDetail = '{% url 'dashboard-bookmarks-edit' slug=dashboard.id pk=0 %}'
 
       const definition = {{ definition|safe }};
       let editMode = true;

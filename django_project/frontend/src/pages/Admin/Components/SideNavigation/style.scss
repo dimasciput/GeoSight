@@ -33,9 +33,20 @@
     &:hover {
       opacity: 1;
     }
+
+    path {
+      fill: $anti-primary-color !important;
+    }
   }
 
   .SideNavigation-Row-Icon {
     margin-right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+
+    path {
+      fill: $base-black-color;
+    }
   }
 }

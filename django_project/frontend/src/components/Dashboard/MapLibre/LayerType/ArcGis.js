@@ -2,8 +2,6 @@ import FeatureService from 'mapbox-gl-arcgis-featureserver'
 import parseArcRESTStyle from "../../../../utils/esri/esri-style";
 import { addPopup, hasLayer, hasSource, loadImageToMap } from "../utils";
 
-const BEFORE_LAYER = 'gl-draw-polygon-fill-inactive.cold'
-
 /*** Arcgis style */
 function ArcGisStyle(map, id, layer) {
   const casesByType = {}
@@ -254,7 +252,7 @@ function ArcGisStyle(map, id, layer) {
 /***
  * Render geojson layer
  */
-export default function arcGisLayer(map, id, data, popupFeatureFn) {
+export default function arcGisLayer(map, id, data, contextLayerData, popupFeatureFn) {
   // Create the source
   if (!data.url) {
     return
@@ -302,7 +300,11 @@ export default function arcGisLayer(map, id, data, popupFeatureFn) {
       id: symbolId,
       type: 'symbol',
       source: id,
-      filter: ['==', '$type', 'Point']
+      filter: ['==', '$type', 'Point'],
+      layout: {
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true
+      }
     })
     const popupFeature = (properties) => {
       return popupFeatureFn(properties, data?.data?.fields)

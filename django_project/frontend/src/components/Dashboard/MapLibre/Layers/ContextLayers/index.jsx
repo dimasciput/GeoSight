@@ -3,13 +3,15 @@
    ========================================================================== */
 
 import React, { Fragment, useEffect } from 'react';
+import { centroid as turfCentroid } from '@turf/turf';
 import { useSelector } from "react-redux";
-import { removeLayer, removeSource } from "../../utils";
+import { hasLayer, hasSource, removeLayer, removeSource } from "../../utils";
 import { arcGisLayer, geojsonLayer, rasterTileLayer } from "../../LayerType"
 import { dictDeepCopy, featurePopupContent } from "../../../../../utils/main";
 
 const ID = `context-layer`
 const markersContextLayers = {}
+const onLoadFunctions = {}
 
 /**
  * Remove source and layer
@@ -47,12 +49,17 @@ const popupFeature = (featureProperties, name, fields, defaultField) => {
   if (fields) {
     fields.map(field => {
       if (field.visible !== false) {
-        properties[field.alias] = featureProperties[field.name]
-        if (field.type === 'date') {
-          try {
-            properties[field.alias] = new Date(featureProperties[field.name]).toString()
-          } catch (err) {
+        if (field.name) {
+          properties[field.alias] = featureProperties[field.name]
+          if (field.type === 'date') {
+            try {
+              properties[field.alias] = new Date(featureProperties[field.name]).toString()
+            } catch (err) {
 
+            }
+          }
+          if (field.name !== field.alias) {
+            delete properties[field.name]
           }
         }
       } else {
@@ -62,6 +69,92 @@ const popupFeature = (featureProperties, name, fields, defaultField) => {
       }
     })
     return featurePopupContent(name, properties, "")
+  }
+}
+
+/**
+ * Render label of data
+ */
+export function renderLabel(id, contextLayerData, contextLayer, map) {
+  const labels = contextLayerData.data_fields.filter(field => field.as_label)
+  if (labels.length && contextLayerData.label_styles) {
+
+    // Add label source
+    const idLabel = id + '-label'
+    if (!hasSource(map, idLabel)) {
+      map.addSource(idLabel, {
+        'type': 'geojson',
+        'data': {
+          type: 'FeatureCollection',
+          features: []
+        }
+      });
+    }
+
+    // Add layer
+    if (!hasLayer(map, idLabel)) {
+      const layout = {
+        'text-anchor': 'bottom',
+        'text-size': 14,
+        'text-offset': [0, -1]
+      }
+      const paint = {
+        'text-halo-blur': 2
+      }
+      const labels = contextLayerData.data_fields.filter(field => field.as_label)
+      if (labels.length && contextLayerData.label_styles) {
+        const style = contextLayerData.label_styles
+        paint['text-color'] = style.fontColor
+        layout['text-size'] = style.fontSize
+        paint['text-halo-color'] = style.haloColor
+        paint['text-halo-width'] = 1
+
+        const textField = ['format']
+        labels.map((label, idx) => {
+          textField.push(['get', label.name])
+          textField.push({})
+          if (idx < labels - 1) {
+            textField.push('\n')
+            textField.push({})
+          }
+        })
+        layout['text-field'] = textField
+      }
+      map.addLayer(
+        {
+          id: idLabel,
+          type: 'symbol',
+          source: idLabel,
+          filter: ['==', '$type', 'Point'],
+          layout: layout,
+          paint: paint,
+        }
+      );
+    }
+
+    // For onload layer
+    if (!onLoadFunctions[id]) {
+      onLoadFunctions[id] = (e) => {
+        if (e.sourceId === id && e?.source?.data?.features?.length) {
+          const features = dictDeepCopy(e?.source?.data?.features)
+          features.map(feature => {
+            const centroid = turfCentroid({
+              type: 'FeatureCollection',
+              features: [feature]
+            });
+            feature.geometry = centroid.geometry
+          })
+
+          // Update the source
+          map.getSource(idLabel).setData({
+            type: 'FeatureCollection',
+            features: features
+          });
+        }
+      }
+    }
+    map.off('sourcedata', onLoadFunctions[id]);
+    map.on('sourcedata', onLoadFunctions[id]);
   }
 }
 
@@ -87,11 +180,12 @@ export function contextLayerRendering(id, contextLayerData, contextLayer, map) {
           break;
         }
         case 'ARCGIS': {
-          arcGisLayer(map, id, layer, (featureProperties, arcgisField) => {
+          arcGisLayer(map, id, layer, contextLayerData, (featureProperties, arcgisField) => {
             return popupFeature(
               featureProperties, contextLayerData.name, arcgisField, contextLayerData.data_fields
             )
           })
+          renderLabel(id, contextLayerData, contextLayer, map)
           break;
         }
       }

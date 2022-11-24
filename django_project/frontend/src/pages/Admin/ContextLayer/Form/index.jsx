@@ -18,7 +18,6 @@ export function ContextLayerConfig() {
 
   const setDataFn = () => {
     const formData = data
-    console.log(data)
     $('.BasicForm').find('input').each(function () {
       const name = $(this).attr('name');
       if (name) {

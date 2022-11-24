@@ -10,6 +10,11 @@ from geosight.georepo.request import GeorepoUrl
 
 
 def run(apps, schema_editor):
+    # TODO:
+    #  Move this to management command
+    #  To prevent calling georepo on migrations
+    return
+
     Indicator = apps.get_model("geosight_data", "Indicator")
     ReferenceLayer = apps.get_model("geosight_georepo", "ReferenceLayer")
 

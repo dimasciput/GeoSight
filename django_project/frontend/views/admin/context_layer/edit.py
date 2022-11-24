@@ -1,7 +1,5 @@
 """Admin ContextLayer Edit View."""
 
-import json
-
 from braces.views import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, reverse, render
@@ -62,7 +60,7 @@ class ContextLayerEditView(LoginRequiredMixin, BaseView):
         )
         edit_permission_resource(instance, self.request.user)
         data = request.POST.copy()
-        data['data_fields'] = json.loads(request.POST.get('data_fields', '[]'))
+        data['data_fields'] = request.POST.get('data_fields', '[]')
         form = ContextLayerForm(
             data,
             instance=instance

@@ -100,7 +100,7 @@ class ContextLayer(AbstractEditData, AbstractTerm):
     def save_relations(self, data):
         """Save all relationship data."""
         self.contextlayerfield_set.all().delete()
-        for idx, field in enumerate(data['data_fields']):
+        for idx, field in enumerate(json.loads(data['data_fields'])):
             ContextLayerField.objects.get_or_create(
                 context_layer=self,
                 name=field['name'],

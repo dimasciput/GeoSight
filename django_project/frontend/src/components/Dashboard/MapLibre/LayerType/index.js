@@ -4,8 +4,6 @@ import { addPopup, addPopupEl, hasLayer, hasSource } from "../utils";
 
 export { default as arcGisLayer } from "./ArcGis";
 
-const BEFORE_LAYER = 'gl-draw-polygon-fill-inactive.cold'
-
 /**
  * Symbol layers as marker
  * This is to prevent CORS error
@@ -56,8 +54,7 @@ export function geojsonLayer(map, id, geojson, popupFeature) {
           'fill-opacity': 0.6
         },
         'filter': ['==', '$type', 'Polygon']
-      },
-      BEFORE_LAYER
+      }
     );
     addPopup(map, idFill, popupFeature)
   }
@@ -97,8 +94,7 @@ export function rasterTileLayer(map, id, data) {
         ...parameters,
         id: id,
         source: id,
-      },
-      BEFORE_LAYER
+      }
     );
   }
 }

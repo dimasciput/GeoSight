@@ -5,13 +5,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import maplibregl from 'maplibre-gl';
-import StarIcon from "@mui/icons-material/Star";
 
 import ReferenceLayerCentroid from './ReferenceLayerCentroid'
-import CustomPopover from "../../CustomPopover";
 import ReferenceLayer from "./Layers/ReferenceLayer";
 import ContextLayers from "./Layers/ContextLayers";
-import { Plugin, PluginChild } from "./Plugin";
+import { Plugin } from "./Plugin";
 import { removeLayer, removeSource } from "./utils"
 
 // Toolbars
@@ -44,7 +42,12 @@ export default function MapLibre() {
     if (!map) {
       const newMap = new maplibregl.Map({
         container: 'map',
-        style: { version: 8, sources: {}, layers: [] },
+        style: {
+          version: 8,
+          sources: {},
+          layers: [],
+          glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=get_your_own_OpIi9ZULNHzrESv6T2vL"
+        },
         center: [0, 0],
         zoom: 1
       });
@@ -107,22 +110,7 @@ export default function MapLibre() {
       <TiltControl map={map}/>
       <Measurement map={map}/>
       <Plugin>
-        <CustomPopover
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          Button={
-            <PluginChild title={'Bookmark'}>
-              <StarIcon/>
-            </PluginChild>
-          }>
-          <Bookmark/>
-        </CustomPopover>
+        <Bookmark/>
       </Plugin>
       <Plugin>
         <DownloaderData/>

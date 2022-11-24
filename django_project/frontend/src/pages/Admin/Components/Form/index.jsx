@@ -12,10 +12,11 @@ import './style.scss';
  * Indicator List App
  * @param {Boolean} isSubmitted If submitted.
  * @param {Function} submit Submit.
+ * @param {Object} onChanges Events onchange for every input.
  * @param {React.Component} children React component to be rendered.
  */
 export default function AdminForm(
-  { isSubmitted, submit, children }
+  { isSubmitted, submit, onChanges = {}, children }
 ) {
 
   // onSubmitted
@@ -64,9 +65,14 @@ export default function AdminForm(
           options={options} defaultValue={initValue}
           name={$select.attr('name')}/>
       } else {
+        const attrName = $select.attr('name')
         input = <Select
           options={options} defaultValue={initValue}
-          name={$select.attr('name')}/>
+          name={$select.attr('name')} onChange={e => {
+          if (onChanges[attrName]) {
+            onChanges[attrName](e.value)
+          }
+        }}/>
       }
     } else {
       const $input = $(p).find('.form-input input');

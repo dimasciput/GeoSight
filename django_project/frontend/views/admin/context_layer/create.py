@@ -1,7 +1,5 @@
 """Admin ContextLayer Create View."""
 
-import json
-
 from django.shortcuts import redirect, reverse, render
 
 from frontend.views._base import BaseView
@@ -57,8 +55,7 @@ class ContextLayerCreateView(RoleCreatorRequiredMixin, BaseView):
     def post(self, request, **kwargs):
         """Create indicator."""
         data = request.POST.copy()
-        data_fields = data.get('data_fields', '[]')
-        data['data_fields'] = json.loads(data_fields if data_fields else '[]')
+        data['data_fields'] = data.get('data_fields', '[]')
         form = ContextLayerForm(data)
 
         if form.is_valid():

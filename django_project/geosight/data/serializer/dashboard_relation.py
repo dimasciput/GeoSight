@@ -108,6 +108,7 @@ class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):
     """Serializer for DashboardLayer."""
 
     id = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
     indicator = serializers.SerializerMethodField()
     rule = serializers.SerializerMethodField()
     active = serializers.SerializerMethodField()
@@ -116,6 +117,10 @@ class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):
     def get_id(self, obj: DashboardIndicatorLayerIndicator):
         """Return dashboard group name."""
         return obj.indicator.id
+
+    def get_name(self, obj: DashboardIndicatorLayerIndicator):
+        """Return dashboard group name."""
+        return obj.name if obj.name else obj.indicator.name
 
     def get_indicator(self, obj: DashboardIndicatorLayerIndicator):
         """Return dashboard group name."""

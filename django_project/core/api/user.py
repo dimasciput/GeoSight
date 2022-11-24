@@ -17,7 +17,11 @@ class UserListAPI(APIView):
 
     def get(self, request):
         """Return User list."""
-        return Response(UserSerializer(User.objects.all(), many=True).data)
+        return Response(
+            UserSerializer(
+                User.objects.all().order_by('username'), many=True
+            ).data
+        )
 
 
 class UserDetailAPI(APIView):

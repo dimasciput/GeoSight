@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
 from django.utils.translation import gettext_lazy as _
 
-from core.models.profile import ROLES_TYPES
+from core.models.profile import ROLES_TYPES, ROLES
 
 User = get_user_model()
 
@@ -28,6 +28,14 @@ class UserForm(forms.ModelForm):
         choices=ROLES_TYPES,
         widget=forms.Select()
     )
+    is_staff = forms.BooleanField(
+        required=False,
+        label='Backend admin (Django Staff)',
+        help_text=_(
+            'Designates whether the user can access '
+            'the backend (Django) admin site.'
+        )
+    )
 
     def clean_username(self):
         """Check username."""
@@ -39,6 +47,14 @@ class UserForm(forms.ModelForm):
             )
         return username
 
+    def clean_is_staff(self):
+        """Check is_staff."""
+        role = self.cleaned_data['role']
+        is_staff = self.cleaned_data.get('is_staff', False)
+        if role == ROLES.SUPER_ADMIN.name:
+            return is_staff
+        return False
+
     def clean_password(self):
         """Check password."""
         return make_password(self.cleaned_data['password'])
@@ -47,7 +63,7 @@ class UserForm(forms.ModelForm):
         model = User
         fields = (
             'first_name', 'last_name', 'username',
-            'email', 'is_staff', 'role', 'password'
+            'email', 'role', 'is_staff', 'password'
         )
 
     @staticmethod
@@ -65,5 +81,5 @@ class UserEditForm(UserForm):
         model = User
         fields = (
             'first_name', 'last_name', 'username',
-            'email', 'is_staff', 'role',
+            'email', 'role', 'is_staff',
         )

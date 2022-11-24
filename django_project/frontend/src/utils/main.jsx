@@ -280,11 +280,13 @@ export function toSingular(str) {
 export function jsonToXlsx(data, filename, sheetName = "Sheet 1") {
   const worksheet = XLSX.utils.json_to_sheet(data);
   const workbook = XLSX.utils.book_new();
-  worksheet["!cols"] = Object.keys(data[0]).map(key => {
-    return { wch: data.reduce((w, r) => Math.max(w, r[key].length), 10) }
-  });
-  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
-  XLSX.writeFile(workbook, filename);
+  if (data[0]) {
+    worksheet["!cols"] = Object.keys(data[0]).map(key => {
+      return { wch: data.reduce((w, r) => Math.max(w, r[key]?.length), 10) }
+    });
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    XLSX.writeFile(workbook, filename);
+  }
 }
 
 /**

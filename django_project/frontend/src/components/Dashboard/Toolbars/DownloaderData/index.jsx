@@ -15,6 +15,7 @@ import { PluginChild } from "../../MapLibre/Plugin";
 import CustomPopover from "../../../CustomPopover";
 import { ThemeButton } from "../../../Elements/Button";
 import { dictDeepCopy, jsonToXlsx } from "../../../../utils/main";
+import { returnWhere } from "../../../../utils/queryExtraction";
 
 import './style.scss';
 
@@ -26,10 +27,13 @@ export default function DownloaderData() {
   const selectedIndicatorLayer = useSelector(state => state.selectedIndicatorLayer)
   const selectedAdminLevel = useSelector(state => state.selectedAdminLevel)
   const indicatorsData = useSelector(state => state.indicatorsData)
+  const filtersData = useSelector(state => state.filtersData);
   const [downloading, setDownloading] = useState(false)
 
   const [xls, setXls] = useState(true)
   const [geojson, setGeojson] = useState(false)
+
+  const where = returnWhere(filtersData ? filtersData : [])
 
   const selectedLayerData = []
   selectedIndicatorLayer?.indicators?.map(indicator => {
@@ -54,7 +58,10 @@ export default function DownloaderData() {
             "type": "FeatureCollection",
             "features": []
           }
-          filteredGeometries.map(code => {
+          const usedGeometries = where ? filteredGeometries : geometryData.map(geometry=>{
+            return geometry?.properties?.identifier?.admin
+          })
+          usedGeometries.map(code => {
             // Get data per geom
             const geom = geometryData.find(feature => {
               return feature.properties.identifier.admin === code
@@ -77,8 +84,8 @@ export default function DownloaderData() {
                       tableData[name] = []
                     }
                     const indicatorData = {
-                      IndicatorCode: indicator.shortcode ? indicator.shortcode : '',
-                      IndicatorName: indicator.name,
+                      IndicatorCode: indicator.shortcode,
+                      IndicatorName: name,
                       Value: '' + value.value,
                       Date: value.date
                     }

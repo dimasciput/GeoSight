@@ -13,6 +13,9 @@ from geosight.permission.access.mixin import (
     RoleContributorRequiredMixin, read_permission_resource,
     edit_permission_resource
 )
+from geosight.permission.models.resource import (
+    ReferenceLayerIndicatorPermission
+)
 
 
 class IndicatorValueManagementMapView(RoleContributorRequiredMixin, BaseView):
@@ -164,6 +167,8 @@ class IndicatorValueManagementTableView(RoleContributorRequiredMixin,
             reference_layer=reference_layer,
             indicator=indicator
         )
+        # Make sure we have permission
+        ReferenceLayerIndicatorPermission.objects.get_or_create(obj=dataset)
         edit_permission_resource(dataset, self.request.user)
         if date:
             indicator_values = {}
