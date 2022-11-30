@@ -76,8 +76,11 @@ const popupFeature = (featureProperties, name, fields, defaultField) => {
  * Render label of data
  */
 export function renderLabel(id, contextLayerData, contextLayer, map) {
+  if (!contextLayerData?.data_fields) {
+    return
+  }
   const labels = contextLayerData.data_fields.filter(field => field.as_label)
-  if (labels.length && contextLayerData.label_styles) {
+  if (labels && labels.length && contextLayerData?.label_styles) {
 
     // Add label source
     const idLabel = id + '-label'
