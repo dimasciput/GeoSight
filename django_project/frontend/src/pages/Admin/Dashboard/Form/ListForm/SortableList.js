@@ -31,6 +31,8 @@ import SortableContainer from "./SortableContainer";
  * @param {Function} editLayerInGroup When edit layer in group
  * @param {Function} rearrangeLayers Rearrange layers
  * @param {Function} otherActionsFunction Other actions
+ * @param {boolean} selectable Indicates if table is selectable
+ * @param {Function} removeItems Remove selected items
  */
 export default function SortableList(
   {
@@ -43,7 +45,9 @@ export default function SortableList(
     addLayerInGroup,
     editLayerInGroup,
     rearrangeLayers,
-    otherActionsFunction
+    otherActionsFunction,
+    selectable,
+    removeItems
   }
 ) {
   const prevState = useRef();
@@ -274,6 +278,8 @@ export default function SortableList(
               addLayerInGroup={addLayerInGroup}
               editLayerInGroup={editLayerInGroup}
               otherActionsFunction={otherActionsFunction}
+              selectable={selectable}
+              removeItems={removeItems}
             />
           ))}
         </SortableContext>
