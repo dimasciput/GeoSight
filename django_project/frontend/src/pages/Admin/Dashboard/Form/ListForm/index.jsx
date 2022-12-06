@@ -26,6 +26,7 @@ import './style.scss';
  *
  * @param {boolean} openDataSelection Open data selection
  * @param {Function} setOpenDataSelection Set open data selection
+ * @param {boolean} selectable Indicates whether the list is selectable or not, default is false
  */
 export default function ListForm(
   {
@@ -43,7 +44,8 @@ export default function ListForm(
     groupLabel,
 
     openDataSelection,
-    setOpenDataSelection
+    setOpenDataSelection,
+    selectable = false,
   }
 ) {
   // GLOBAL DATA
@@ -155,6 +157,10 @@ export default function ListForm(
     setOpen(false)
   }
 
+  const handleRemoveItems = (selectedItems) => {
+    selectedItems.map(selectedItem => removeLayerAction(selectedItem))
+  }
+
   return <Fragment>
     {
       !groups ? <div>Loading</div> :
@@ -183,6 +189,8 @@ export default function ListForm(
             editLayerInGroup={editLayerInGroupAction}
             rearrangeLayers={rearrangeLayersAction}
             otherActionsFunction={otherActionsFunction}
+            selectable={selectable}
+            removeItems={handleRemoveItems}
           />
 
           {

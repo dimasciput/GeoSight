@@ -46,5 +46,6 @@ export default function IndicatorsForm() {
       dispatch(Actions.Indicators.rearrange(payload))
     }}
     groupLabel={'Category'}
+    selectable={true}
   />
 }

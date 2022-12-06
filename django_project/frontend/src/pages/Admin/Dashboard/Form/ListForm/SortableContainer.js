@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import {
   rectSortingStrategy,
   SortableContext,
@@ -11,9 +11,11 @@ import DragHandleIcon from '@mui/icons-material/DragHandle';
 import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconTextField } from "../../../../../components/Elements/Input";
 import SortableItem from "./SortableItem";
 import { CSS } from "@dnd-kit/utilities";
+import {Button, Checkbox} from "@mui/material";
 
 /**
  * Group container
@@ -29,6 +31,8 @@ import { CSS } from "@dnd-kit/utilities";
  * @param {Function} addLayerInGroup Function of addLayerInGroup.
  * @param {Function} editLayerInGroup When edit layer in group
  * @param {Function} otherActionsFunction Other actions
+ * @param {boolean} selectable Indicates whether the list is selectable or not, default is false
+ * @param {Function} removeItems Remove selected items
  */
 export default function SortableContainer(
   {
@@ -43,12 +47,55 @@ export default function SortableContainer(
     changeLayer,
     addLayerInGroup,
     editLayerInGroup,
-    otherActionsFunction
+    otherActionsFunction,
+    selectable = false,
+    removeItems
   }) {
 
   const noGroup = '_noGroup'
   const [editName, setEditName] = useState(false);
   const [name, setName] = useState(groupName);
+  const [itemSelected, setItemSelected] = useState([]);
+  const [groupSelected, setGroupSelected] = useState(false);
+
+  useEffect(() => {
+    if (!data) return
+    if (data.length !== itemSelected.length) {
+      setItemSelected([])
+    }
+  }, [data])
+
+  useEffect(() => {
+    if (items) {
+      const itemIds = items.filter(item => Number.isInteger(item))
+      if (itemSelected.length === itemIds.length) {
+        setGroupSelected(true)
+      } else {
+        setGroupSelected(false)
+      }
+    }
+  }, [itemSelected])
+
+  const selectItem = (item) => {
+    if (itemSelected.indexOf(item) >= 0) {
+      setItemSelected(itemSelected.filter(id => id !== item))
+    } else {
+      setItemSelected([...itemSelected, ...[item]])
+    }
+  }
+
+  const selectGroup = () => {
+    if (!groupSelected) {
+      const itemIds = items.filter(item => Number.isInteger(item))
+      setItemSelected([...itemIds])
+    } else {
+      setItemSelected([])
+    }
+  }
+
+  const handleRemoveItemsClick = () => {
+    removeItems(itemSelected.map(item => data[item]))
+  }
 
   const {
     attributes,
@@ -79,6 +126,14 @@ export default function SortableContainer(
                 <SortableItem
                   key={item} id={item}
                   className={'GroupRow ' + item}>
+                  {
+                    selectable ?
+                    <td width={1}>
+                        <Checkbox
+                            onClick={selectGroup} style={{ color: 'white' }}
+                            checked={groupSelected}/>
+                    </td> : null
+                  }
                   <td className='DragDropItem-Drag'>
                     {
                       item !== noGroup ?
@@ -127,6 +182,13 @@ export default function SortableContainer(
                               )
                           }
                           <div className='Separator'/>
+                          { itemSelected.length > 0 ?
+                            <span className='ItemSelectedInfo'>{itemSelected.length} selected
+                              <Button size={'small'} variant="text" onClick={handleRemoveItemsClick}>
+                                <DeleteOutlineIcon fontSize={'small'}/>
+                              </Button>
+                            </span> : ''
+                          }
                           <div className='AddButton MuiButtonLike'
                                onClick={() => {
                                  addLayerInGroup(groupName)
@@ -149,6 +211,10 @@ export default function SortableContainer(
             /** FOR GROUP MEMBERS **/
             return (
               <SortableItem key={item} id={item}>
+                { selectable ?
+                  <td width={1}>
+                      <Checkbox onClick={(e) => selectItem(item)} checked={itemSelected.indexOf(item) >= 0}/>
+                  </td> : null }
                 <td title={layer.name}>
                   <div className='DragDropItem-Name'>
                     {layer.name}
@@ -193,13 +259,13 @@ export default function SortableContainer(
                       }}/>
                     </td> : ''
                 }
-                <td className='RemoveAction'>
-                  <RemoveCircleIcon className='MuiButtonLike'
-                                    onClick={() => {
-                                      removeLayer(layer)
-                                    }}/>
-                </td>
-
+                { !selectable ?
+                  <td className='RemoveAction'>
+                    <RemoveCircleIcon className='MuiButtonLike'
+                                      onClick={() => {
+                                        removeLayer(layer)
+                                      }}/>
+                  </td> : null }
               </SortableItem>
             )
           }) : <SortableItem

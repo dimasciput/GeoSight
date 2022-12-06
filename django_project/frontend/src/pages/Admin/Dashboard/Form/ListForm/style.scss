@@ -109,6 +109,15 @@
       font-weight: $base-font-medium;
       text-align: left;
     }
+
+    .ItemSelectedInfo {
+      display: flex !important;
+
+      button {
+        color: white;
+        padding: 0 !important;
+      }
+    }
   }
 
   .VisibilityAction,
