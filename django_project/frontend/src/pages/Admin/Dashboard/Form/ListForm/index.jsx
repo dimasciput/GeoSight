@@ -8,6 +8,8 @@ import DataSelectionModal from './DataSelectionModal'
 import SortableList from './SortableList'
 
 import './style.scss';
+import {SortableTree} from "./SortableTree";
+import {createTreeData} from "./utilities";
 
 /**
  * Basemaps dashboard
@@ -177,6 +179,10 @@ export default function ListForm(
             </div>
           </div>
 
+          <SortableTree
+            data={createTreeData(groups)}
+            otherActionsFunction={otherActionsFunction}
+            collapsible indicator/>
           {/* for the table */}
           <SortableList
             groups={groups}
