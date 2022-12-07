@@ -181,23 +181,28 @@ export default function ListForm(
 
           <SortableTree
             data={createTreeData(groups)}
+            changeGroupName={changeGroupName}
+            changeLayer={changeLayer}
             otherActionsFunction={otherActionsFunction}
+            rearrangeLayers={rearrangeLayersAction}
+            groupLabel={groupLabel}
+            addLayerInGroup={addLayerInGroup}
             collapsible indicator/>
           {/* for the table */}
-          <SortableList
-            groups={groups}
-            groupLabel={groupLabel}
-            removeGroup={removeGroup}
-            changeGroupName={changeGroupName}
-            removeLayer={removeLayer}
-            changeLayer={changeLayer}
-            addLayerInGroup={addLayerInGroup}
-            editLayerInGroup={editLayerInGroupAction}
-            rearrangeLayers={rearrangeLayersAction}
-            otherActionsFunction={otherActionsFunction}
-            selectable={selectable}
-            removeItems={handleRemoveItems}
-          />
+          {/*<SortableList*/}
+          {/*  groups={groups}*/}
+          {/*  groupLabel={groupLabel}*/}
+          {/*  removeGroup={removeGroup}*/}
+          {/*  changeGroupName={changeGroupName}*/}
+          {/*  removeLayer={removeLayer}*/}
+          {/*  changeLayer={changeLayer}*/}
+          {/*  addLayerInGroup={addLayerInGroup}*/}
+          {/*  editLayerInGroup={editLayerInGroupAction}*/}
+          {/*  rearrangeLayers={rearrangeLayersAction}*/}
+          {/*  otherActionsFunction={otherActionsFunction}*/}
+          {/*  selectable={selectable}*/}
+          {/*  removeItems={handleRemoveItems}*/}
+          {/*/>*/}
 
           {
             open ?

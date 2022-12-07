@@ -24,7 +24,7 @@ import {
   getChildCount,
   removeItem,
   removeChildrenOf,
-  setProperty,
+  setProperty, convertToLayerData,
 } from './utilities';
 import {sortableTreeKeyboardCoordinates} from './keyboardCoordinates';
 import {TreeItem} from '../../../Components/TreeItem/TreeItem';
@@ -47,13 +47,26 @@ export function SortableTree({
   indicator,
   indentationWidth = 50,
   removable,
-  otherActionsFunction
+  rearrangeLayers,
+  otherActionsFunction,
+  changeGroupName,
+  changeLayer,
+  ...props
 }) {
   const [items, setItems] = useState(() => data);
   const [activeId, setActiveId] = useState(null);
   const [overId, setOverId] = useState(null);
   const [offsetLeft, setOffsetLeft] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(null);
+  const [dragged, setDragged] = useState(false);
+
+  useEffect(() => {
+    if (!dragged) {
+      if (JSON.stringify(items) !== JSON.stringify(data)) {
+        setItems(data)
+      }
+    }
+  }, [data, items])
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items);
@@ -156,6 +169,9 @@ export function SortableTree({
             onRemove={removable ? () => handleRemove(id) : undefined}
             isGroup={isGroup}
             otherActionsFunction={otherActionsFunction}
+            changeGroupName={changeGroupName}
+            changeLayer={changeLayer}
+            {...props}
           />
         ))}
         {createPortal(
@@ -182,6 +198,7 @@ export function SortableTree({
   function handleDragStart({active: {id: activeId}}) {
     setActiveId(activeId);
     setOverId(activeId);
+    setDragged(true)
 
     const activeItem = flattenedItems.find(({id}) => id === activeId);
 
@@ -196,12 +213,10 @@ export function SortableTree({
   }
 
   function handleDragMove({delta}) {
-    console.log('handleDragMove', delta)
     setOffsetLeft(delta.x);
   }
 
   function handleDragOver({over}) {
-    console.log('handleDragOver', over)
     setOverId(over?.id ?? null);
   }
 
@@ -209,7 +224,6 @@ export function SortableTree({
     resetState();
 
     if (projected && over) {
-      console.log('handleDragEnd', projected, over, active)
       const {depth, parentId} = projected;
       const clonedItems = JSON.parse(
         JSON.stringify(flattenTree(items))
@@ -224,11 +238,16 @@ export function SortableTree({
       const newItems = buildTree(sortedItems);
 
       setItems(newItems);
+      rearrangeLayers(convertToLayerData(newItems))
+      setTimeout(() => {
+        setDragged(false)
+      }, 500)
     }
   }
 
   function handleDragCancel() {
     resetState();
+    setDragged(false)
   }
 
   function resetState() {
@@ -245,11 +264,15 @@ export function SortableTree({
   }
 
   function handleCollapse(id) {
+    setDragged(true)
     setItems((items) =>
       setProperty(items, id, 'collapsed', (value) => {
         return !value;
       })
     );
+    setTimeout(() => {
+      setDragged(false)
+    }, 500)
   }
 
   function getMovementAnnouncement(

@@ -1,9 +1,13 @@
-import React, {forwardRef, HTMLAttributes} from 'react';
+import React, {Fragment, forwardRef, useState} from 'react';
 import classNames from 'classnames';
 
 import styles from './TreeItem.module.scss';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import {IconTextField} from "../../../../components/Elements/Input";
+import DoneIcon from "@mui/icons-material/Done";
+import EditIcon from "@mui/icons-material/Edit";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 export function Action({active, className, cursor, style, ...props}) {
   return (
@@ -72,7 +76,10 @@ export const TreeItem = forwardRef(
     },
     ref
   ) => {
-    console.log('propsData', props.data);
+    const noGroup = '_noGroup'
+    const [editName, setEditName] = useState(false)
+    const [name, setName] = useState(value);
+
     return (
       <li
         className={classNames(
@@ -104,7 +111,44 @@ export const TreeItem = forwardRef(
               {collapseIcon}
             </Action>
           )}
-          <span className={styles.Text}>{value}</span>
+          {
+            props.isGroup ? (
+              editName? (
+                  <Fragment>
+                    <span>{props.groupLabel ? (props.groupLabel + ' : ') : 'Group : '}</span>
+                    <IconTextField
+                      className={styles.GroupTextField}
+                      iconEnd={
+                        <DoneIcon
+                          className='MuiButtonLike'
+                          onClick={() => {
+                            if (props.changeGroupName(value, name)) {
+                              setEditName(false)
+                            }
+                          }}/>
+                      }
+                      value={name}
+                      onChange={(evt) => {
+                        setName(evt.target.value)
+                      }}
+                    />
+                  </Fragment>
+                ) :
+                (
+                  <Fragment>
+                    <span>
+                      {props.groupLabel ? (props.groupLabel + ' : ') : 'Group : '} {name ? name :
+                      <i>No Name</i>}
+                    </span>
+                    <EditIcon
+                      className='MuiButtonLike GroupEditName'
+                      onClick={() => {
+                        setEditName(true)
+                      }}/>
+                  </Fragment>
+                )
+              ) : <span className={styles.Text}>{value}</span>
+            }
           {!clone && onRemove && <Remove onClick={onRemove} />}
           {clone && childCount && childCount > 1 ? (
             <span className={styles.Count}>{childCount}</span>
@@ -119,19 +163,27 @@ export const TreeItem = forwardRef(
                 </span> : ''
           }
 
+          { props.isGroup ?
+            <span className={styles.AddButton}
+                 onClick={() => {
+                   props.addLayerInGroup(value)
+                 }}>
+              <AddCircleIcon/>{"Add To Group"}
+            </span> : null }
+
           <span className={styles.VisibilityAction}>
           {
             !props.isGroup && props.data ?
               props.data?.visible_by_default ? <VisibilityIcon
                   onClick={() => {
-                    layer.visible_by_default = false;
-                    // changeLayer(layer);
+                    props.data.visible_by_default = false;
+                    props.changeLayer(props.data);
                   }}/> :
                 <VisibilityOffIcon
                   className={styles.VisibilityOffAction}
                   onClick={() => {
-                    layer.visible_by_default = true;
-                    // changeLayer(layer);
+                    props.data.visible_by_default = true;
+                    props.changeLayer(props.data);
                   }}/>
               : null
           }

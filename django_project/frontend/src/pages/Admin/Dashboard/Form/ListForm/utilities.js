@@ -93,14 +93,8 @@ export function flattenTree(items) {
   return flatten(items);
 }
 
-function flattenData(items, parentId = null, depth = 0) {
-  // items.reduce((item) => {
-  //   console.log(item)
-  // })
-  return items;
-}
-
 export function createTreeData(items) {
+  console.log('layerData', items)
   const treeData = []
   for (const item of items instanceof Array ? items : Object.keys(items)) {
     if (item) {
@@ -117,9 +111,43 @@ export function createTreeData(items) {
   return treeData
 }
 
-export function flattenTreeData(items) {
-  const treeData = createTreeData(items)
-  return flatten(treeData)
+function unflattenTree(items) {
+  let groupedData = {}
+  for (const item of items) {
+    let groupName = null;
+    if (item.isGroup) {
+      groupName = item.id
+    } else {
+      if (item.data) {
+        groupName = item.data.group
+      }
+    }
+    if (groupName !== null && !groupedData.hasOwnProperty(groupName)) {
+      groupedData[groupName] = []
+    }
+    if (!item.isGroup && item.data) {
+      groupedData[groupName].push(item.data)
+    } else {
+      for (let child of item.children) {
+        groupedData[groupName].push(child.data)
+      }
+    }
+  }
+  return groupedData
+}
+
+export function convertToLayerData(treeData) {
+  const unflattenData = unflattenTree(treeData)
+  const layerData = Object.keys(unflattenData).map(group => {
+    return {[group] : [(group ? group : 'noHeader') + '-header',
+      ...unflattenData[group].map(data => data.id)]}
+  })
+  const layerObj = {}
+  for (const layer of layerData) {
+    let key = Object.keys(layer)[0]
+    layerObj[key] = layer[key]
+  }
+  return layerObj
 }
 
 export function buildTree(flattenedItems) {

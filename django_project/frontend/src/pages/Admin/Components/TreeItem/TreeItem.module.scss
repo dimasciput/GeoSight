@@ -184,3 +184,32 @@ $focused-outline-color: #4c9ffe;
 .VisibilityOffAction {
   opacity: 0.5;
 }
+
+.AddButton {
+  cursor: pointer;
+  margin-left: auto;
+  padding: 0.5rem;
+  display: flex;
+  font-weight: 500;
+  letter-spacing: 0.02857em;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  color: var(--anti-secondary-color);
+  svg {
+    margin-right: 0.5rem;
+  }
+}
+
+.GroupTextField {
+    margin-top: 0.2rem;
+    margin-left: 0.5em !important;
+    color: var(--anti-secondary-color);
+    input, svg {
+      color: var(--anti-secondary-color);
+      padding: 5px 10px;
+    }
+    fieldset {
+      border: 2px solid white;
+    }
+}
