@@ -270,9 +270,9 @@ export function IndicatorLayers() {
     }, []);
 
     return <div className={'LayerGroup ' + (groupName ? '' : 'Empty')}>
-      <div className='LayerGroupName'>
+      <div className='LayerGroupName' onClick={handleCollapseClick}>
         <Button className='CollapseButton'
-                variant={'text'} size={'small'} startIcon={isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>} onClick={handleCollapseClick}/>
+                variant={'text'} size={'small'} startIcon={isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>} />
         <b className='light'>{groupName}</b>
       </div>
       <Collapse in={isCollapsed}>

@@ -254,6 +254,7 @@
     .LayerGroupName {
       background-color: $base-to-white-color;
       padding: 5px 10px;
+      cursor: pointer;
       .CollapseButton {
         padding: 0 !important;
         display: inline-block;
