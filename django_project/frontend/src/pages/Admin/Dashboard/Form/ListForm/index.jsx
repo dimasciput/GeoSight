@@ -8,6 +8,8 @@ import DataSelectionModal from './DataSelectionModal'
 import SortableList from './SortableList'
 
 import './style.scss';
+import {SortableTree} from "./SortableTree";
+import {createTreeData} from "./utilities";
 
 /**
  * Basemaps dashboard
@@ -177,21 +179,30 @@ export default function ListForm(
             </div>
           </div>
 
-          {/* for the table */}
-          <SortableList
-            groups={groups}
-            groupLabel={groupLabel}
-            removeGroup={removeGroup}
+          <SortableTree
+            data={createTreeData(groups)}
             changeGroupName={changeGroupName}
-            removeLayer={removeLayer}
             changeLayer={changeLayer}
-            addLayerInGroup={addLayerInGroup}
-            editLayerInGroup={editLayerInGroupAction}
-            rearrangeLayers={rearrangeLayersAction}
             otherActionsFunction={otherActionsFunction}
-            selectable={selectable}
-            removeItems={handleRemoveItems}
-          />
+            rearrangeLayers={rearrangeLayersAction}
+            groupLabel={groupLabel}
+            addLayerInGroup={addLayerInGroup}
+            collapsible indicator/>
+          {/* for the table */}
+          {/*<SortableList*/}
+          {/*  groups={groups}*/}
+          {/*  groupLabel={groupLabel}*/}
+          {/*  removeGroup={removeGroup}*/}
+          {/*  changeGroupName={changeGroupName}*/}
+          {/*  removeLayer={removeLayer}*/}
+          {/*  changeLayer={changeLayer}*/}
+          {/*  addLayerInGroup={addLayerInGroup}*/}
+          {/*  editLayerInGroup={editLayerInGroupAction}*/}
+          {/*  rearrangeLayers={rearrangeLayersAction}*/}
+          {/*  otherActionsFunction={otherActionsFunction}*/}
+          {/*  selectable={selectable}*/}
+          {/*  removeItems={handleRemoveItems}*/}
+          {/*/>*/}
 
           {
             open ?
