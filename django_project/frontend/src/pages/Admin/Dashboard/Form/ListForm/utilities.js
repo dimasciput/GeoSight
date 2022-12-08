@@ -94,7 +94,6 @@ export function flattenTree(items) {
 }
 
 export function createTreeData(items) {
-  console.log('layerData', items)
   const treeData = []
   for (const item of items instanceof Array ? items : Object.keys(items)) {
     if (item) {
@@ -108,36 +107,56 @@ export function createTreeData(items) {
       treeData.push(...createTreeData(items[item]))
     }
   }
+  console.log('treeData', treeData)
   return treeData
 }
 
-function unflattenTree(items) {
-  let groupedData = {}
-  for (const item of items) {
-    let groupName = null;
-    if (item.isGroup) {
-      groupName = item.id
+let layerIndex = 0;
+function unflattenTree(treeData, groups, parentGroup = '') {
+  for (let i = 0; i < treeData.length; i++) {
+    let node = treeData[i];
+    if (node.isGroup) {
+      // If the node is a group, add it to the groups object
+      groups[node.id] = [];
+      // Store the parent group of the current group
+      groups[node.id].parent = parentGroup;
+      // Recursively process the children of the group
+      unflattenTree(node.children, groups, node.id);
     } else {
-      if (item.data) {
-        groupName = item.data.group
+      // If the node is not a group, add it to the appropriate group in the groups object
+      let group = node.data.group;
+      node.data.order = layerIndex;
+      let group_parent = null;
+      try {
+        group_parent = groups[group].parent
+      } catch (e) {
       }
-    }
-    if (groupName !== null && !groupedData.hasOwnProperty(groupName)) {
-      groupedData[groupName] = []
-    }
-    if (!item.isGroup && item.data) {
-      groupedData[groupName].push(item.data)
-    } else {
-      for (let child of item.children) {
-        groupedData[groupName].push(child.data)
+      node.data.group_parent = group_parent;
+      if (node.data.group_parent) {
+        node.data.group_order = layerIndex
+      } else {
+        node.data.group_order = ''
+      }
+      let data = {
+        id: node.id,
+        index: layerIndex,
+        data: node.data,
+        group: group,
+        group_parent: group_parent
+      };
+      try {
+        groups[group].push(data);
+        layerIndex += 1;
+      } catch (e) {
       }
     }
   }
-  return groupedData
+  return groups;
 }
 
 export function convertToLayerData(treeData) {
-  const unflattenData = unflattenTree(treeData)
+  layerIndex = 0
+  const unflattenData = unflattenTree(treeData, {})
   const layerData = Object.keys(unflattenData).map(group => {
     return {[group] : [(group ? group : 'noHeader') + '-header',
       ...unflattenData[group].map(data => data.id)]}
@@ -147,7 +166,7 @@ export function convertToLayerData(treeData) {
     let key = Object.keys(layer)[0]
     layerObj[key] = layer[key]
   }
-  return layerObj
+  return unflattenData;
 }
 
 export function buildTree(flattenedItems) {

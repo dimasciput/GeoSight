@@ -59,7 +59,11 @@ export function IndicatorLayer(
     }
     const errorData = indicatorsData[indicator.id]?.error
     if (errorData) {
-      errors.push(errorData.data.detail)
+      try {
+        errors.push(errorData.data.detail)
+      } catch (e) {
+        console.error(e)
+      }
     }
   })
   // --------------------------------------------

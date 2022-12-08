@@ -32,12 +32,37 @@ class DashboardIndicatorSerializer(serializers.ModelSerializer):
         fields = ('order', 'group', 'visible_by_default', 'rules')
 
 
-class DashboardIndicatorLayerSerializer(serializers.ModelSerializer):
+class DashboardSerializer(serializers.ModelSerializer):
+
+    group = serializers.SerializerMethodField()
+    group_parent = serializers.SerializerMethodField()
+    group_order = serializers.SerializerMethodField()
+
+    def get_group(self, obj):
+        """Return dashboard group name."""
+        return obj.relation_group.name if obj.relation_group else '-'
+
+    def get_group_parent(self, obj):
+        """Return name of parent of the group"""
+        if obj.relation_group:
+            if obj.relation_group.group:
+                return obj.relation_group.group.name
+        else:
+            return '-'
+
+    def get_group_order(self, obj):
+        """Return order of the group"""
+        return obj.relation_group.order if obj.relation_group else '-'
+
+    class Meta:
+        fields = ('group', 'group_parent', 'group_order')
+
+
+class DashboardIndicatorLayerSerializer(DashboardSerializer):
     """Serializer for DashboardLayer."""
 
     name = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
-    group = serializers.SerializerMethodField()
     indicators = serializers.SerializerMethodField()
     style = serializers.SerializerMethodField()
     last_update = serializers.SerializerMethodField()
@@ -52,10 +77,6 @@ class DashboardIndicatorLayerSerializer(serializers.ModelSerializer):
     def get_description(self, obj: DashboardIndicatorLayer):
         """Return dashboard group name."""
         return obj.desc
-
-    def get_group(self, obj: DashboardIndicatorLayer):
-        """Return dashboard group name."""
-        return obj.group if obj.group else ''
 
     def get_indicators(self, obj: DashboardIndicatorLayer):
         """Return rules."""
@@ -100,8 +121,9 @@ class DashboardIndicatorLayerSerializer(serializers.ModelSerializer):
         model = DashboardIndicatorLayer
         fields = (
             'id', 'name', 'description', 'style',
-            'order', 'group', 'visible_by_default', 'indicators',
+            'order', 'visible_by_default', 'indicators',
             'last_update', 'rules', 'reporting_level', 'reporting_levels')
+        fields += DashboardSerializer.Meta.fields
 
 
 class DashboardIndicatorLayerIndicatorSerializer(serializers.ModelSerializer):
@@ -167,7 +189,7 @@ class DashboardBasemapSerializer(serializers.ModelSerializer):
 
     def get_group(self, obj: DashboardBasemap):
         """Return dashboard group name."""
-        return obj.group if obj.group else ''
+        return obj.relation_group.name if obj.relation_group else ''
 
     class Meta:  # noqa: D106
         model = DashboardBasemap
@@ -184,7 +206,7 @@ class DashboardContextLayerSerializer(serializers.ModelSerializer):
 
     def get_group(self, obj: DashboardContextLayer):
         """Return dashboard group name."""
-        return obj.group if obj.group else ''
+        return obj.relation_group.name if obj.relation_group else ''
 
     def get_data_fields(self, obj: DashboardContextLayer):
         """Return dashboard group name."""

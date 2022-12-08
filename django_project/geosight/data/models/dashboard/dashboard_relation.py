@@ -15,10 +15,10 @@ from core.models.general import AbstractTerm
 User = get_user_model()
 
 
-class DashboardIndicatorGroup(AbstractTerm):
+class DashboardRelationGroup(AbstractTerm):
     """Group for dashboard relation data"""
     group = models.ForeignKey(
-        'geosight_data.DashboardIndicatorGroup',
+        'geosight_data.DashboardRelationGroup',
         null=True,
         blank=True,
         on_delete=models.CASCADE
@@ -53,8 +53,8 @@ class DashboardRelation(models.Model):
         max_length=512,
         blank=True, null=True
     )
-    indicator_group = models.ForeignKey(
-        'geosight_data.DashboardIndicatorGroup',
+    relation_group = models.ForeignKey(
+        'geosight_data.DashboardRelationGroup',
         null=True,
         blank=True,
         on_delete=models.SET_NULL

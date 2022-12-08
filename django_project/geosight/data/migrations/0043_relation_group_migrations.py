@@ -6,7 +6,7 @@ from django.db import migrations
 
 def run(apps, schema_editor):
     DashboardIndicator = apps.get_model("geosight_data", "DashboardIndicator")
-    DashboardIndicatorGroup = apps.get_model("geosight_data", "DashboardIndicatorGroup")
+    DashboardRelationGroup = apps.get_model("geosight_data", "DashboardRelationGroup")
     DashboardBasemap = apps.get_model("geosight_data", "DashboardBasemap")
     DashboardContextLayer = apps.get_model("geosight_data", "DashboardContextLayer")
     DashboardIndicatorLayer = apps.get_model("geosight_data", "DashboardIndicatorLayer")
@@ -27,41 +27,41 @@ def run(apps, schema_editor):
         group=''
     )
     for indicator in indicators:
-        group, _ = DashboardIndicatorGroup.objects.get_or_create(
+        group, _ = DashboardRelationGroup.objects.get_or_create(
             name=indicator.group
         )
-        indicator.indicator_group = group
+        indicator.relation_group = group
         indicator.save()
     for basemap in basemaps:
-        group, _ = DashboardIndicatorGroup.objects.get_or_create(
+        group, _ = DashboardRelationGroup.objects.get_or_create(
             name=basemap.group
         )
-        basemap.indicator_group = group
+        basemap.relation_group = group
         basemap.save()
     for context_layer in context_layers:
-        group, _ = DashboardIndicatorGroup.objects.get_or_create(
+        group, _ = DashboardRelationGroup.objects.get_or_create(
             name=context_layer.group
         )
-        context_layer.indicator_group = group
+        context_layer.relation_group = group
         context_layer.save()
     for widget in widgets:
-        group, _ = DashboardIndicatorGroup.objects.get_or_create(
+        group, _ = DashboardRelationGroup.objects.get_or_create(
             name=widget.group
         )
-        widget.indicator_group = group
+        widget.relation_group = group
         widget.save()
     for dashboard_indicator in dashboard_indicators:
-        group, _ = DashboardIndicatorGroup.objects.get_or_create(
+        group, _ = DashboardRelationGroup.objects.get_or_create(
             name=dashboard_indicator.group
         )
-        dashboard_indicator.indicator_group = group
+        dashboard_indicator.relation_group = group
         dashboard_indicator.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('geosight_data', '0042_auto_20221208_0557'),
+        ('geosight_data', '0042_auto_20221208_0735'),
     ]
 
     operations = [
