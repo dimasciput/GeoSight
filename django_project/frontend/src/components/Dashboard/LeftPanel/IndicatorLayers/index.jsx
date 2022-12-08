@@ -2,7 +2,13 @@
    INDICATOR LAYER
    ========================================================================== */
 
-import React, { Fragment, useEffect, useState } from 'react';
+import React, {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -10,7 +16,9 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from "@mui/material/Accordion";
 import InfoIcon from '@mui/icons-material/Info';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Checkbox, Radio } from "@mui/material";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import {Button, Checkbox, Collapse, Radio} from "@mui/material";
 
 import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
@@ -21,13 +29,15 @@ import CustomPopover from "../../../CustomPopover";
 /**
  * Indicator selector.
  * @param {dict} layer Layer dictionary.
+ * @param {int} containerWidth width of the container
  * @param {bool} checked Is indicator checked.
  * @param {function} onChange Function when on changed
  * @param {bool} checkedAsSecond Is indicator checked as second.
  * @param {function} onChangeAsSecond Function when on changed as second
  */
 export function IndicatorLayer(
-  { layer, checked, onChange, checkedAsSecond, onChangeAsSecond }
+  { layer, containerWidth,
+    checked, onChange, checkedAsSecond, onChangeAsSecond }
 ) {
   const { indicators } = useSelector(state => state.dashboard.data)
   const indicatorsData = useSelector(state => state.indicatorsData)
@@ -60,6 +70,9 @@ export function IndicatorLayer(
       onChange(id)
     }
   }
+
+  const maxWordLength = parseInt(containerWidth / 15)
+  const maxWordRegex = new RegExp(`(\\w{${maxWordLength}})(?=\\w)`)
 
   const disabled = errors.length !== 0 || (compareMode && checked)
   return (
@@ -101,7 +114,7 @@ export function IndicatorLayer(
         </td>
         <td valign="top">
           <div className='text title'>
-            <div>{layer.name}</div>
+            <div>{layer.name.replace(maxWordRegex, '$1 ')}</div>
           </div>
         </td>
         {/* If not error */}
@@ -241,24 +254,45 @@ export function IndicatorLayers() {
    * @param {dict} group Group data.
    */
   const LayerRow = ({ groupName, group }) => {
+    const layerGroupListRef = useRef(null);
+    const [isCollapsed, setIsCollapsed] = React.useState(true);
+
+    const handleCollapseClick = () => {
+      setIsCollapsed(!isCollapsed);
+    };
+
+    const [width, setWidth] = useState(0);
+
+    useLayoutEffect(() => {
+      if (layerGroupListRef?.current) {
+        setWidth(layerGroupListRef.current.offsetWidth);
+      }
+    }, []);
+
     return <div className={'LayerGroup ' + (groupName ? '' : 'Empty')}>
-      <div className='LayerGroupName'><b
-        className='light'>{groupName}</b></div>
-      <div className='LayerGroupList'>
-        {
-          group.map(layer => {
-              return <IndicatorLayer
-                key={layer.id}
-                layer={layer}
-                checked={currentIndicatorLayer === layer.id}
-                onChange={setCurrentIndicatorLayer}
-                checkedAsSecond={currentIndicatorSecondLayer === layer.id}
-                onChangeAsSecond={setCurrentIndicatorSecondLayer}
-              />
-            }
-          )
-        }
+      <div className='LayerGroupName'>
+        <Button className='CollapseButton'
+                variant={'text'} size={'small'} startIcon={isCollapsed ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>} onClick={handleCollapseClick}/>
+        <b className='light'>{groupName}</b>
       </div>
+      <Collapse in={isCollapsed}>
+        <div className='LayerGroupList' ref={layerGroupListRef}>
+          {
+            group.map(layer => {
+                return <IndicatorLayer
+                  key={layer.id}
+                  layer={layer}
+                  containerWidth={width}
+                  checked={currentIndicatorLayer === layer.id}
+                  onChange={setCurrentIndicatorLayer}
+                  checkedAsSecond={currentIndicatorSecondLayer === layer.id}
+                  onChangeAsSecond={setCurrentIndicatorSecondLayer}
+                />
+              }
+            )
+          }
+        </div>
+      </Collapse>
     </div>
   }
 
