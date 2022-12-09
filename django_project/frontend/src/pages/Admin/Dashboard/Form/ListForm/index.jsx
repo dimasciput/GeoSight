@@ -180,7 +180,7 @@ export default function ListForm(
           </div>
 
           <SortableTree
-            data={createTreeData(groups)}
+            data={createTreeData(data)}
             changeGroupName={changeGroupName}
             changeLayer={changeLayer}
             otherActionsFunction={otherActionsFunction}

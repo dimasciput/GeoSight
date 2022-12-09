@@ -51,20 +51,20 @@ export default function indicatorLayersReducer(state = initialState, action) {
       return newState
     }
     case INDICATOR_LAYERS_ACTION_TYPE_REARRANGE: {
-      const newState = []
-      let order = 0
+     let newState = []
       for (const [groupName, groupValue] of Object.entries(action.payload)) {
-        groupValue.map(id => {
-          const layer = state.filter(layerState => {
-            return layerState.id === id
-          })[0]
-          if (layer) {
-            layer.order = order
-            layer.group = groupName
-            newState.push(layer)
-            order += 1;
-          }
-        })
+        for (const value of groupValue) {
+          state.forEach(function (indicator) {
+            if (indicator.id === value.data.id) {
+              indicator.order = value.data.order;
+              indicator.group = value.data.group;
+              indicator.group_parent = value.data.group_parent;
+              indicator.group_order = value.data.group_order;
+              newState.push(indicator)
+            }
+          })
+        }
+        console.log('INDICATOR_ACTION_TYPE_REARRANGE', state, groupValue);
       }
       return newState
     }

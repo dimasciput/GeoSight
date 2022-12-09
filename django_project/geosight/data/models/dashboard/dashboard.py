@@ -63,6 +63,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
     permissions = PermissionManager()
 
     def save_relations(self, data):
+        from geosight.data.models.dashboard import DashboardRelationGroup
         """Save all relationship data."""
         from geosight.data.models.dashboard import (
             DashboardIndicator, DashboardIndicatorRule, DashboardBasemap,
@@ -152,8 +153,23 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                 model = DashboardIndicatorLayer(
                     dashboard=self
                 )
-            model.order = idx
+            model.order = data.get('order', idx)
             model.group = data.get('group', '')
+            group, _ = DashboardRelationGroup.objects.get_or_create(
+                name=data.get('group', '')
+            )
+            group_parent = data.get('group_parent', '')
+            if group_parent:
+                group_parent, _ = DashboardRelationGroup.objects.get_or_create(
+                    name=data.get('group_parent')
+                )
+                group.group = group_parent
+                if data.get('group_order', ''):
+                    group.order = int(data.get('group_order'))
+            else:
+                group.group = None
+            group.save()
+            model.relation_group = group
             model.visible_by_default = data.get('visible_by_default', False)
             model.style = json.dumps(data.get('style', {}))
 

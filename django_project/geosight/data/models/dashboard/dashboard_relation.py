@@ -10,8 +10,24 @@ from geosight.data.models.context_layer import (
 from geosight.data.models.dashboard import Dashboard
 from geosight.data.models.indicator import Indicator, IndicatorValue
 from geosight.data.models.rule import RuleModel
+from core.models.general import AbstractTerm
 
 User = get_user_model()
+
+
+class DashboardRelationGroup(AbstractTerm):
+    """Group for dashboard relation data"""
+    group = models.ForeignKey(
+        'geosight_data.DashboardRelationGroup',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    order = models.IntegerField(
+        default=0
+    )
+    def __str__(self):
+        return self.name
 
 
 class DashboardRelation(models.Model):
@@ -36,6 +52,12 @@ class DashboardRelation(models.Model):
     group = models.CharField(
         max_length=512,
         blank=True, null=True
+    )
+    relation_group = models.ForeignKey(
+        'geosight_data.DashboardRelationGroup',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
     )
 
     class Meta:  # noqa: D106
