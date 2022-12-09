@@ -78,13 +78,14 @@ function getMinDepth({nextItem}) {
 function flatten(
   items,
   parentId = null,
+  data = null,
   depth = 0
 ) {
   return items.reduce((acc, item, index) => {
     return [
       ...acc,
       {...item, parentId, depth, index},
-      ...flatten(item.children, item.id, depth + 1),
+      ...flatten(item.children, item.id, item.data, depth + 1),
     ];
   }, []);
 }
@@ -93,22 +94,54 @@ export function flattenTree(items) {
   return flatten(items);
 }
 
-export function createTreeData(items) {
-  const treeData = []
-  for (const item of items instanceof Array ? items : Object.keys(items)) {
-    if (item) {
-      treeData.push({
-        id: item.name ? item.name : item,
-        isGroup: typeof items[item] !== 'undefined',
-        data: item.id ? item : null,
-        children: typeof items[item] !== 'undefined' ? createTreeData(items[item]) : []
-      })
-    } else {
-      treeData.push(...createTreeData(items[item]))
+export function createTreeData(layerData) {
+  // Sort the data by order
+  layerData.sort((a, b) => a.order - b.order)
+
+  // Create a map to store the tree structure
+  const treeMap = new Map();
+  const childrenGroups = [];
+
+  // Loop through each layer in the input data
+  for (const layer of layerData) {
+    // Check if the layer's group has been added to the tree map
+    if (!treeMap.has(layer.group)) {
+      // If the group hasn't been added, create a new group object and add it to the tree map
+      const group = {
+        id: layer.group,
+        isGroup: true,
+        data: null,
+        children: []
+      };
+      treeMap.set(layer.group, group);
+
+      // If the group has a parent group, add it as a child of the parent group
+      if (layer.group_parent) {
+        const parentGroup = treeMap.get(layer.group_parent);
+        parentGroup.children.push(group);
+        childrenGroups.push(group)
+      }
     }
+
+    // Get the current group from the tree map
+    const currentGroup = treeMap.get(layer.group);
+
+    // Create a new layer object and add it to the current group's children array
+    const newLayer = {
+      id: layer.name,
+      children: [],
+      isGroup: false,
+      data: layer
+    };
+    currentGroup.children.push(newLayer);
   }
-  console.log('treeData', treeData)
-  return treeData
+
+  // Return the tree as an array
+  let treeData = Array.from(treeMap.values())
+  for (const group of childrenGroups) {
+    treeData = treeData.filter(data => data.id !== group.id)
+  }
+  return treeData;
 }
 
 let layerIndex = 0;
@@ -124,6 +157,7 @@ function unflattenTree(treeData, groups, parentGroup = '') {
       unflattenTree(node.children, groups, node.id);
     } else {
       // If the node is not a group, add it to the appropriate group in the groups object
+      console.log('node.data.group;', node)
       let group = node.data.group;
       node.data.order = layerIndex;
       let group_parent = null;

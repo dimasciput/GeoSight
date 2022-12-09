@@ -222,7 +222,6 @@ export function SortableTree({
 
   function handleDragEnd({active, over}) {
     resetState();
-
     if (projected && over) {
       const {depth, parentId} = projected;
       const clonedItems = JSON.parse(
@@ -236,7 +235,6 @@ export function SortableTree({
 
       const sortedItems = arrayMove(clonedItems, activeIndex, overIndex);
       const newItems = buildTree(sortedItems);
-
       setItems(newItems);
       rearrangeLayers(convertToLayerData(newItems))
       setTimeout(() => {
