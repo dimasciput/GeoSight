@@ -157,7 +157,6 @@ function unflattenTree(treeData, groups, parentGroup = '') {
       unflattenTree(node.children, groups, node.id);
     } else {
       // If the node is not a group, add it to the appropriate group in the groups object
-      console.log('node.data.group;', node)
       let group = node.data.group;
       node.data.order = layerIndex;
       let group_parent = null;
@@ -189,18 +188,8 @@ function unflattenTree(treeData, groups, parentGroup = '') {
 }
 
 export function convertToLayerData(treeData) {
-  layerIndex = 0
-  const unflattenData = unflattenTree(treeData, {})
-  const layerData = Object.keys(unflattenData).map(group => {
-    return {[group] : [(group ? group : 'noHeader') + '-header',
-      ...unflattenData[group].map(data => data.id)]}
-  })
-  const layerObj = {}
-  for (const layer of layerData) {
-    let key = Object.keys(layer)[0]
-    layerObj[key] = layer[key]
-  }
-  return unflattenData;
+  layerIndex = 0;
+  return unflattenTree(treeData, {});
 }
 
 export function buildTree(flattenedItems) {

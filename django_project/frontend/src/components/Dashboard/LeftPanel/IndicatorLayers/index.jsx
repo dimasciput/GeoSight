@@ -24,7 +24,10 @@ import { Actions } from '../../../../store/dashboard'
 import { layerInGroup } from "../../../../utils/layers";
 import OnOffSwitcher from "../../../Switcher/OnOff";
 import CustomPopover from "../../../CustomPopover";
-
+import {
+  createTreeData
+} from "../../../../pages/Admin/Dashboard/Form/ListForm/utilities";
+import SidePanelTreeView from "../../../SidePanelTree";
 
 /**
  * Indicator selector.
@@ -204,7 +207,7 @@ export function IndicatorLayers() {
    */
   useEffect(() => {
     const indicator = indicatorLayers.filter(indicator => {
-      return indicator.id === currentIndicatorLayer
+      return ('' + indicator.id) === ('' + currentIndicatorLayer)
     })[0]
     if (indicator) {
       const indicatorData = JSON.parse(JSON.stringify(indicator))
@@ -217,7 +220,7 @@ export function IndicatorLayers() {
    */
   useEffect(() => {
     const indicator = indicatorLayers.filter(indicator => {
-      return indicator.id === currentIndicatorSecondLayer
+      return ('' + indicator.id) === ('' + currentIndicatorSecondLayer)
     })[0]
     if (indicator) {
       const indicatorData = JSON.parse(JSON.stringify(indicator))
@@ -299,18 +302,37 @@ export function IndicatorLayers() {
       </Collapse>
     </div>
   }
+  const treeData = createTreeData(indicatorLayers)
 
-  const groups = layerInGroup(indicatorLayers)
+  const onChange = (selectedData) => {
+    if (selectedData.length === 0) {
+      if (currentIndicatorLayer) {
+        setCurrentIndicatorLayer(0)
+        dispatch(Actions.SelectedIndicatorLayer.change({}))
+      }
+    }
+    if (selectedData.length > 0) {
+      setCurrentIndicatorLayer(selectedData[0])
+    }
+    if (selectedData.length > 1) {
+      setCurrentIndicatorSecondLayer(selectedData[1])
+    } else {
+      if (compareMode) {
+        setCurrentIndicatorSecondLayer(0)
+        dispatch(Actions.SelectedIndicatorSecondLayer.change({}))
+      }
+    }
+  }
+
   return (
     <Fragment>
-      {
-        Object.keys(groups).map(
-          groupName => (
-            <LayerRow
-              key={groupName} groupName={groupName}
-              group={groups[groupName]}/>
-          )
-        )
+      {treeData.map(data => data ?
+        <SidePanelTreeView
+          data={data}
+          selectable={true}
+          maxSelect={compareMode ? 2 : 1}
+          onChange={onChange}
+        /> : null)
       }
     </Fragment>
   )
