@@ -326,14 +326,12 @@ export function IndicatorLayers() {
 
   return (
     <Fragment>
-      {treeData.map(data => data ?
-        <SidePanelTreeView
-          data={data}
-          selectable={true}
-          maxSelect={compareMode ? 2 : 1}
-          onChange={onChange}
-        /> : null)
-      }
+      <SidePanelTreeView
+        data={treeData}
+        selectable={true}
+        maxSelect={compareMode ? 2 : 1}
+        onChange={onChange}
+      />
     </Fragment>
   )
 }
