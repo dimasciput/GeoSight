@@ -236,6 +236,25 @@ export function findItemDeep(
   return undefined;
 }
 
+export function getDepth(items, itemId, currentDepth = 0) {
+  for (const item of items) {
+    const {id, children} = item;
+
+    if (id === itemId) {
+      return currentDepth;
+    }
+
+    if (children.length) {
+      const depth = getDepth(children, itemId, currentDepth + 1);
+      if (depth) {
+        return depth;
+      }
+    }
+  }
+
+  return undefined;
+}
+
 export function removeItem(items, id) {
   const newItems = [];
 

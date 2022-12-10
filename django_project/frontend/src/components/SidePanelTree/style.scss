@@ -24,3 +24,14 @@
 
   }
 }
+
+.PanelSearchBox {
+  width: 100%;
+  .MuiInputBase-root {
+    width: 100%;
+    input {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+  }
+}
