@@ -201,6 +201,7 @@ export function IndicatorLayers() {
   const [currentIndicatorLayer, setCurrentIndicatorLayer] = useState(0)
   const { compareMode } = useSelector(state => state.mapMode)
   const [currentIndicatorSecondLayer, setCurrentIndicatorSecondLayer] = useState(0)
+  const [treeData, setTreeData] = useState([])
 
   /**
    * Change selected indicator layer
@@ -243,6 +244,7 @@ export function IndicatorLayers() {
    */
   useEffect(() => {
     if (indicatorLayers) {
+      setTreeData([...createTreeData(indicatorLayers)])
       // Change current indicator if indicators changed
       const indicatorsEnabled = indicatorLayers.find(indicator => {
         return indicator.visible_by_default
@@ -302,7 +304,6 @@ export function IndicatorLayers() {
       </Collapse>
     </div>
   }
-  const treeData = createTreeData(indicatorLayers)
 
   const onChange = (selectedData) => {
     if (selectedData.length === 0) {

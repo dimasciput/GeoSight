@@ -59,7 +59,6 @@ export default function indicatorLayersReducer(state = initialState, action) {
               indicator.order = value.data.order;
               indicator.group = value.data.group;
               indicator.group_parent = value.data.group_parent;
-              indicator.group_order = value.data.group_order;
               newState.push(indicator)
             }
           })

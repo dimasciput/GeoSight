@@ -9,7 +9,7 @@ import SortableList from './SortableList'
 
 import './style.scss';
 import {SortableTree} from "./SortableTree";
-import {createTreeData} from "./utilities";
+import {allGroups, createTreeData, findAllGroups, findItem} from "./utilities";
 
 /**
  * Basemaps dashboard
@@ -60,6 +60,8 @@ export default function ListForm(
   const [currentGroupName, setCurrentGroupName] = useState(null);
   const [open, setOpen] = useState(false);
 
+  const [treeData, setTreeData] = useState(null)
+
   // Fetch data
   useEffect(() => {
     if (listUrl) {
@@ -74,6 +76,7 @@ export default function ListForm(
   // Onload, check the default one
   useEffect(() => {
     setGroups(layerInGroup(data))
+    setTreeData(createTreeData(data))
   }, [data])
 
   // Open data selection when the props true
@@ -93,16 +96,24 @@ export default function ListForm(
   /** Add group */
   const addGroup = () => {
     let created = false;
-    let idx = Object.keys(groups).length + 1;
-    while (!created) {
-      const name = 'Group ' + idx;
-      if (!groups[name]) {
-        groups[name] = []
-        created = true;
+    let allGroups = findAllGroups(treeData);
+    let idx = allGroups.length + 1;
+    let groupName = '';
+    let maxTry = 10 + idx;
+    while (!created && idx < maxTry) {
+      groupName = 'Group ' + idx;
+      if (!findItem(treeData, groupName)) {
+        treeData.push({
+          id: groupName,
+          isGroup: true,
+          children: [],
+          data: null
+        })
+        created = true
       }
       idx += 1;
     }
-    setGroups({ ...groups })
+    setTreeData([...treeData])
   }
 
   /** Remove group */
@@ -180,7 +191,7 @@ export default function ListForm(
           </div>
 
           <SortableTree
-            data={createTreeData(data)}
+            data={treeData}
             changeGroupName={changeGroupName}
             changeLayer={changeLayer}
             otherActionsFunction={otherActionsFunction}
