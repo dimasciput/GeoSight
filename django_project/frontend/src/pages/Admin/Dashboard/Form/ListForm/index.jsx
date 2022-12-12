@@ -9,7 +9,13 @@ import SortableList from './SortableList'
 
 import './style.scss';
 import {SortableTree} from "./SortableTree";
-import {allGroups, createTreeData, findAllGroups, findItem} from "./utilities";
+import {
+  allGroups,
+  createTreeData,
+  findAllGroups,
+  findItem,
+  flattenTree
+} from "./utilities";
 
 /**
  * Basemaps dashboard
@@ -136,18 +142,38 @@ export default function ListForm(
   }
   /** Change group name */
   const changeGroupName = (groupName, newName) => {
-    const names = Object.keys(groups).filter(name => {
-      return name !== groupName;
-    });
+    const allGroups = findAllGroups(treeData)
+    const names = allGroups.map(({id}) => {
+      return id
+    }).filter(name => name !== groupName);
+    const flattenData = flattenTree(treeData)
+    console.log('flattendData', flattenData)
     if (
       !newName || names.includes(newName) || ['_Table', ''].includes(newName)
     ) {
       return false;
     } else {
-      groups[groupName].map(layer => {
-        layer.group = newName;
-        changeLayer(layer);
-      })
+      for (const _data of flattenData) {
+        if (_data.id === groupName && _data.isGroup) {
+          for (const layer of _data.children) {
+            if (!layer.isGroup) {
+              layer.data.group = newName;
+              layer.parentId = newName;
+              layer.data.parentId = newName;
+              changeLayer(layer)
+            }
+          }
+        }
+        if (_data.parentId === groupName && _data.isGroup) {
+          for (const layer of _data.children) {
+            if (!layer.isGroup) {
+              layer.data.group_parent = newName;
+              changeLayer(layer)
+            }
+          }
+        }
+      }
+      console.log('newData', flattenData)
       return true;
     }
   }

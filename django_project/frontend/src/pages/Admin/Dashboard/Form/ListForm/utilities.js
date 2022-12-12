@@ -118,8 +118,10 @@ export function createTreeData(layerData) {
       // If the group has a parent group, add it as a child of the parent group
       if (layer.group_parent) {
         const parentGroup = treeMap.get(layer.group_parent);
-        parentGroup.children.push(group);
-        childrenGroups.push(group)
+        if (typeof parentGroup !== 'undefined') {
+          parentGroup.children.push(group);
+          childrenGroups.push(group)
+        }
       }
     }
 
@@ -184,7 +186,7 @@ function unflattenTree(treeData, groups, parentGroup = '') {
 
 export function convertToLayerData(treeData) {
   layerIndex = 0;
-  return unflattenTree(treeData, {});
+  return unflattenTree(treeData, {}, '');
 }
 
 export function buildTree(flattenedItems) {

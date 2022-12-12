@@ -155,6 +155,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                 )
             model.order = data.get('order', idx)
             model.group = data.get('group', '')
+            old_group = None
             group, _ = DashboardRelationGroup.objects.get_or_create(
                 name=data.get('group', '')
             )
@@ -163,7 +164,10 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                 group_parent, _ = DashboardRelationGroup.objects.get_or_create(
                     name=data.get('group_parent')
                 )
-                group.group = group_parent
+                if group.group != group_parent:
+                    old_group = group.group
+                    group.group = group_parent
+
                 if data.get('group_order', ''):
                     group.order = int(data.get('group_order'))
             else:

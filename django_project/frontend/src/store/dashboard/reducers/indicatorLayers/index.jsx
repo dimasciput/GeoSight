@@ -57,13 +57,12 @@ export default function indicatorLayersReducer(state = initialState, action) {
           state.forEach(function (indicator) {
             if (indicator.id === value.data.id) {
               indicator.order = value.data.order;
-              indicator.group = value.data.group;
-              indicator.group_parent = value.data.group_parent;
+              indicator.group = value.group;
+              indicator.group_parent = value.group_parent;
               newState.push(indicator)
             }
           })
         }
-        console.log('INDICATOR_ACTION_TYPE_REARRANGE', state, groupValue);
       }
       return newState
     }

@@ -24,7 +24,7 @@ import {
   getChildCount,
   removeItem,
   removeChildrenOf,
-  setProperty, convertToLayerData,
+  setProperty, convertToLayerData, findAllGroups,
 } from './utilities';
 import {sortableTreeKeyboardCoordinates} from './keyboardCoordinates';
 import {TreeItem} from '../../../Components/TreeItem/TreeItem';
