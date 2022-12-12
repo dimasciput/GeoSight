@@ -159,7 +159,7 @@ function unflattenTree(treeData, groups, parentGroup = '') {
       unflattenTree(node.children, groups, node.id);
     } else {
       // If the node is not a group, add it to the appropriate group in the groups object
-      let group = node.data.group;
+      let group = node.parentId;
       node.data.order = layerIndex;
       let group_parent = null;
       try {
