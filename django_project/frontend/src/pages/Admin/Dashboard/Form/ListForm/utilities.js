@@ -165,11 +165,6 @@ function unflattenTree(treeData, groups, parentGroup = '') {
       } catch (e) {
       }
       node.data.group_parent = group_parent;
-      if (node.data.group_parent) {
-        node.data.group_order = layerIndex
-      } else {
-        node.data.group_order = ''
-      }
       let data = {
         id: node.id,
         index: layerIndex,
@@ -211,6 +206,13 @@ export function buildTree(flattenedItems) {
 
 export function findItem(items, itemId) {
   return items.find(({id}) => id === itemId);
+}
+
+export function findAllGroups(items) {
+  const flattenItems = flattenTree(items)
+  return flattenItems.filter((obj) => {
+    return obj.isGroup === true
+  })
 }
 
 export function findItemDeep(

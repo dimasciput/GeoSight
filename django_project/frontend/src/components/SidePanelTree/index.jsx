@@ -56,12 +56,17 @@ export default function SidePanelTreeView(
     groupSelectable= false,
     onChange = null
   }) {
-  const [nodes, setNodes] = useState(data || [])
+  const [nodes, setNodes] = useState( [])
   const [selected, setSelected] = useState([])
   const [groups, setGroups] = useState([])
   const [filterText, setFilterText] = useState('')
   const layerGroupListRef = useRef(null);
   const [width, setWidth] = useState(25)
+
+  useEffect(() => {
+    setNodes(data)
+    setGroups(getGroups(data));
+  }, [data])
 
   useLayoutEffect(() => {
     if (layerGroupListRef?.current) {
@@ -75,7 +80,6 @@ export default function SidePanelTreeView(
   }, [filterText])
 
   useEffect(() => {
-    setGroups(getGroups(nodes));
     if (selected.length > maxSelect) {
       if (maxSelect === 1) {
         setSelected([selected.at(-1)])
