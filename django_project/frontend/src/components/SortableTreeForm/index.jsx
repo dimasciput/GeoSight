@@ -27,8 +27,8 @@ import {
   setProperty, convertToLayerData, findAllGroups,
 } from './utilities';
 import {sortableTreeKeyboardCoordinates} from './keyboardCoordinates';
-import {TreeItem} from '../../../Components/TreeItem/TreeItem';
-import {SortableTreeItem} from '../../../Components/TreeItem/SortableTreeItem';
+import {TreeItem} from './TreeItem'
+import {SortableTreeItem} from './SortableTreeItem';
 
 const measuring = {
   droppable: {
@@ -51,6 +51,8 @@ export function SortableTree({
   otherActionsFunction,
   changeGroupName,
   changeLayer,
+  addLayerInGroup,
+  removeGroup,
   ...props
 }) {
   const [items, setItems] = useState(() => data);
@@ -62,11 +64,9 @@ export function SortableTree({
 
   useEffect(() => {
     if (!dragged) {
-      if (JSON.stringify(items) !== JSON.stringify(data)) {
-        setItems(data)
-      }
+      setItems(data)
     }
-  }, [data, items])
+  }, [data])
 
   const flattenedItems = useMemo(() => {
     const flattenedTree = flattenTree(items);
@@ -171,6 +171,8 @@ export function SortableTree({
             otherActionsFunction={otherActionsFunction}
             changeGroupName={changeGroupName}
             changeLayer={changeLayer}
+            addLayerInGroup={addLayerInGroup}
+            removeGroup={removeGroup}
             {...props}
           />
         ))}

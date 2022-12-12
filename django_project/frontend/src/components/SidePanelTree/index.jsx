@@ -15,7 +15,7 @@ import TextField from "@mui/material/TextField";
 import _ from 'lodash';
 import {
   findItemDeep, getDepth
-} from "../../pages/Admin/Dashboard/Form/ListForm/utilities";
+} from "../SortableTreeForm/utilities";
 
 const Highlighted = ({text = '', highlight = ''}) => {
    if (!highlight.trim()) {

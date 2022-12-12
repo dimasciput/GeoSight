@@ -109,6 +109,7 @@ export function createTreeData(layerData) {
       // If the group hasn't been added, create a new group object and add it to the tree map
       const group = {
         id: layer.group,
+        trueId: layer.id,
         isGroup: true,
         data: null,
         children: []
@@ -129,13 +130,15 @@ export function createTreeData(layerData) {
     const currentGroup = treeMap.get(layer.group);
 
     // Create a new layer object and add it to the current group's children array
-    const newLayer = {
-      id: layer.name,
-      children: [],
-      isGroup: false,
-      data: layer
-    };
-    currentGroup.children.push(newLayer);
+    if (layer.name) {
+      const newLayer = {
+        id: layer.name,
+        children: [],
+        isGroup: false,
+        data: layer
+      };
+      currentGroup.children.push(newLayer);
+    }
   }
 
   // Return the tree as an array

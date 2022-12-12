@@ -100,26 +100,26 @@ export default function IndicatorLayersForm() {
 
   // Remove layer if the indicator is removed
   useEffect(() => {
-    const indicatorIds = indicators.map(indicator => indicator.id)
-    indicatorLayers.map(layer => {
-      const indicators = layer.indicators.filter(
-        indicator => indicatorIds.includes(indicator.id)
-      )
-      // If it is multi indicator and just remaining 1 indicator, remove it
-      if (indicators.length === 1 && layer.indicators.length >= 2) {
-        dispatch(Actions.IndicatorLayers.remove(layer))
-      }
-      if (indicators.length !== layer.indicators) {
-        layer.indicators = indicators
-      }
-
-      // delete or update
-      if (layer.indicators.length === 0) {
-        dispatch(Actions.IndicatorLayers.remove(layer))
-      } else {
-        dispatch(Actions.IndicatorLayers.update(layer))
-      }
-    })
+    // const indicatorIds = indicators.map(indicator => indicator.id)
+    // indicatorLayers.map(layer => {
+    //   const indicators = layer.indicators.filter(
+    //     indicator => indicatorIds.includes(indicator.id)
+    //   )
+    //   // If it is multi indicator and just remaining 1 indicator, remove it
+    //   if (indicators.length === 1 && layer.indicators.length >= 2) {
+    //     dispatch(Actions.IndicatorLayers.remove(layer))
+    //   }
+    //   if (indicators.length !== layer.indicators) {
+    //     layer.indicators = indicators
+    //   }
+    //
+    //   // delete or update
+    //   if (layer.indicators.length === 0) {
+    //     dispatch(Actions.IndicatorLayers.remove(layer))
+    //   } else {
+    //     dispatch(Actions.IndicatorLayers.update(layer))
+    //   }
+    // })
   }, [dashboardIndicators])
 
   /** Change indicator data format to indicator layer data. **/

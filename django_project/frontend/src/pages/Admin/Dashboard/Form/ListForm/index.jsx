@@ -5,17 +5,15 @@ import { layerInGroup } from '../../../../../utils/layers'
 import { fetchingData } from "../../../../../Requests";
 
 import DataSelectionModal from './DataSelectionModal'
-import SortableList from './SortableList'
 
 import './style.scss';
-import {SortableTree} from "./SortableTree";
+import {SortableTree} from "../../../../../components/SortableTreeForm/index"
 import {
-  allGroups,
   createTreeData,
   findAllGroups,
   findItem,
   flattenTree
-} from "./utilities";
+} from "../../../../../components/SortableTreeForm/utilities";
 
 /**
  * Basemaps dashboard
@@ -124,12 +122,35 @@ export default function ListForm(
 
   /** Remove group */
   const removeGroup = (groupName) => {
-    const layers = [...(groups[groupName] ? groups[groupName] : groups[''])]
-    delete groups[groupName]
-    setGroups({ ...groups })
-    layers.map(layer => {
-      removeLayer(layer)
-    })
+    const groups = findAllGroups(treeData)
+    let groupToDelete = []
+    let layersToDelete = []
+    for (const group of groups) {
+      if (group.id === groupName || group.parentId === groupName) {
+        groupToDelete.push(group.trueId)
+        if (group.children.length > 0) {
+          for (const layer of group.children) {
+            if (!layer.isGroup && layer.data) {
+              layersToDelete.push(layer.data)
+            }
+          }
+        }
+      }
+    }
+    if (layersToDelete.length > 0) {
+      layersToDelete.map(layer => {
+        removeLayer(layer)
+      })
+    } else {
+      if (groupToDelete.length > 0) {
+        for (const group of groupToDelete) {
+          removeLayer({
+            'id': group,
+          })
+        }
+        // setTreeData([...treeData.filter(({id}) => groupToDelete.indexOf(id) === -1)])
+      }
+    }
   }
 
   /** Remove Layer */
@@ -147,7 +168,6 @@ export default function ListForm(
       return id
     }).filter(name => name !== groupName);
     const flattenData = flattenTree(treeData)
-    console.log('flattendData', flattenData)
     if (
       !newName || names.includes(newName) || ['_Table', ''].includes(newName)
     ) {
@@ -173,12 +193,12 @@ export default function ListForm(
           }
         }
       }
-      console.log('newData', flattenData)
       return true;
     }
   }
 
   const addLayerInGroup = (groupName) => {
+    console.log('addLayerInGroup', groupName)
     setCurrentGroupName(groupName)
     if (addLayerInGroupAction) {
       addLayerInGroupAction(groupName)
@@ -224,6 +244,7 @@ export default function ListForm(
             rearrangeLayers={rearrangeLayersAction}
             groupLabel={groupLabel}
             addLayerInGroup={addLayerInGroup}
+            removeGroup={removeGroup}
             collapsible indicator/>
           {/* for the table */}
           {/*<SortableList*/}

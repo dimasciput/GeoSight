@@ -1,13 +1,14 @@
-import React, {Fragment, forwardRef, useState} from 'react';
+import React, {Fragment, forwardRef, useState, useEffect} from 'react';
 import classNames from 'classnames';
 
 import styles from './TreeItem.module.scss';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import {IconTextField} from "../../../../components/Elements/Input";
+import {IconTextField} from "../Elements/Input";
 import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 
 export function Action({active, className, cursor, style, ...props}) {
   return (
@@ -76,9 +77,13 @@ export const TreeItem = forwardRef(
     },
     ref
   ) => {
-    const noGroup = '_noGroup'
     const [editName, setEditName] = useState(false)
     const [name, setName] = useState(value);
+    const [groupName, setGroupName] = useState('');
+
+    useEffect(() => {
+      setGroupName(props.groupLabel)
+    }, [props.groupLabel])
 
     return (
       <li
@@ -115,7 +120,7 @@ export const TreeItem = forwardRef(
             props.isGroup ? (
               editName? (
                   <Fragment>
-                    <span>{props.groupLabel ? (props.groupLabel + ' : ') : 'Group : '}</span>
+                    <span>{groupName ? (groupName + ' : ') : 'Group : '}</span>
                     <IconTextField
                       className={styles.GroupTextField}
                       iconEnd={
@@ -123,6 +128,7 @@ export const TreeItem = forwardRef(
                           className='MuiButtonLike'
                           onClick={() => {
                             if (props.changeGroupName(value, name)) {
+                              setName(name)
                               setEditName(false)
                             }
                           }}/>
@@ -137,7 +143,7 @@ export const TreeItem = forwardRef(
                 (
                   <Fragment>
                     <span>
-                      {props.groupLabel ? (props.groupLabel + ' : ') : 'Group : '} {name ? name :
+                      {groupName ? (groupName + ' : ') : 'Group : '} {name ? name :
                       <i>No Name</i>}
                     </span>
                     <EditIcon
@@ -166,10 +172,18 @@ export const TreeItem = forwardRef(
           { props.isGroup ?
             <span className={styles.AddButton}
                  onClick={() => {
-                   props.addLayerInGroup(value)
+                   props.addLayerInGroup(name)
                  }}>
               <AddCircleIcon/>{"Add To Group"}
             </span> : null }
+
+          { props.isGroup ?
+          <span className={styles.RemoveButton}
+               onClick={() => {
+                 props.removeGroup(name)
+               }}>
+            <RemoveCircleIcon/>{"Remove Group"}
+          </span> : null }
 
           <span className={styles.VisibilityAction}>
           {

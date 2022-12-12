@@ -26,7 +26,7 @@ import OnOffSwitcher from "../../../Switcher/OnOff";
 import CustomPopover from "../../../CustomPopover";
 import {
   createTreeData
-} from "../../../../pages/Admin/Dashboard/Form/ListForm/utilities";
+} from "../../../SortableTreeForm/utilities";
 import SidePanelTreeView from "../../../SidePanelTree";
 
 /**
