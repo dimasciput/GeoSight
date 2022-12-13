@@ -13,12 +13,16 @@ import Switch from '@mui/material/Switch';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { Actions } from '../../../../store/dashboard'
-import { layerInGroup } from '../../../../utils/layers'
 import { getLayer } from "./Layer"
 import OnOffSwitcher from "../../../Switcher/OnOff";
 import CustomPopover from "../../../CustomPopover";
 
 import './style.scss'
+import {
+  createTreeData,
+  flattenTree
+} from "../../../SortableTreeForm/utilities";
+import SidePanelTreeView from "../../../SidePanelTree";
 
 function ContextLayerInput({ data, styles, data_fields }) {
   const dispatch = useDispatch();
@@ -243,6 +247,76 @@ function LayerRow({ groupName, group }) {
   </div>
 }
 
+function ContextLayers() {
+  const dispatch = useDispatch();
+  const { contextLayers } = useSelector(state => state.dashboard.data);
+  const [treeData, setTreeData] = useState([])
+  const [selectedLayer, setSelectedLayer] = useState([])
+  const [layers, setLayers] = useState({})
+
+  useEffect(() => {
+    initialize(contextLayers)
+  }, [contextLayers])
+
+  const initialize = (_contextLayers) => {
+    const _layers = {};
+
+    for (const contextLayer of _contextLayers) {
+      getLayer(
+        contextLayer,
+        (layer) => {_layers[contextLayer.id] = layer},
+        (legend) => contextLayer.legend = legend,
+        (error) => contextLayer.error = error,
+        null
+      )
+    }
+    setLayers(_layers)
+    if (_contextLayers) {
+      setTreeData([...createTreeData(_contextLayers)])
+    }
+  }
+
+  const onChange = (selectedData) => {
+    const flattenedData = flattenTree(treeData)
+    const selectedLayers = flattenedData.reduce((items, item) => {
+      if (!item.isGroup && item.data) {
+        if (selectedData.indexOf('' + item.data.id) >= 0) {
+          items.push(item.data)
+        }
+      }
+      return items;
+    }, [])
+    for (const item of selectedLayers) {
+      if (layers[item.id]) {
+         dispatch(
+          Actions.Map.addContextLayer(item.id, {
+            layer: layers[item.id],
+            layer_type: item.layer_type
+          })
+        );
+      }
+    }
+    for (const layerId of selectedLayer) {
+      if (selectedData.indexOf(layerId) === -1) {
+        dispatch(
+          Actions.Map.removeContextLayer(layerId)
+        );
+      }
+    }
+    setSelectedLayer([...selectedData])
+  }
+
+  return (
+    <SidePanelTreeView
+        data={treeData}
+        selectable={true}
+        groupSelectable={true}
+        maxSelect={10}
+        onChange={onChange}
+    />
+  )
+}
+
 /**
  * Context Layer Accordion.
  * @param {bool} expanded Is the accordion expanded.
@@ -250,9 +324,7 @@ function LayerRow({ groupName, group }) {
  */
 export default function ContextLayersAccordion({ expanded, handleChange }) {
   const dispatch = useDispatch();
-  const { contextLayers } = useSelector(state => state.dashboard.data);
   const { contextLayersShow } = useSelector(state => state.map);
-  const groups = layerInGroup(contextLayers)
 
   /** Render group and layers
    * @param {str} groupName Name of group.
@@ -279,17 +351,7 @@ export default function ContextLayersAccordion({ expanded, handleChange }) {
           }}/>
       </AccordionSummary>
       <AccordionDetails>
-        {
-          contextLayers !== undefined ?
-            (Object.keys(groups)).map(
-              groupName => (
-                <LayerRow
-                  key={groupName} groupName={groupName}
-                  group={groups[groupName]}/>
-              )
-            )
-            : <div>Loading</div>
-        }
+        <ContextLayers/>
       </AccordionDetails>
     </Accordion>
   )

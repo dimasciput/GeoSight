@@ -54,7 +54,7 @@ export default function SidePanelTreeView(
     selectable= false,
     maxSelect = 0,
     groupSelectable= false,
-    onChange = null
+    onChange = null,
   }) {
   const [nodes, setNodes] = useState( [])
   const [selected, setSelected] = useState([])
@@ -122,6 +122,33 @@ export default function SidePanelTreeView(
     setSelected(_selectedIds)
   }
 
+  const selectGroup = (e) => {
+    e.stopPropagation();
+    const checked = e.target.checked;
+    let _selectedIds = [];
+    for (const _data of data) {
+      if (_data.isGroup && _data.id === e.target.value) {
+        for (const item of _data.children) {
+          if (!item.data || item.isGroup) {
+            continue
+          }
+          if (!item.data.error) {
+            if (selected.indexOf('' + item.data.id) === -1) {
+              _selectedIds.push('' + item.data.id)
+            }
+          }
+        }
+      }
+    }
+    if (checked) {
+      _selectedIds = ([...selected, ..._selectedIds]);
+    } else {
+      _selectedIds = ([...selected.filter(id => _selectedIds.indexOf(id) > -1)])
+    }
+    onChange(_selectedIds)
+    setSelected(_selectedIds)
+  }
+
   const handleToggle = (event, nodeIds) => {
     setGroups(nodeIds);
   };
@@ -132,39 +159,63 @@ export default function SidePanelTreeView(
 
   const rightIcon = (layer = null) => {
     return (
-      <span className='InfoIcon'>
-        <CustomPopover
-          anchorOrigin={{
-            vertical: 'center',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'center',
-            horizontal: 'left',
-          }}
-          Button={
-            <InfoIcon fontSize={"small"}/>
-          }
-          showOnHover={true}
-        >
-          <div className='LayerInfoPopover'>
-            <div className='LayerInfoPopover'>
-              <div className='title'>
-                <b className='light'>{layer.data.name.replace(/(\w{17})(?=\w)/g, '$1 ')}
-                </b>
-              </div>
-              <div>
-                <b className='light'>Last Update: </b>{layer.data.last_update}
-              </div>
-              <div>
-                <b className='light'>Description: </b>
-                {
-                  layer.data.description ? layer.data.description : '-'
+      <span className={'InfoIcon' + (layer.data?.error ? ' Error' : '')}>
+        {
+          layer.data?.error ?
+            <CustomPopover
+                anchorOrigin={{
+                  vertical: 'center',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'center',
+                  horizontal: 'left',
+                }}
+                Button={
+                  <InfoIcon fontSize={"small"}/>
                 }
+                showOnHover={true}
+              >
+                <div className='LayerInfoPopover'>
+                  {layer.data.error}
+                </div>
+              </CustomPopover>
+            :
+            <CustomPopover
+              anchorOrigin={{
+                vertical: 'center',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'center',
+                horizontal: 'left',
+              }}
+              Button={
+                <InfoIcon fontSize={"small"}/>
+              }
+              showOnHover={true}
+            >
+              <div className='LayerInfoPopover'>
+                <div className='LayerInfoPopover'>
+                  <div className='title'>
+                    <b
+                      className='light'>{layer.data.name.replace(/(\w{17})(?=\w)/g, '$1 ')}
+                    </b>
+                  </div>
+                  <div>
+                    <b className='light'>Last
+                      Update: </b>{layer.data.last_update}
+                  </div>
+                  <div>
+                    <b className='light'>Description: </b>
+                    {
+                      layer.data.description ? layer.data.description : '-'
+                    }
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </CustomPopover>
+            </CustomPopover>
+        }
       </span>
     )
   }
@@ -191,6 +242,7 @@ export default function SidePanelTreeView(
 
   const renderTree = (treeData) => {
     const nodesDataId = treeData.data ? '' + treeData.data.id : treeData.id;
+    const disabled = treeData.data ? !!treeData.data.error : false;
     const itemDeep = getDepth(data, treeData.id)
     const maxWord = parseInt(
       '' + ((width - (TREE_INDENT_SPACE * itemDeep)) / 9)
@@ -207,6 +259,7 @@ export default function SidePanelTreeView(
                       <Checkbox
                         className='PanelCheckbox'
                         size={'small'}
+                        disabled={disabled}
                         value={nodesDataId}
                         checked={selected.indexOf(nodesDataId) >= 0}
                         onChange={selectItem}/> :
@@ -220,7 +273,15 @@ export default function SidePanelTreeView(
                       <Highlighted text={treeData.id.replace(new RegExp(`(\\w{${maxWord}})(?=\\w)`), '$1 ')} highlight={filterText} />
                       {rightIcon ? rightIcon(treeData) : null}
                   </span>}
-                  /> : <Highlighted text={treeData.id} highlight={filterText}/>
+                  /> : groupSelectable ?
+                    <FormControlLabel
+                      onClick={(e) => e.stopPropagation()}
+                      control={
+                        <Checkbox
+                          onClick={(e) => e.stopPropagation()}
+                          onChange={selectGroup} className='PanelCheckbox' size={'small'} value={treeData.id}/>} label={
+                      <Highlighted text={treeData.id ? treeData.id : 'No Name'} highlight={filterText}/>}/> :
+                    <Highlighted text={treeData.id ? treeData.id : 'No Name'} highlight={filterText}/>
               }>
       {Array.isArray(treeData.children)
         ? treeData.children.map((node) => renderTree(node))
