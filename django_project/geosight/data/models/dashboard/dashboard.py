@@ -115,7 +115,6 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                 dashbaord_context_layer = self.dashboardcontextlayer_set.get(
                     object_id=context_layer['id'])
                 dashbaord_context_layer.dashboardcontextlayerfield_set.all(
-
                 ).delete()
                 for idx, field in enumerate(context_layer['data_fields']):
                     DashboardContextLayerField.objects.get_or_create(
@@ -155,7 +154,6 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                 )
             model.order = data.get('order', idx)
             model.group = data.get('group', '')
-            old_group = None
             group, _ = DashboardRelationGroup.objects.get_or_create(
                 name=data.get('group', '')
             )
@@ -206,6 +204,7 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
                     pass
 
     def save_relation(self, ModelClass, ObjectClass, modelQuery, inputData):
+        from geosight.data.models.dashboard import DashboardRelationGroup
         """Save relation from data."""
         ids = []
 
@@ -236,6 +235,23 @@ class Dashboard(SlugTerm, IconTerm, AbstractEditData):
 
             model.order = data.get('order', 0)
             model.group = data.get('group', '')
+            group, _ = DashboardRelationGroup.objects.get_or_create(
+                name=data.get('group', '')
+            )
+            group_parent = data.get('group_parent', '')
+            if group_parent:
+                group_parent, _ = DashboardRelationGroup.objects.get_or_create(
+                    name=data.get('group_parent')
+                )
+                if group.group != group_parent:
+                    group.group = group_parent
+
+                if data.get('group_order', ''):
+                    group.order = int(data.get('group_order'))
+            else:
+                group.group = None
+            group.save()
+            model.relation_group = group
             model.visible_by_default = data.get('visible_by_default', False)
             model.styles = data.get('styles', None)
             model.label_styles = data.get('label_styles', None)

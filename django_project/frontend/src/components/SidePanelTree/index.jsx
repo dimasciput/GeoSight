@@ -14,7 +14,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import TextField from "@mui/material/TextField";
 import _ from 'lodash';
 import {
-  findItemDeep, getDepth
+  findAllGroups, findItem,
+  findItemDeep, flattenTree, getDepth
 } from "../SortableTreeForm/utilities";
 
 const Highlighted = ({text = '', highlight = ''}) => {
@@ -58,6 +59,7 @@ export default function SidePanelTreeView(
   }) {
   const [nodes, setNodes] = useState( [])
   const [selected, setSelected] = useState([])
+  const [selectedGroups, setSelectedGroups] = useState([])
   const [groups, setGroups] = useState([])
   const [filterText, setFilterText] = useState('')
   const layerGroupListRef = useRef(null);
@@ -106,45 +108,75 @@ export default function SidePanelTreeView(
 
   const selectItem = (e) => {
     e.stopPropagation();
+    const checked = e.target.checked;
+    const nodeId = e.target.value;
     let _selectedIds = []
-    if (selected.indexOf(e.target.value) >= 0) {
-      _selectedIds = [...selected.filter(s => s !== e.target.value)]
+    if (selected.indexOf(nodeId) >= 0) {
+      _selectedIds = [...selected.filter(s => s !== nodeId)]
     } else {
       if (maxSelect === 1) {
-        _selectedIds = [e.target.value]
+        _selectedIds = [nodeId]
       } else if (maxSelect === 0) {
-        _selectedIds = [...selected, e.target.value]
+        _selectedIds = [...selected, nodeId]
       } else {
-        _selectedIds = [...selected.slice(-(maxSelect-1)), e.target.value]
+        _selectedIds = [...selected.slice(-(maxSelect-1)), nodeId]
+      }
+    }
+    if (!checked && selectedGroups.length > 0) {
+      const layers = flattenTree(data);
+      for (const layer of layers) {
+        if (!layer.isGroup && layer.data) {
+          if ('' + layer.data.id === nodeId) {
+            const group = layer.data.group;
+            setSelectedGroups([...selectedGroups.filter(id => id !== group)])
+          }
+        }
       }
     }
     onChange(_selectedIds)
     setSelected(_selectedIds)
   }
 
+  const getChildIds = (_data) => {
+    const _selectedIds = []
+    for (const item of _data.children) {
+      if (!item.data || item.isGroup) {
+        if (item.children) {
+          _selectedIds.push(...getChildIds(item))
+        }
+        continue
+      }
+      if (!item.data.error) {
+        _selectedIds.push('' + item.data.id)
+      }
+    }
+    return _selectedIds;
+  }
+
   const selectGroup = (e) => {
     e.stopPropagation();
     const checked = e.target.checked;
     let _selectedIds = [];
-    for (const _data of data) {
+    let _selectedGroups = [e.target.value]
+    const allGroups = findAllGroups(data);
+    let parentGroup = e.target.value;
+    for (const _data of allGroups) {
       if (_data.isGroup && _data.id === e.target.value) {
-        for (const item of _data.children) {
-          if (!item.data || item.isGroup) {
-            continue
-          }
-          if (!item.data.error) {
-            if (selected.indexOf('' + item.data.id) === -1) {
-              _selectedIds.push('' + item.data.id)
-            }
-          }
-        }
+        _selectedIds.push(...getChildIds(_data))
+      }
+      if (_data.parentId === parentGroup) {
+        _selectedGroups.push(_data.id)
+        parentGroup = _data.id;
       }
     }
     if (checked) {
-      _selectedIds = ([...selected, ..._selectedIds]);
+      _selectedIds = ([...selected, ..._selectedIds.filter(id => selected.indexOf(id) >= -1)]);
+      _selectedGroups = ([...selectedGroups, ..._selectedGroups.filter(id => selectedGroups.indexOf(id) >= -1)])
     } else {
-      _selectedIds = ([...selected.filter(id => _selectedIds.indexOf(id) > -1)])
+      _selectedIds = ([...selected.filter(id => _selectedIds.indexOf(id) === -1)])
+      _selectedGroups = ([...selectedGroups.filter(id => _selectedGroups.indexOf(id) === -1)])
     }
+    setSelectedGroups([..._selectedGroups])
     onChange(_selectedIds)
     setSelected(_selectedIds)
   }
@@ -278,10 +310,14 @@ export default function SidePanelTreeView(
                       onClick={(e) => e.stopPropagation()}
                       control={
                         <Checkbox
+                          checked={selectedGroups.length > 0 && selectedGroups.indexOf(treeData.id) >= 0}
                           onClick={(e) => e.stopPropagation()}
-                          onChange={selectGroup} className='PanelCheckbox' size={'small'} value={treeData.id}/>} label={
-                      <Highlighted text={treeData.id ? treeData.id : 'No Name'} highlight={filterText}/>}/> :
-                    <Highlighted text={treeData.id ? treeData.id : 'No Name'} highlight={filterText}/>
+                          onChange={selectGroup} className='PanelCheckbox' size={'small'}
+                          value={treeData.id}/>} label={
+                            <Highlighted text={treeData.id ? treeData.id : 'No Name'}
+                                         highlight={filterText}/>}/> :
+                    <Highlighted text={treeData.id ? treeData.id : 'No Name'}
+                                 highlight={filterText}/>
               }>
       {Array.isArray(treeData.children)
         ? treeData.children.map((node) => renderTree(node))

@@ -44,17 +44,16 @@ export default function contextLayersReducer(state = initialState, action) {
         const contextLayers = []
         let order = 0
         for (const [groupName, groupValue] of Object.entries(action.payload)) {
-          groupValue.map(id => {
-            const layer = state.filter(layerState => {
-              return layerState.id === id
-            })[0]
-            if (layer) {
-              layer.order = order
-              layer.group = groupName
-              contextLayers.push(layer)
-              order += 1;
-            }
-          })
+          for (const value of groupValue) {
+            state.forEach(function (indicator) {
+              if (indicator.id === value.data.id) {
+                indicator.order = value.data.order;
+                indicator.group = value.group;
+                indicator.group_parent = value.group_parent;
+                contextLayers.push(indicator)
+              }
+            })
+          }
         }
         return contextLayers
       }
