@@ -9,6 +9,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import EditIcon from "@mui/icons-material/Edit";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import {Checkbox} from "@mui/material";
 
 export function Action({active, className, cursor, style, ...props}) {
   return (
@@ -73,6 +74,7 @@ export const TreeItem = forwardRef(
       style,
       value,
       wrapperRef,
+      data,
       ...props
     },
     ref
@@ -105,6 +107,13 @@ export const TreeItem = forwardRef(
       >
         <div className={styles.TreeItem} ref={ref} style={style}>
           <Handle {...handleProps} />
+          <Checkbox size={'small'} onClick={() => {
+            if (props.isGroup) {
+              props.select(value, true)
+            } else {
+              props.select(data.id, false)
+            }
+          }} checked={props.selected}/>
           {onCollapse && (
             <Action
               onClick={onCollapse}
