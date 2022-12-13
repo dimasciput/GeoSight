@@ -29,6 +29,9 @@ import {
 import {sortableTreeKeyboardCoordinates} from './keyboardCoordinates';
 import {TreeItem} from './TreeItem'
 import {SortableTreeItem} from './SortableTreeItem';
+import {Button} from "@mui/material";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import './style.scss';
 
 const measuring = {
   droppable: {
@@ -53,6 +56,7 @@ export function SortableTree({
   changeLayer,
   addLayerInGroup,
   removeGroup,
+  removeLayer,
   ...props
 }) {
   const [items, setItems] = useState(() => data);
@@ -61,6 +65,7 @@ export function SortableTree({
   const [offsetLeft, setOffsetLeft] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [dragged, setDragged] = useState(false);
+  const [selected, setSelected] = useState([])
 
   useEffect(() => {
     if (!dragged) {
@@ -138,8 +143,66 @@ export function SortableTree({
     },
   };
 
+  const selectGroup = (group) => {
+    const childIds = []
+    for (const _data of flattenedItems) {
+      if (_data.id === group) {
+        childIds.push(_data.id)
+        for (const child of _data.children) {
+          if (child.children.length > 0) {
+            childIds.push(...selectGroup(child.id))
+          } else if (child.data) {
+            childIds.push(child.data.id)
+          }
+        }
+      }
+    }
+    return childIds
+  }
+
+  const select = (value, isGroup) => {
+    if (isGroup) {
+      const itemIds = selectGroup(value)
+      if (selected.indexOf(value) >= 0) {
+        setSelected(selected.filter(id => itemIds.indexOf(id) === -1))
+      } else {
+        setSelected([...selected, ...itemIds.filter(id => selected.indexOf(id) === -1)])
+      }
+      return
+    }
+    if (selected.indexOf(value) >= 0) {
+      const unselectIds = [value]
+      flattenedItems.forEach(item => {
+        if (item.data && item.data.id === value) {
+          if (selected.indexOf(item.data.group) >= 0) {
+            unselectIds.push(item.data.group)
+          }
+        }
+      })
+      setSelected(selected.filter(id => unselectIds.indexOf(id) === -1))
+    } else {
+      setSelected([...selected, ...[value]])
+    }
+  }
+
+  const deleteSelected = () => {
+    for (const id of selected) {
+      for (const item of flattenedItems) {
+        if (!item.isGroup && item.data && item.data.id === id) {
+          removeLayer(item.data)
+        }
+      }
+    }
+    setSelected([])
+  }
+
   return (
-    <DndContext
+    <div>
+      <p>
+        { selected.length > 0 ? <span className='SelectedContainer'> {selected.filter(id => typeof id === 'number').length} selected
+          <Button className='DeleteItemsButton' size={'small'} variant={'text'} color={'error'} onClick={deleteSelected}><DeleteOutlineIcon/></Button></span> : <br/>}
+      </p>
+      <DndContext
       announcements={announcements}
       sensors={sensors}
       collisionDetection={closestCenter}
@@ -168,11 +231,13 @@ export function SortableTree({
             }
             onRemove={removable ? () => handleRemove(id) : undefined}
             isGroup={isGroup}
+            selected={isGroup ? selected.indexOf(id) >= 0 : selected.indexOf(data.id) >= 0}
             otherActionsFunction={otherActionsFunction}
             changeGroupName={changeGroupName}
             changeLayer={changeLayer}
             addLayerInGroup={addLayerInGroup}
             removeGroup={removeGroup}
+            select={select}
             {...props}
           />
         ))}
@@ -195,6 +260,7 @@ export function SortableTree({
         )}
       </SortableContext>
     </DndContext>
+    </div>
   );
 
   function handleDragStart({active: {id: activeId}}) {

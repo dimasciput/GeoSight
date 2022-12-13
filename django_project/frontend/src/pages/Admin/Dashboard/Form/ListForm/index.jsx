@@ -245,6 +245,7 @@ export default function ListForm(
             groupLabel={groupLabel}
             addLayerInGroup={addLayerInGroup}
             removeGroup={removeGroup}
+            removeLayer={removeLayer}
             collapsible indicator/>
           {/* for the table */}
           {/*<SortableList*/}
